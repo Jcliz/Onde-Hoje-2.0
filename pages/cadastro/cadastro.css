@@ -1,0 +1,44 @@
+.custom-body {
+    background: linear-gradient(to right, #182848, #080c16);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.05); 
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-primary {
+    background-color: #080c16;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0a0f1f;
+}
+
+label, h2{
+    color: white;
+}
+
+option {
+    color: black;
+}
