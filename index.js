@@ -3,6 +3,7 @@ var app = express();
 app.use(express.json());
 
 app.use(express.static(__dirname + '/pages'));
+app.use(express.static(__dirname + '/public'));
 
 //importante o modulo de mysql
 var mysql = require('mysql');

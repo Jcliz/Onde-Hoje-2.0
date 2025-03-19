@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="shortcut icon" href="/Images/image.png">
+  <link rel="shortcut icon" href="/logo.jpg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet"
     href="https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/docs-app/css/dist/mdb5/standard/core.min.css">
@@ -20,84 +20,85 @@
   <title>Login</title>
   <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="/Login/login.css" rel="stylesheet">
-  
+
 </head>
 
 <body class="text-center">
   <div class="container">
-    <div style="margin-top: 15vh !important;" class="d-flex justify-content-center my-4">
+    <a href="../TelaEntrada/telaentrada.html">
+      <div style="margin-top: 15vh !important;" class="d-flex justify-content-center my-4">
         <img class="logo" src="/logo.jpg" alt="Logo" width="150" height="150">
-      </a>
-    </div>
-    <section class="w-100 p-4 d-flex justify-content-center pb-4" style="padding: 0 !important;">
-      <form style="width: 22rem;">
-        <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
-          <input type="text" id="email" class="form-control" data-gtm-form-interact-field-id="0">
-          <label class="form-label" for="email" style="margin-left: 0px;">Email</label>
-          <div class="form-notch">
-            <div class="form-notch-leading" style="width: 9px;"></div>
-            <div class="form-notch-middle" style="width: 40px;"></div>
-            <div class="form-notch-trailing"></div>
-          </div>
-        </div>
-
-        <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
-          <input onkeyup="validarSenha(event)" type="password" id="senha" class="form-control password-form"
-            data-gtm-form-interact-field-id="0">
-          <label class="form-label" for="senha" style="margin-left: 0px;">Senha</label>
-          <div class="form-notch">
-            <div class="form-notch-leading" style="width: 9px;"></div>
-            <div class="form-notch-middle" style="width: 40px;"></div>
-            <div class="form-notch-trailing"></div>
-          </div>
-        </div>
+    </a>
   </div>
-  <label id="campoObrigatorio" class="labelValidacao">Os campos são obrigatórios</label>
-  <label id="senhaTamanho" class="labelValidacao">A senha deve ter entre 8 e 16 dígitos</label>
-  <label id="senhaPadrao" class="labelValidacao">A senha deve ter: 1 letra maíscula e 1 caractere especial</label>
-
-  <br>
-  <div class="row mb-4">
-    <div class="col d-flex justify-content-center" style="padding-left: 37%;">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked="">
-        <label class="form-check-label" for="form2Example31"> Lembre de mim </label>
+  <section class="w-100 p-4 d-flex justify-content-center pb-4" style="padding: 0 !important;">
+    <form style="width: 22rem;">
+      <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
+        <input type="text" id="email" class="form-control" data-gtm-form-interact-field-id="0">
+        <label class="form-label" for="email" style="margin-left: 0px;">Email</label>
+        <div class="form-notch">
+          <div class="form-notch-leading" style="width: 9px;"></div>
+          <div class="form-notch-middle" style="width: 40px;"></div>
+          <div class="form-notch-trailing"></div>
+        </div>
       </div>
+
+      <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
+        <input onkeyup="validarSenha(event)" type="password" id="senha" class="form-control password-form"
+          data-gtm-form-interact-field-id="0">
+        <label class="form-label" for="senha" style="margin-left: 0px;">Senha</label>
+        <div class="form-notch">
+          <div class="form-notch-leading" style="width: 9px;"></div>
+          <div class="form-notch-middle" style="width: 40px;"></div>
+          <div class="form-notch-trailing"></div>
+        </div>
+      </div>
+      </div>
+      <label id="campoObrigatorio" class="labelValidacao">Os campos são obrigatórios</label>
+      <label id="senhaTamanho" class="labelValidacao">A senha deve ter entre 8 e 16 dígitos</label>
+      <label id="senhaPadrao" class="labelValidacao">A senha deve ter: 1 letra maíscula e 1 caractere especial</label>
+
+      <br>
+      <div class="row mb-4">
+        <div class="col d-flex justify-content-center" style="padding-left: 37%;">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked="">
+            <label class="form-check-label" for="form2Example31"> Lembre de mim </label>
+          </div>
+        </div>
+
+        <div class="col" style="padding-right: 37%;">
+          <a style="text-decoration: none; color:  #2B4250;" href="/EsqueceuSenha/esqueceuSenha.html">Esqueceu a
+            senha?</a>
+        </div>
+      </div>
+      <button onclick="enviarDados(event)" id="botaoContinuar" style="width: 250px;" type="button"
+        data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-primary btn-block mb-4"
+        data-mdb-button-initialized="true">Continuar</button>
+    </form>
+    <div class="text-center">
+      <p>Sem conta? <a style="text-decoration: none; color:  #2B4250" ; href="/Cadastro/cadastro.html">Cadastre-se</a>
+      </p>
+      <p>ou logue com:</p>
+      <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
+        data-mdb-button-initialized="true">
+        <i style="color: white;" class="fab fa-facebook-f"></i>
+      </button>
+
+      <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
+        data-mdb-button-initialized="true">
+        <i style="color: white" class="fab fa-google"></i>
+      </button>
+
+      <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
+        data-mdb-button-initialized="true">
+        <i style="color: white" class="fab fa-twitter"></i>
+      </button>
+
+      <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
+        data-mdb-button-initialized="true">
+        <i style="color: white" class="fab fa-github"></i>
+      </button>
     </div>
-
-    <div class="col" style="padding-right: 37%;">
-      <a style="text-decoration: none; color:  #2B4250;" href="/EsqueceuSenha/esqueceuSenha.html">Esqueceu a
-        senha?</a>
-    </div>
-  </div>
-  <button onclick="enviarDados(event)" id="botaoContinuar" style="width: 250px;" type="button"
-    data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-primary btn-block mb-4"
-    data-mdb-button-initialized="true">Continuar</button>
-  </form>
-  <div class="text-center">
-    <p>Sem conta? <a style="text-decoration: none; color:  #2B4250" ;
-        href="/Cadastro/cadastro.html">Cadastre-se</a></p>
-    <p>ou logue com:</p>
-    <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
-      data-mdb-button-initialized="true">
-      <i style="color: white;" class="fab fa-facebook-f"></i>
-    </button>
-
-    <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
-      data-mdb-button-initialized="true">
-      <i style="color: white" class="fab fa-google"></i>
-    </button>
-
-    <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
-      data-mdb-button-initialized="true">
-      <i style="color: white" class="fab fa-twitter"></i>
-    </button>
-
-    <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-link btn-floating mx-1"
-      data-mdb-button-initialized="true">
-      <i style="color: white" class="fab fa-github"></i>
-    </button>
-  </div>
   </section>
   <footer>
     <div class="container">
@@ -138,7 +139,7 @@
     </div>
   </footer>
 
-<script src="/Login/login.js"></script>
+  <script src="/Login/login.js"></script>
 </body>
 
 </html>
