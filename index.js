@@ -13,8 +13,8 @@ var mysql = require('mysql');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
-    database: "webdev"
+    password: "123456",
+    database: "ondehojephp"
 });
 
 //tentando conectar
@@ -175,7 +175,7 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
 app.use(router);
 
 app.get('/', (req, res) => {
-    res.redirect('/TelaEntrada/telaentrada.html'); // Ajuste o caminho aqui
+    res.redirect('/Configuracao/config.html'); // Ajuste o caminho aqui
 });
 
 // Iniciando o servidor
