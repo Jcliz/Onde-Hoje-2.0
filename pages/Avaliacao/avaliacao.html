@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="/Avaliacao/avaliacao.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Avaliação</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMbJ+FqCp48OlXjnkL9lbC9qOxh41g25rZReYNf" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<header class="p-3 mb-3 bg-dark" style="margin-bottom: 0 !important;">
+    <div class="container" style="margin: 0; padding: 0;">
+        <div class="d-flex flex-wrap align-items-center justify-content-between" style="width: 100%;">
+            <button class="botao" id="menu-button">&#9776;</button>
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+                <img src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="32" height="32"
+                    class="rounded-circle me-2" />
+            </a>
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 mx-auto" style="width: 60%;">
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search" />
+            </form>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="menu" class="col-md-3 menu-show kulim-park-regular" style="padding: 0%; width: 22%;">
+                <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="height: 90vh; width: 22vw;">
+                    <a href="/Perfil/perfil.html"
+                        class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <img src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="32" height="32"
+                            class="rounded-circle me-2" />
+                        <span class="fs-4">Seu Perfil</span>
+                    </a>
+                    <hr />
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item ">
+                            <a href="/TelaInicial/telainicial.html" class="nav-link selected text-white"
+                                aria-current="page">
+                                Início
+                            </a>
+                        </li>
+                        <li><a href="/Proximos/proximos.html" class="nav-link select text-white">Próximo a você</a></li>
+                        <li><a href="#" class="nav-link selected active fw-bold">Avalie</a></li>
+                        <li><a href="/Top Rolês/topRoles.html" class="nav-link select text-white">Top
+                                Rolês</a></li>
+                                <li><a href="/Mensagem/mensagem.html" class="nav-link select text-white">Mensagens</a></li>
+                        <li><a href="/Estabelecimentos/estabelecimentos.html"
+                                class="nav-link select text-white">Estabelecimentos</a></li>
+                    </ul>
+                    <hr />
+                    <div class="dropdown" style="margin-bottom: 8%;">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                            id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="32" height="32"
+                                class="rounded-circle me-2" />
+                            <strong>Opções</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser2">
+                            <li><a class="dropdown-item" href="/Usuarios/usuarios.html">Gerenciar Usuarios</a></li>
+                            <li><a class="dropdown-item" href="/Configuracao/config.html">Configurações</a></li>
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li><a class="dropdown-item" href="/TelaEntrada/telaentrada.html">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <section id="content" class="p-4 justify-content-center align-items-center koulen-regular"
+                style="background-color: rgb(26, 26, 26); width: 78%; height: 90vh; color: white;">
+                <div class="row justify-content-center mt-2">
+                    <h5 class="col-md-12 text-left" style="margin-left: 25%;">Estabelecimentos</h5>
+                    <div class="overflow-auto" style="width: 80%; height: 25vh;">
+                        <section class="write-review bg-dark rounded p-0" id="write-review">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="row align-items-center" style="height: 25vh;">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center p-3 bg-dark rounded-3">
+                                                    <div class="flex-column">
+                                                        <a href="#" class="map-link text-rate fs-5"
+                                                            id="pedrao-link">Pedrão Bar</a>
+                                                        <div>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star"></span>
+                                                        </div>
+                                                        <p class="text">Bar tradicional, bom para juntar os amigos.
+                                                            Música ao vivo e preços justos.</p>
+                                                    </div>
+                                                    <img src="https://uploads.cheers.com.br/media/seller/profile/41d12ac4c2fef3b9a36ca7fbb71ceb2134c0ec199ffe6d5f93fa73f7fd0033e8.jpg?v=4.01"
+                                                        height="100" width="100" class="ms-3 rounded-circle text-end">
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row align-items-center" style="height: 25vh;">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center p-3 bg-dark rounded-3">
+                                                    <div class="flex-column">
+                                                        <a href="#" class="map-link text-rate fs-5"
+                                                            id="pedrao-link">Havana Bar</a>
+                                                        <div>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star"></span>
+                                                        </div>
+                                                        <p class="text">Bar tradicional, bom para juntar os amigos.
+                                                            Música ao vivo e preços justos.</p>
+                                                    </div>
+                                                    <img src="https://scontent.fbfh9-1.fna.fbcdn.net/v/t39.30808-6/347789141_639503410938818_122111528749115274_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=2E4MajynGTMQ7kNvgFeEjI9&_nc_zt=23&_nc_ht=scontent.fbfh9-1.fna&_nc_gid=ANSEcCwTyUQIUTKA1MTxT_N&oh=00_AYDgxm9RZx0dCIcCmIKI0kM3dMBUWjd9WcBTu6yYvap4rQ&oe=6726F49C"
+                                                        height="100" width="100" class="ms-3 rounded-circle text-end">
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row align-items-center" style="height: 25vh;">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center p-3 bg-dark rounded-3">
+                                                    <div class="flex-column">
+                                                        <a href="#" class="map-link text-rate fs-5"
+                                                            id="pedrao-link">Crossroads</a>
+                                                        <div>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star"></span>
+                                                        </div>
+                                                        <p class="text">Bar tradicional, bom para juntar os amigos.
+                                                            Música ao vivo e preços justos.</p>
+                                                    </div>
+                                                    <img src="https://scontent.fbfh9-1.fna.fbcdn.net/v/t39.30808-6/327176013_733282691490072_2467762187796847497_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=KRV6Eqsifd8Q7kNvgHWBKv-&_nc_zt=23&_nc_ht=scontent.fbfh9-1.fna&_nc_gid=A2xkXEYA3QjWCG5pz9dk5p6&oh=00_AYDPUDJUkacG1q87R5wjI41i_suZgma3BT1SlbyqEeOB8w&oe=6726FC42"
+                                                        height="100" width="100" class="ms-3 rounded-circle text-end">
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row align-items-center" style="height: 25vh;">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center p-3 bg-dark rounded-3">
+                                                    <div class="flex-column">
+                                                        <a href="#" class="map-link text-rate fs-5"
+                                                            id="pedrao-link">Crossroads</a>
+                                                        <div>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star"></span>
+                                                        </div>
+                                                        <p class="text">Bar tradicional, bom para juntar os amigos.
+                                                            Música ao vivo e preços justos.</p>
+                                                    </div>
+                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa7m04g2_TzJUKR9fcxir7hJc6zNFbHeMmGg&s"
+                                                        height="100" width="100" class="ms-3 rounded-circle text-end">
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row align-items-center" style="height: 25vh;">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center p-3 bg-dark rounded-3">
+                                                    <div class="flex-column">
+                                                        <a href="#" class="map-link text-rate fs-5"
+                                                            id="pedrao-link">Boteco do Didi</a>
+                                                        <div>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star"></span>
+                                                        </div>
+                                                        <p class="text">Bar tradicional, bom para juntar os amigos.
+                                                            Música ao vivo e preços justos.</p>
+                                                    </div>
+                                                    <img src="https://scontent.fbfh9-1.fna.fbcdn.net/v/t39.30808-6/352241060_191279610544614_3973040169422220503_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=_E4axqTaqEoQ7kNvgHbHuVY&_nc_zt=23&_nc_ht=scontent.fbfh9-1.fna&_nc_gid=A_4a9VQj4gC82_KDv86FcGF&oh=00_AYCImnXbonwOB-1NG3wpeSgwNH39edwzVW_Syd8elUwP8A&oe=6726DC6E"
+                                                        height="100" width="100" class="ms-3 rounded-circle text-end">
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row align-items-center" style="height: 25vh;">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center p-3 bg-dark rounded-3">
+                                                    <div class="flex-column">
+                                                        <a href="#" class="map-link text-rate fs-5"
+                                                            id="pedrao-link">Taverna do Dragão</a>
+                                                        <div>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star text-warning"></span>
+                                                            <span class="fa fa-star"></span>
+                                                        </div>
+                                                        <p class="text">Bar tradicional, bom para juntar os amigos.
+                                                            Música ao vivo e preços justos.</p>
+                                                    </div>
+                                                    <img src="https://scontent.fbfh9-1.fna.fbcdn.net/v/t39.30808-6/313400883_545769024220094_1795768560749918606_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=nVSNiv9pNy8Q7kNvgEolWOV&_nc_zt=23&_nc_ht=scontent.fbfh9-1.fna&_nc_gid=A0-VkttXWWGUCantpSyl4py&oh=00_AYDLGLLzjN3PwyU_9AJxcjSuNdu9jlLGuMQoDDfoJX8kIg&oe=6726C8A7"
+                                                        height="100" width="100" class="ms-3 rounded-circle text-end">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </section>
+                    </div>
+                    <h5 class="col-md-12 text-left mt-3 " style="margin-left: 25%;"> Usuários</h5>
+                    <div class="overflow-auto " style="width: 80% !important; height: 30vh; color: white;">
+                        <section class="write-review py-5 bg-dark rounded" id="write-review" style="padding: 0 !important;">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 p-3 bg-dark text-center rounded" style="box-shadow: inset 0px 0px 15px 1px rgb(27, 31, 34)">
+                                        <div class="flex-column" style="height: 15vh;">
+                                            <img style="float: left; margin-left: 10%;"
+                                                src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="70"
+                                                height="70" class="rounded-circle me-2" />
+                                            <p class="mb-0" style="padding-top: 5%;">Mrs Linkedin</p>
+                                            <i class="bi bi-geo-alt">500 m</i>
+                                        </div>
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star"></span>
+                                            <p class="mb-0 mt-2">Muito divertido!</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 p-3 bg-dark text-center rounded" style="box-shadow: inset 0px 0px 15px 1px rgb(27, 31, 34);">
+                                        <div class="flex-column" style="height: 15vh;">
+                                            <img style="float: left; margin-left: 10%;"
+                                                src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="70"
+                                                height="70" class="rounded-circle me-2" />
+                                            <p class="mb-0" style="padding-top: 5%;">Mrs Linkedin</p>
+                                            <i class="bi bi-geo-alt">500 m</i>
+                                        </div>
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star"></span>
+                                            <p class="mb-0 mt-2">Muito divertido!</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 p-3 bg-dark text-center rounded" style="box-shadow: inset 0px 0px 15px 1px rgb(27, 31, 34)">
+                                        <div class="flex-column" style="height: 15vh;">
+                                            <img style="float: left; margin-left: 10%;"
+                                                src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="70"
+                                                height="70" class="rounded-circle me-2" />
+                                            <p class="mb-0" style="padding-top: 5%;">Mrs Linkedin</p>
+                                            <i class="bi bi-geo-alt">500 m</i>
+                                        </div>
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star"></span>
+                                            <p class="mb-0 mt-2">Muito divertido!</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 p-3 bg-dark text-center rounded" style="box-shadow: inset 0px 0px 15px 1px rgb(27, 31, 34)">
+                                        <div class="flex-column" style="height: 15vh;">
+                                            <img style="float: left; margin-left: 10%;"
+                                                src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="70"
+                                                height="70" class="rounded-circle me-2" />
+                                            <p class="mb-0" style="padding-top: 5%;">Mrs Linkedin</p>
+                                            <i class="bi bi-geo-alt">500 m</i>
+                                        </div>
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star"></span>
+                                            <p class="mb-0 mt-2">Muito divertido!</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 p-3 bg-dark text-center rounded" style="box-shadow: inset 0px 0px 15px 1px rgb(27, 31, 34)">
+                                        <div class="flex-column" style="height: 15vh;">
+                                            <img style="float: left; margin-left: 10%;"
+                                                src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="70"
+                                                height="70" class="rounded-circle me-2" />
+                                            <p class="mb-0" style="padding-top: 5%;">Mrs Linkedin</p>
+                                            <i class="bi bi-geo-alt">500 m</i>
+                                        </div>
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star"></span>
+                                            <p class="mb-0 mt-2">Muito divertido!</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 p-3 bg-dark text-center rounded" style="box-shadow: inset 0px 0px 15px 1px rgb(27, 31, 34)">
+                                        <div class="flex-column" style="height: 15vh;">
+                                            <img style="float: left; margin-left: 10%;"
+                                                src="https://pbs.twimg.com/media/Evg99SnWQAM9Yb8.jpg" alt="" width="70"
+                                                height="70" class="rounded-circle me-2" />
+                                            <p class="mb-0" style="padding-top: 5%;">Mrs Linkedin</p>
+                                            <i class="bi bi-geo-alt">500 m</i>
+                                        </div>
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star text-warning"></span>
+                                            <span class="fa fa-star"></span>
+                                            <p class="mb-0 mt-2">Muito divertido!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+            </section>
+        </div>
+    </div>
+    </section>
+    </div>
+    </div>
+    </section>
+
+    </div>
+    <script src="/Avaliacao/avaliacao.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

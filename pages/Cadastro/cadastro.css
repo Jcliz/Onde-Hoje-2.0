@@ -1,0 +1,47 @@
+.labelValidacao {
+    color: red;
+}
+
+#botaoContinuar {
+    width: 250px; 
+    background-color: #2B4250; 
+    border: 1px solid #2B4250;
+    box-shadow: 2px 2px 2px #628194;
+}
+
+#botaoContinuar:hover{
+    background-color:#233541;
+}
+
+#botaoContinuar:active{
+    background-color: #152027;
+}
+
+.form-outline .form-control:focus {
+    outline: none !important; /* Remove o contorno padrão */
+    border-color: red !important; /* Altera a cor da borda */
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5) !important; /* Adiciona um efeito de sombra ao focar */
+  }
+
+a {
+  color: #2B4250 !important;  
+}
+
+html p, label {
+    color: white;
+}
+
+html{
+    background-color: rgb(26, 26, 26);
+}
+
+#email, #senha, #senhaConfirm {
+    color: white; 
+    background-color: rgb(26, 26, 26);
+}
+
+.labelValidacao {
+    display: none; /* Inicialmente escondido */
+    color: red;    /* Cor de destaque para o erro */
+  }
+  

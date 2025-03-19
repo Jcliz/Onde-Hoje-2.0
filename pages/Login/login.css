@@ -1,0 +1,33 @@
+.labelValidacao {
+    color: red;
+    display: none;
+}
+
+#botaoContinuar {
+    width: 250px; 
+    background-color: #2B4250; 
+    border: 1px solid #2B4250;
+    box-shadow: 2px 2px 2px #628194;
+}
+
+#botaoContinuar:hover{
+    background-color:#233541;
+}
+
+#botaoContinuar:active{
+    background-color: #152027;
+}
+
+html p, label {
+    color: white;
+}
+
+html, body {
+    background-color: rgb(26, 26, 26);
+    width: 99%;
+}
+
+#email, #senha {
+    color: white; 
+    background-color: rgb(26, 26, 26);
+}

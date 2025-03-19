@@ -1,0 +1,12 @@
+#link {
+    color: #2B4250 !important;
+}
+
+#texto {
+    margin-top: 20vh !important;
+    color: white;
+}
+
+html, body {
+    background-color: rgb(26, 26, 26);
+}
