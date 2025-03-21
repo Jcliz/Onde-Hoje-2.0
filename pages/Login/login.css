@@ -1,6 +1,5 @@
 .labelValidacao {
     color: red;
-    display: none;
 }
 
 #botaoContinuar {
@@ -18,16 +17,26 @@
     background-color: #152027;
 }
 
+a {
+  color: #2B4250 !important;  
+}
+
 html p, label {
     color: white;
 }
 
-html, body {
+html, body{
     background-color: rgb(26, 26, 26);
-    width: 99%;
+    overflow-x: hidden;
 }
 
 #email, #senha {
     color: white; 
     background-color: rgb(26, 26, 26);
 }
+
+.labelValidacao {
+    display: none; /* Inicialmente escondido */
+    color: red;    /* Cor de destaque para o erro */
+  }
+  

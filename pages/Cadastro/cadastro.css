@@ -31,7 +31,7 @@ html p, label {
     color: white;
 }
 
-html{
+html, body{
     background-color: rgb(26, 26, 26);
 }
 

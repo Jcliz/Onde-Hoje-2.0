@@ -14,7 +14,7 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "123456",
-    database: "ondehojephp"
+    database: "ondehoje"
 });
 
 //tentando conectar
@@ -175,7 +175,7 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
 app.use(router);
 
 app.get('/', (req, res) => {
-    res.redirect('/Configuracao/config.html'); // Ajuste o caminho aqui
+    res.redirect('/Cadastro/cadastro.html'); // Ajuste o caminho aqui
 });
 
 // Iniciando o servidor
