@@ -4,6 +4,7 @@ function validarSenha() {
   const email = document.getElementById('email').value;
   const senha = document.getElementById('senha').value;
   const senhaConfirm = document.getElementById('senhaConfirm').value;
+  const cep = document.getElementById('cep').value;
 
   // Esconde os labels de erro antes de verificar
   document.getElementById('campoObrigatorio').style.display = 'none';
@@ -11,7 +12,7 @@ function validarSenha() {
   document.getElementById('senhaPadrao').style.display = 'none';
 
   // Verifica se os campos de email ou senha estão vazios
-  if (!email || !senha || !senhaConfirm) {
+  if (!email || !senha || !senhaConfirm || !cep) {
     console.log('campos vazios');
     document.getElementById('campoObrigatorio').style.display = 'block';
     return false;
@@ -132,3 +133,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+// document.getElementById("cep").addEventListener("blur", function() {
+//   let cep = this.value.replace(/\D/g, "");
+//   if (cep.length === 8) {
+//       fetch(https://viacep.com.br/ws/${cep}/json/)
+//           .then(response => response.json())
+//           .then(data => {
+//               if (!data.erro) {
+//                   document.getElementById("logradouro").value = data.logradouro;
+//                   document.getElementById("bairro").value = data.bairro;
+//                   document.getElementById("cidade").value = data.localidade;
+//                   document.getElementById("uf").value = data.uf;
+//               } else {
+//                   alert("CEP não encontrado.");
+//               }
+//           })
+//           .catch(error => console.error("Erro na requisição:", error));
+//   } else {
+//       alert("CEP inválido!");
+//   }
+// });

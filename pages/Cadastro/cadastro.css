@@ -36,7 +36,7 @@ html, body{
     align-items: center !important;
 }
 
-#email, #senha, #senhaConfirm {
+#email, #senha, #senhaConfirm, #cep, #bairro, #estado, #cidade {
     color: white; 
     background-color: rgb(26, 26, 26);
 }
