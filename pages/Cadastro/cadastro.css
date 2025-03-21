@@ -33,6 +33,7 @@ html p, label {
 
 html, body{
     background-color: rgb(26, 26, 26);
+    align-items: center !important;
 }
 
 #email, #senha, #senhaConfirm {
@@ -43,5 +44,8 @@ html, body{
 .labelValidacao {
     display: none; /* Inicialmente escondido */
     color: red;    /* Cor de destaque para o erro */
-  }
-  
+}
+
+#icons-container {
+    align-items: center;
+}
