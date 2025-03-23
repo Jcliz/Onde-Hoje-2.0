@@ -1,46 +1,25 @@
-.labelValidacao {
-    color: red;
-}
-
-#botaoContinuar {
-    width: 250px;
-    background-color: #2B4250;
-    border: 1px solid #2B4250;
-    box-shadow: 2px 2px 2px #628194;
-}
-
-#botaoContinuar:hover {
-    background-color: #233541;
-}
-
-#botaoContinuar:active {
-    background-color: #152027;
-}
-
-a {
-    color: #2B4250 !important;
-}
-
-html p,
-label {
-    color: white;
-}
-
 html,
 body {
-    background-color: rgb(26, 26, 26);
-    overflow-x: hidden;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-#email,
-#senha {
-    color: white;
-    background-color: rgb(26, 26, 26);
+main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.labelValidacao {
-    display: none;
-    /* Inicialmente escondido */
-    color: red;
-    /* Cor de destaque para o erro */
+section {
+    width: 100%;
+    transform: scale(0.90);
+    transform-origin: top;
+    overflow: hidden;
+}
+
+#infos {
+    background-image: linear-gradient(to top, rgb(33, 37, 41), rgb(99, 101, 104), rgb(33, 37, 41));
 }
