@@ -1,10 +1,16 @@
+const cep = document.querySelector('#cep');
+const rua = document.querySelector('#street');
+const bairro = document.querySelector('#bairro');
+const cidade = document.querySelector('#cidade');
+const numero = document.querySelector('#number');
+const mensagem = document.querySelector('#mensagem');
+
 function validarSenha() {
   console.log('chamou a validação');
 
   const email = document.getElementById('email').value;
   const senha = document.getElementById('senha').value;
   const senhaConfirm = document.getElementById('senhaConfirm').value;
-  const cep = document.getElementById('cep').value;
 
   // Esconde os labels de erro antes de verificar
   document.getElementById('campoObrigatorio').style.display = 'none';
@@ -35,9 +41,9 @@ function validarSenha() {
   // Verifica se a confirmação da senha é igual à senha
   if (senha.trim() !== senhaConfirm.trim()) {
     console.log('as senhas não coincidem');
-    document.getElementById('senhaObrigatorio').style.display = 'block'; 
+    document.getElementById('senhaObrigatorio').style.display = 'block';
     return false;
-}
+  }
 
   console.log('email: ' + email);
   console.log('senha: ' + senha);
@@ -134,23 +140,34 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// document.getElementById("cep").addEventListener("blur", function() {
-//   let cep = this.value.replace(/\D/g, "");
-//   if (cep.length === 8) {
-//       fetch(https://viacep.com.br/ws/${cep}/json/)
-//           .then(response => response.json())
-//           .then(data => {
-//               if (!data.erro) {
-//                   document.getElementById("logradouro").value = data.logradouro;
-//                   document.getElementById("bairro").value = data.bairro;
-//                   document.getElementById("cidade").value = data.localidade;
-//                   document.getElementById("uf").value = data.uf;
-//               } else {
-//                   alert("CEP não encontrado.");
-//               }
-//           })
-//           .catch(error => console.error("Erro na requisição:", error));
-//   } else {
-//       alert("CEP inválido!");
-//   }
-// });
+cep.addEventListener('focusout', async () => {
+  const onlyNumbers = /^[0-9]+$/;
+  const cepValid = /^[0-9]{8}$/;
+
+  try {
+    if (!onlyNumbers.test(cep.value) || !cepValid.test(cep.value)) {
+      throw { cep_error: 'CEP inválido' };
+    }
+
+    const response = await fetch(`https://viacep.com.br/ws/${cep.value}/json/`);
+
+    if (!response.ok) {
+      throw await response.json();
+    }
+
+    const responseCep = await response.json();
+
+    rua.value = responseCep.logradouro;
+    bairro.value = responseCep.bairro;
+    cidade.value = responseCep.localidade;
+
+  } catch (error) {
+    if (error?.cep_error) {
+      mensagem.textContent = error.cep_error;
+      setTimeout(() => {
+        mensagem.textContent = "Por favor, insira um CEP válido.";
+      }, 5000);
+    }
+    console.log(error);
+  }
+})

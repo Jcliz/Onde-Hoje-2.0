@@ -19,7 +19,3 @@ section {
     transform-origin: top;
     overflow: hidden;
 }
-
-#infos {
-    background-image: linear-gradient(to top, rgb(33, 37, 41), rgb(99, 101, 104), rgb(33, 37, 41));
-}
