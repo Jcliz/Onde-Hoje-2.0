@@ -17,9 +17,16 @@ var con = mysql.createConnection({
     database: "ondehoje"
 });
 
+var con1 = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1234",
+    database: "webdev"
+});
+
 //tentando conectar
 //a variável con tem a conexão agora
-con.connect(function (err) {
+con1.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
 });
