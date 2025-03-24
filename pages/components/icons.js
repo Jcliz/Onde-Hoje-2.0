@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("../Componentes/icons.html")
+    fetch("../components/icons.html")
         .then(response => response.text())
         .then(data => {
             document.getElementById("icons-container").innerHTML = data;
