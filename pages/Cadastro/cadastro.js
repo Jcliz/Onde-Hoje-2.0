@@ -8,28 +8,34 @@ const cpf = document.getElementById('cpf').value;
 const nome = document.getElementById('name').value;
 
 function validarSenha() {
-  const senha = document.getElementById('password').value;
-  const senhaConfirm = document.getElementById('confirmPassword').value;
+  const senha = document.getElementById('password');
+  const senhaConfirm = document.getElementById('confirmPassword');
   const senhaError = document.getElementById('password').nextElementSibling;
   const senhaConfirmError = document.getElementById('confirmPassword').nextElementSibling;
 
-  if (senha.length < 6) {
+  let isValid = true;
+
+  if (senha.value.length < 6) {
+    senha.classList.add('is-invalid');
     senhaError.style.display = 'block';
     senhaError.textContent = 'A senha deve ter pelo menos 6 caracteres.';
-    return false;
+    isValid = false;
   } else {
+    senha.classList.remove('is-invalid');
     senhaError.style.display = 'none';
   }
 
-  if (senha !== senhaConfirm) {
+  if (senha.value !== senhaConfirm.value) {
+    senhaConfirm.classList.add('is-invalid');
     senhaConfirmError.style.display = 'block';
     senhaConfirmError.textContent = 'As senhas não coincidem.';
-    return false;
+    isValid = false;
   } else {
+    senhaConfirm.classList.remove('is-invalid');
     senhaConfirmError.style.display = 'none';
   }
 
-  return true;
+  return isValid;
 }
 
 document.getElementById('password').addEventListener('focusout', validarSenha);
