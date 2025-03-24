@@ -65,14 +65,16 @@
                     <form>
                       <div class="mb-3">
                         <label for="cpf" class="form-label">CPF</label>
-                        <input type="text" class="form-control bg-dark text-light" id="cpf" placeholder="_ _ _ _ _ _ _ _ _ _ _" required>
+                        <input type="text" class="form-control bg-dark text-light" id="cpf"
+                          placeholder="_ _ _ _ _ _ _ _ _ _ _" required>
                         <div class="invalid-feedback">Por favor, insira um CPF válido (ex: 123.456.789-00).</div>
                       </div>
 
                       <div class="mb-3">
                         <label for="cep" class="form-label">CEP</label>
-                        <input type="text" class="form-control bg-dark text-light" id="cep" placeholder="_ _ _ _ _ _ _ _" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <div class="invalid-feedback" id="mensagem"></div>
+                        <input type="text" class="form-control bg-dark text-light" id="cep"
+                          placeholder="_ _ _ _ _ _ _ _" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <div class="invalid-feedback">CEP inválido.</div>
                       </div>
 
                       <div class="row mb-3">
