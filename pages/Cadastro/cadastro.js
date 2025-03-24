@@ -41,14 +41,14 @@ function validarSenha() {
 document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
-function processarLogin(event) {
-  event.preventDefault();
+// function processarLogin(event) {
+//   event.preventDefault();
 
-  // Se a validação for bem-sucedida, chama a função enviarDados
-  if (validarSenha()) {
-    enviarDados();
-  }
-}
+//   // Se a validação for bem-sucedida, chama a função enviarDados
+//   if (validarSenha()) {
+//     enviarDados();
+//   }
+// }
 
 // async function cadastrarUsuario(email, senha, status) {
 //   try {
@@ -228,4 +228,26 @@ function validarNome(input) {
 
 document.getElementById('name').addEventListener('focusout', function () {
   validarNome(this);
+});
+
+function validarEmail(input) {
+  const emailError = input.nextElementSibling;
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (input.value.length < 5 || input.value.length > 50) {
+    input.classList.add('is-invalid');
+    emailError.style.display = 'block';
+    emailError.textContent = 'Por favor, insira um e-mail válido (exemplo@dominio.com) e entre 5 e 100 caracteres.';
+  } else if (emailValid.test(input.value)) {
+    input.classList.remove('is-invalid');
+    emailError.style.display = 'none';
+  } else {
+    input.classList.add('is-invalid');
+    emailError.style.display = 'block';
+    emailError.textContent = 'Por favor, insira um e-mail válido (exemplo@dominio.com).';
+  }
+}
+
+document.getElementById('email').addEventListener('focusout', function () {
+  validarEmail(this);
 });
