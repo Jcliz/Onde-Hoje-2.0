@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
 async function validarCEP(input) {
   const onlyNumbers = /^[0-9]+$/;
   const cepValid = /^[0-9]{8}$/;
-  const cepError = input.nextElementSibling; 
+  const cepError = input.nextElementSibling;
 
   try {
     if (!onlyNumbers.test(input.value) || !cepValid.test(input.value)) {
@@ -159,6 +159,10 @@ async function validarCEP(input) {
     }
 
     const responseCep = await response.json();
+
+    if (responseCep.erro) {
+      throw { cep_error: 'CEP não encontrado.' };
+    }
 
     rua.value = responseCep.logradouro;
     bairro.value = responseCep.bairro;
@@ -175,7 +179,7 @@ async function validarCEP(input) {
       cepError.style.display = 'block';
       cepError.textContent = error.cep_error;
     }
-    
+
     console.log(error);
   }
 }
@@ -186,8 +190,8 @@ cep.addEventListener('focusout', async () => {
 
 //verificação de CPF
 function validarCPF(input) {
-  const cpfError = input.nextElementSibling; 
-  const cpfValid = /^[0-9]{11}$/; 
+  const cpfError = input.nextElementSibling;
+  const cpfValid = /^[0-9]{11}$/;
 
   input.value = input.value.replace(/\D/g, '');
 
