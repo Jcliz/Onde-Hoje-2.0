@@ -3,8 +3,9 @@ const rua = document.querySelector('#street');
 const bairro = document.querySelector('#bairro');
 const cidade = document.querySelector('#cidade');
 const numero = document.querySelector('#number');
-const mensagem = document.querySelector('#mensagem');
+const mensagem = document.querySelector('.invalid-feedback');
 const cpf = document.getElementById('cpf').value;
+const nome = document.getElementById('name').value;
 
 function validarSenha() {
   console.log('chamou a validação');
@@ -214,4 +215,28 @@ document.querySelectorAll('#cpf').forEach(cpfInput => {
   cpfInput.addEventListener('focusout', () => {
     validarCPF(cpfInput);
   });
+});
+
+//validação de nome
+function validarNome(input) {
+  const nomeError = input.nextElementSibling;
+  const nomeValid = /^[a-zA-ZÀ-ú\s]+$/;
+
+  if (input.value.length < 3 || input.value.length > 50) {
+    input.classList.add('is-invalid');
+    nomeError.style.display = 'block';
+    nomeError.textContent = 'Por favor, preencha o campo com entre 3 e 50 caracteres.';
+
+  } else if (nomeValid.test(input.value)) {
+    input.classList.remove('is-invalid');
+    nomeError.style.display = 'none';
+  } else {
+    input.classList.add('is-invalid');
+    nomeError.style.display = 'block';
+    nomeError.textContent = 'Por favor, insira um nome válido.';
+  }
+}
+
+document.getElementById('name').addEventListener('focusout', function() {
+  validarNome(this);
 });
