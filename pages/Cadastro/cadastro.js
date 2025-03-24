@@ -167,6 +167,8 @@ async function validarCEP(input) {
 
     input.classList.remove('is-invalid');
     cepError.style.display = 'none';
+    input.value = input.value.replace(/(\d{5})(\d{3})/, '$1-$2');
+    input.disabled = true;
 
   } catch (error) {
     if (error?.cep_error) {
