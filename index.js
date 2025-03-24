@@ -6,22 +6,22 @@ app.use(express.static(__dirname + '/pages'));
 app.use(express.static(__dirname + '/public'));
 
 //importante o modulo de mysql
-var mysql = require('mysql');
+var mysql = require('mysql2');
 
 //criando a variável con que vai ter a referência de conexão
 //com o banco de dadosa
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "123456",
+    password: "@Batata352416",
     database: "ondehoje"
 });
 
 var con1 = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
-    database: "webdev"
+    password: "@Batata352416",
+    database: "ondehoje"
 });
 
 //tentando conectar

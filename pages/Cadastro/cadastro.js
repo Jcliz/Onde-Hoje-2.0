@@ -6,6 +6,7 @@ const numero = document.querySelector('#number');
 const mensagem = document.querySelector('#mensagem');
 const cpf = document.getElementById('cpf').value;
 
+
 function validarSenha() {
   console.log('chamou a validação');
 
@@ -145,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
 async function validarCEP(input) {
   const onlyNumbers = /^[0-9]+$/;
   const cepValid = /^[0-9]{8}$/;
-  const cepError = input.nextElementSibling; 
+  const cepError = input.nextElementSibling;
 
   try {
     if (!onlyNumbers.test(input.value) || !cepValid.test(input.value)) {
@@ -173,7 +174,7 @@ async function validarCEP(input) {
       cepError.style.display = 'block';
       cepError.textContent = error.cep_error;
     }
-    
+
     console.log(error);
   }
 }
@@ -184,8 +185,8 @@ cep.addEventListener('focusout', async () => {
 
 //verificação de CPF
 function validarCPF(input) {
-  const cpfError = input.nextElementSibling; 
-  const cpfValid = /^[0-9]{11}$/; 
+  const cpfError = input.nextElementSibling;
+  const cpfValid = /^[0-9]{11}$/;
 
   input.value = input.value.replace(/\D/g, '');
 
@@ -208,4 +209,19 @@ document.querySelectorAll('#cpf').forEach(cpfInput => {
   cpfInput.addEventListener('focusout', () => {
     validarCPF(cpfInput);
   });
+});
+
+
+// Validação de idade
+document.getElementById("dob").addEventListener(("input"), () => {
+  let data_nasc = new Date(document.getElementById("dob").value);
+  let idade = new Date().getFullYear() - data_nasc.getFullYear() - (new Date() < new Date(data_nasc.setFullYear(new Date().getFullYear())));
+  if (idade < 18) {
+    document.getElementById("idade").textContent = "Você precisa ser maior de 18 anos para se cadastrar na plataforma";
+    document.getElementById("continue").style.display = 'none'
+  }
+  else {
+    document.getElementById("idade").textContent = `Idade: ${idade} anos`;
+    document.getElementById("continue").style.display = 'block'
+  }
 });
