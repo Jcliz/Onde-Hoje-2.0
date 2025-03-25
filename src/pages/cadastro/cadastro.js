@@ -254,15 +254,40 @@ document.getElementById('email').addEventListener('focusout', function () {
 });
 
 // Validação de idade
-document.getElementById("dob").addEventListener(("input"), () => {
-  let data_nasc = new Date(document.getElementById("dob").value);
-  let idade = new Date().getFullYear() - data_nasc.getFullYear() - (new Date() < new Date(data_nasc.setFullYear(new Date().getFullYear())));
+function validarIdade(input) {
+  const idadeError = input.nextElementSibling;
+  const data_nasc = new Date(input.value);
+  const hoje = new Date();
+
+  // Verifica se a data de nascimento está completa
+  if (isNaN(data_nasc.getTime()) || input.value.length < 10) {
+    input.classList.add('is-invalid');
+    idadeError.style.display = 'block';
+    idadeError.textContent = 'Por favor, insira uma data de nascimento válida.';
+    document.getElementById("continue").style.display = 'none';
+    return;
+  }
+
+  let idade = hoje.getFullYear() - data_nasc.getFullYear();
+  const mes = hoje.getMonth() - data_nasc.getMonth();
+
+  if (mes < 0 || (mes === 0 && hoje.getDate() < data_nasc.getDate())) {
+    idade--;
+  }
+
   if (idade < 18) {
-    document.getElementById("idade").textContent = "Você precisa ser maior de 18 anos para se cadastrar na plataforma";
-    document.getElementById("continue").style.display = 'none'
+    input.classList.add('is-invalid');
+    idadeError.style.display = 'block';
+    idadeError.textContent = 'Você precisa ser maior de 18 anos para se cadastrar na plataforma.';
+    document.getElementById("continue").style.display = 'none';
+  } else {
+    input.classList.remove('is-invalid');
+    idadeError.style.display = 'none';
+    idadeError.textContent = `Idade: ${idade} anos`;
+    document.getElementById("continue").style.display = 'block';
   }
-  else {
-    document.getElementById("idade").textContent = `Idade: ${idade} anos`;
-    document.getElementById("continue").style.display = 'block'
-  }
+}
+
+document.getElementById('dob').addEventListener('input', function () {
+  validarIdade(this);
 });
