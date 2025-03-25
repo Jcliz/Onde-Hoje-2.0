@@ -1,0 +1,87 @@
+body {
+    background-color: rgb(26, 26, 26);
+}
+
+.menu-show {
+    width: 22vw;
+  }
+  
+  .menu-hide {
+    display: none;
+    width: 0;
+  }
+  
+  .botao {
+    color: white;
+    border: 0px;
+    background-color: rgb(33, 37, 41);
+    font-size: 200%;
+    margin-right: 2%;
+  }
+  
+  .content-expanded {
+    width: 100% !important;
+    height: 90vh !important;
+  }
+  
+  .koulen-regular {
+    font-family: "Koulen", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .kulim-park-regular {
+    font-family: "Kulim Park", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+#req p, li, h3, label {
+    color: rgb(212, 210, 210) !important;
+}
+
+.caixa-form input::placeholder{
+    color: grey !important;
+}
+
+.avatar img {
+    margin-left: 15vw;
+}
+
+#botaoSalvar {
+    background-color: #2b4250;
+    border: 0;
+}
+
+#botaoSalvar:hover{
+    background-color:#233541;
+}
+
+#botaoSalvar:active{
+    background-color: #152027;
+}
+
+.menu-show {
+  width: 22vw;
+}
+
+#identificacao {
+    margin-top: 1vh;
+}
+
+#identificacao input::placeholder {
+    color: grey;
+}
+
+.botoes input {
+    height: 3.5vh;
+    width: 3.5vw !important;
+    cursor: pointer;
+}
+
+.botoes label {
+    font-size: 19px;
+    margin-left: 1vw;
+    margin-top: 0.5vh;
+}
+

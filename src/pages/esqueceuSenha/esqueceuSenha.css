@@ -1,0 +1,30 @@
+#botao {
+    background-color: #2B4250; 
+    border: 1px solid #2B4250;
+}
+
+#borda {
+    border: 0px;
+    margin-top: 15vh;
+}
+
+#botao:hover{
+    background-color:#233541;
+}
+
+#botao:active{
+    background-color: #152027;
+}
+
+#volta a {
+    color: white !important;
+}
+
+html, body{
+    background-color: rgb(26, 26, 26) !important;
+}
+
+#email {
+    color: white; 
+    background-color: rgb(26, 26, 26);
+}

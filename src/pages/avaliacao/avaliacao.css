@@ -1,0 +1,72 @@
+.select:hover {
+    background-color: rgb(59, 64, 70) !important;
+    font-weight: 700;
+    transition: background-color 0.8s, transform 0.8s ease;
+}
+
+.select:active {
+    background-color: rgb(83, 89, 98) !important;
+    font-weight: 700;
+    transition: background-color 0.1s, transform 0.1s ease;
+}
+
+.selected:hover {
+    background-color: rgb(111, 0, 255) !important;
+    transition: background-color 0.6s, transform 0.6s ease;
+    font-weight: 600;
+}
+
+.menu-show {
+    width: 22vw;
+}
+
+.menu-hide {
+    display: none;
+    width: 0;
+}
+
+.content-expanded {
+    width: 100% !important;
+    height: 90vh !important;
+}
+
+.botao {
+    color: white;
+    border: 0px;
+    background-color: rgb(33, 37, 41);
+    font-size: 200%;
+    margin-right: 2%;
+}
+
+.text {
+    margin: 0;
+    font-size: small;
+}
+
+.koulen-regular {
+    font-family: "Koulen", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.kulim-park-regular {
+    font-family: "Kulim Park", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.text-rate {
+    margin: 0;
+    font-size: medium;
+    color: white;
+    text-decoration: none;
+}
+
+.text-rate:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.gradiente {
+    background: linear-gradient(180deg, #353535, #00000079);
+  }
