@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 app.use(express.json());
 
-app.use(express.static(__dirname + '/pages'));
+app.use(express.static(__dirname + '/src/pages'));
 app.use(express.static(__dirname + '/public'));
 
 //importante o modulo de mysql
@@ -13,20 +13,13 @@ var mysql = require('mysql2');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "@Batata352416",
-    database: "ondehoje"
-});
-
-var con1 = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "@Batata352416",
+    password: "123456",
     database: "ondehoje"
 });
 
 //tentando conectar
 //a variável con tem a conexão agora
-con1.connect(function (err) {
+con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
 });
@@ -102,10 +95,10 @@ app.delete('/api/usuarios/:id', (req, res) => {
 // Novo: Endpoint para fazer login e verificar as credenciais
 router.post('/api/login', (req, res) => {
     const { email, senha } = req.body;
-    
+
     // Verifica no banco de dados se o email e a senha correspondem a um usuário
     let sql = `SELECT * FROM usuario WHERE email = '${email}' AND senha = '${senha}'`;
-    
+
     con.query(sql, function (err, result) {
         if (err) {
             console.error('Erro ao consultar o banco de dados:', err);
@@ -182,7 +175,7 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
 app.use(router);
 
 app.get('/', (req, res) => {
-    res.redirect('/Cadastro/cadastro.html'); // Ajuste o caminho aqui
+    res.redirect('/cadastro/cadastro.html'); // Ajuste o caminho aqui
 });
 
 // Iniciando o servidor
