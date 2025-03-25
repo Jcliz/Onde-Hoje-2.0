@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("../components/header.html")
+    fetch("/components/header.html") // Ajuste o caminho aqui
         .then(response => response.text())
         .then(data => {
             document.getElementById("header-container").innerHTML = data;

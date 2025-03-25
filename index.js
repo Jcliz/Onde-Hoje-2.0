@@ -2,8 +2,12 @@ var express = require('express');
 var app = express();
 app.use(express.json());
 
+app.use(express.static(__dirname + '/components'));
 app.use(express.static(__dirname + '/src/pages'));
 app.use(express.static(__dirname + '/public'));
+
+// Adicione esta linha para servir arquivos HTML corretamente
+app.use(express.static(__dirname));
 
 //importante o modulo de mysql
 var mysql = require('mysql2');
@@ -175,7 +179,7 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
 app.use(router);
 
 app.get('/', (req, res) => {
-    res.redirect('/cadastro/cadastro.html'); // Ajuste o caminho aqui
+    res.redirect('/src/pages/cadastro/cadastro.html'); // Ajuste o caminho aqui
 });
 
 // Iniciando o servidor
