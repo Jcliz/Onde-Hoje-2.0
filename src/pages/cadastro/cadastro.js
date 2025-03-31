@@ -42,6 +42,7 @@ function validarSenha() {
 document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
+
 // function processarLogin(event) {
 //   event.preventDefault();
 
