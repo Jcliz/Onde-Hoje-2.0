@@ -291,3 +291,21 @@ function validarIdade(input) {
 document.getElementById('dob').addEventListener('input', function () {
   validarIdade(this);
 });
+
+function validarNumeroComplemento(input) {
+  const numeroError = input.nextElementSibling;
+  const numeroValid = /^\d{1,6},\s[A-Za-z][A-Za-z0-9\s]*$/;
+
+  if (numeroValid.test(input.value)) {
+    input.classList.remove('is-invalid');
+    numeroError.style.display = 'none';
+  } else {
+    input.classList.add('is-invalid');
+    numeroError.style.display = 'block';
+    numeroError.textContent = 'Campo inválido.';
+  }
+}
+
+document.getElementById('number').addEventListener('focusout', function () {
+  validarNumeroComplemento(this);
+});
