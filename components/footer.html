@@ -11,15 +11,35 @@
     display: flex;
     align-items: center;
     box-sizing: border-box;
+    background-color: transparent;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+
+  footer::before,
+  footer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    z-index: -1;
+  }
+
+  footer::before {
+    left: 0;
+    background: linear-gradient(to right, transparent, transparent);
+  }
+
+  footer::after {
+    right: 0;
+    background: linear-gradient(to left, transparent, transparent);
   }
 </style>
 
 <div class="container">
   <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
     <div class="col-md-4 d-flex align-items-center">
-      <!-- <a href="/" class="mb-3 me-2 mb-md-0 text-white text-decoration-none lh-1">
-          <i class="bi bi-bootstrap" style="font-size: 30px;"></i>
-        </a> -->
       <span class="mb-3 mb-md-0 text-white">© 2025 Onde Hoje, Inc</span>
     </div>
 
