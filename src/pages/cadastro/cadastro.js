@@ -224,7 +224,7 @@ document.querySelectorAll('#cpf').forEach(cpfInput => {
 //validação de nome
 function validarNome(input) {
   const nomeError = input.nextElementSibling;
-  const nomeValid = /^[a-zA-ZÀ-ú\s]+$/;
+  const nomeValid = /^[a-zA-ZÀ-ú]+\s[a-zA-ZÀ-ú\s]+$/;
 
   if (input.value.length < 3 || input.value.length > 50) {
     input.classList.add('is-invalid');
@@ -236,7 +236,7 @@ function validarNome(input) {
   } else {
     input.classList.add('is-invalid');
     nomeError.style.display = 'block';
-    nomeError.textContent = 'Por favor, insira um nome válido.';
+    nomeError.textContent = 'Por favor, insira um nome válido';
   }
 }
 
