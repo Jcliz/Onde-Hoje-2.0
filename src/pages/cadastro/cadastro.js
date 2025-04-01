@@ -229,7 +229,7 @@ function validarNome(input) {
   if (input.value.length < 3 || input.value.length > 50) {
     input.classList.add('is-invalid');
     nomeError.style.display = 'block';
-    nomeError.textContent = 'Por favor, preencha o campo com entre 3 e 50 caracteres.';
+    nomeError.textContent = 'Por favor, preencha o campo entre 3 - 50 letras.';
   } else if (nomeValid.test(input.value)) {
     input.classList.remove('is-invalid');
     nomeError.style.display = 'none';

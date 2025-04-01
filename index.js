@@ -175,11 +175,10 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
     });
 });
 
-// Definindo a rota principal
 app.use(router);
 
 app.get('/', (req, res) => {
-    res.redirect('/src/pages/cadastro/cadastro.html'); // Ajuste o caminho aqui
+    res.redirect('/src/pages/cadastro/cadastro.html');
 });
 
 // Iniciando o servidor
