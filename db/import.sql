@@ -8,10 +8,24 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS avaliacao;
 
+
+CREATE TABLE usuario (
+  ID_usuario INT NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(50) NOT NULL,
+  DT_nascimento DATE NOT NULL,
+  email VARCHAR(50) NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  cpf VARCHAR(11) NOT NULL UNIQUE,
+  cep VARCHAR(8) NOT NULL,
+  complemento VARCHAR(25),
+  numero INT,
+  PRIMARY KEY (ID_usuario)
+);
+
 CREATE TABLE avaliacao (
-  ID_rating int NOT NULL AUTO_INCREMENT,
-  Avaliacao int NOT NULL,
-  Comentario text,
+  ID_rating INT NOT NULL AUTO_INCREMENT,
+  Avaliacao INT NOT NULL,
+  Comentario TEXT,
   PRIMARY KEY (ID_rating)
 );
 
@@ -24,10 +38,10 @@ INSERT INTO avaliacao VALUES (1,5,'Ótimas caipirinhas e petiscos saborosos em u
 DROP TABLE IF EXISTS evento;
 
 CREATE TABLE evento (
-  ID_evento int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  Nome varchar(100) NOT NULL,
-  Endereco varchar(100) NOT NULL,
-  fk_ID_rating int NOT NULL
+  ID_evento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  Nome VARCHAR(50) NOT NULL,
+  Endereco VARCHAR(100) NOT NULL,
+  fk_ID_rating INT NOT NULL
 );
 
 ALTER TABLE  evento ADD CONSTRAINT fk_ID_rating FOREIGN KEY (fk_ID_rating) REFERENCES avaliacao (ID_rating);
