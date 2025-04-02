@@ -17,8 +17,8 @@ var mysql = require('mysql2');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
-    database: "webdev"
+    password: "123456",
+    database: "ondehoje"
 });
 
 //tentando conectar
