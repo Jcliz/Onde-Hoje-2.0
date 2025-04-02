@@ -128,3 +128,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+document.querySelectorAll('.toggle-password').forEach(icon => {
+  icon.addEventListener('click', function () {
+
+    const targetId = this.getAttribute('data-target');
+    const targetInput = document.getElementById(targetId);
+
+    if (targetInput.type === 'password') {
+      targetInput.type = 'text';
+      this.querySelector('i').classList.remove('bi-eye-slash'); // Remove a classe de olho fechado
+      this.querySelector('i').classList.add('bi-eye'); // Adiciona a classe de olho aberto
+    } else {
+      targetInput.type = 'password';
+      this.querySelector('i').classList.remove('bi-eye'); // Remove a classe de olho aberto
+      this.querySelector('i').classList.add('bi-eye-slash'); // Adiciona a classe de olho fechado
+    }
+  });
+});

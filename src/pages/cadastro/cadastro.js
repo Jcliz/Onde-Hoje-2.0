@@ -7,20 +7,10 @@ const mensagem = document.querySelector('.invalid-feedback');
 const cpf = document.getElementById('cpf').value;
 const nome = document.getElementById('name').value;
 
-// // Remover a classe is-invalid e reposicionar o ícone ao carregar a página
-// document.addEventListener('DOMContentLoaded', () => {
-//   const senha = document.getElementById('password');
-//   const senhaConfirm = document.getElementById('confirmPassword');
-//   senha.classList.remove('is-invalid');
-//   senhaConfirm.classList.remove('is-invalid');
-//   senha.nextElementSibling.style.right = '0.75rem'; // Resetar posição do ícone
-//   senhaConfirm.nextElementSibling.style.right = '0.75rem'; // Resetar posição do ícone
-// });
-
 function validarSenha() {
   const senha = document.getElementById('password');
   const senhaConfirm = document.getElementById('confirmPassword');
-  const senhaError = senha.nextElementSibling.nextElementSibling; // Ajustado para pular o ícone
+  const senhaError = senha.nextElementSibling.nextElementSibling; 
   const senhaConfirmError = senhaConfirm.nextElementSibling.nextElementSibling;
 
   let isValid = true;
@@ -29,24 +19,19 @@ function validarSenha() {
     senha.classList.add('is-invalid');
     senhaError.style.display = 'block';
     senhaError.textContent = 'A senha deve ter pelo menos 6 caracteres.';
-    // senha.nextElementSibling.style.right = '3rem'; 
     isValid = false;
   } else {
     senha.classList.remove('is-invalid');
     senhaError.style.display = 'none';
-    // senha.nextElementSibling.style.right = '0.75rem'; 
   }
-
   if (senha.value !== senhaConfirm.value) {
     senhaConfirm.classList.add('is-invalid');
     senhaConfirmError.style.display = 'block';
     senhaConfirmError.textContent = 'As senhas não coincidem.';
-    // senhaConfirm.nextElementSibling.style.right = '3rem';
     isValid = false;
   } else {
     senhaConfirm.classList.remove('is-invalid');
     senhaConfirmError.style.display = 'none';
-    // senhaConfirm.nextElementSibling.style.right = '0.75rem';
   }
 
   return isValid;
@@ -323,19 +308,21 @@ document.getElementById('number').addEventListener('focusout', function () {
   validarNumeroComplemento(this);
 });
 
+
 document.querySelectorAll('.toggle-password').forEach(icon => {
   icon.addEventListener('click', function () {
+    console.log('entrou')
     const targetId = this.getAttribute('data-target');
     const targetInput = document.getElementById(targetId);
 
     if (targetInput.type === 'password') {
       targetInput.type = 'text';
-      this.classList.remove('bi-eye-slash');
-      this.classList.add('bi-eye');
+      this.querySelector('i').classList.remove('bi-eye-slash'); // Remove a classe de olho fechado
+      this.querySelector('i').classList.add('bi-eye'); // Adiciona a classe de olho aberto
     } else {
       targetInput.type = 'password';
-      this.classList.remove('bi-eye');
-      this.classList.add('bi-eye-slash');
+      this.querySelector('i').classList.remove('bi-eye'); // Remove a classe de olho aberto
+      this.querySelector('i').classList.add('bi-eye-slash'); // Adiciona a classe de olho fechado
     }
   });
 });

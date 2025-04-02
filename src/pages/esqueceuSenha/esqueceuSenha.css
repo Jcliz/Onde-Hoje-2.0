@@ -1,30 +1,80 @@
-#botao {
-    background-color: #2B4250; 
-    border: 1px solid #2B4250;
+html,
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-#borda {
-    border: 0px;
-    margin-top: 15vh;
+main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#botao:hover{
-    background-color:#233541;
+section {
+    width: 100%;
+    transform: scale(0.90);
+    transform-origin: top;
+    overflow: hidden;
 }
 
-#botao:active{
-    background-color: #152027;
+#infos {
+    background-image: linear-gradient(to top, rgb(33, 37, 41), rgb(99, 101, 104), rgb(33, 37, 41));
 }
 
-#volta a {
+input::placeholder {
     color: white !important;
+    opacity: 0.5 !important;
 }
 
-html, body{
-    background-color: rgb(26, 26, 26) !important;
+.position-relative {
+    display: flex;
+    flex-direction: column;
+    /* Alinha os elementos verticalmente */
+    position: relative;
 }
 
-#email {
-    color: white; 
-    background-color: rgb(26, 26, 26);
+.position-relative label {
+    margin-bottom: 0.5rem;
+    /* Espaçamento entre a label e o campo de input */
+    text-align: left;
+    /* Alinha a label à esquerda */
+    width: 100%;
+    /* Garante que a label ocupe toda a largura */
+}
+
+/* .position-relative .form-control {
+    margin-bottom: 0;
+} */
+
+/* .position-relative .toggle-password {
+    position: absolute;
+    top: 0.375rem;
+    right: 0.75rem;
+    z-index: 2;
+    transition: right 0.3s ease;
+} */
+
+/* .position-relative .form-control.is-invalid+.toggle-password {
+    right: 3rem;
+}
+
+.position-relative .form-control:not(.is-invalid)+.toggle-password {
+    right: 0.75rem;
+} */
+
+.position-relative .form-control.is-invalid+.toggle-password {
+     right: 0.75rem; /* 3rem; */
+}
+
+.position-relative .form-control:not(.is-invalid)+.toggle-password {
+    right: 0.75rem;
+    /* Reseta a posição do ícone quando não há erro */
+}
+
+.position-relative .invalid-feedback {
+    margin-top: 0.5rem;
+    /* Espaçamento adequado abaixo do campo */
 }

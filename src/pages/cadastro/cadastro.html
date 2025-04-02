@@ -50,19 +50,25 @@
                     </div>
                     <div class="mb-3 position-relative">
                       <label for="password" class="form-label">Senha</label>
-                      <input type="password" class="form-control bg-dark text-light" id="password" minlength="6"
-                        required>
-                      <i class="bi bi-eye-slash position-absolute toggle-password" data-target="password"
-                        style="cursor: pointer;"></i>
+                      <div class="input-group">
+                        <input type="password" class="form-control bg-dark text-light" id="password" minlength="6"
+                          required>
+                          <span class="input-group-text toggle-password bg-dark text-white" style="cursor: pointer;" data-target="password">
+                            <i class="bi bi-eye-slash"></i>
+                          </span>
+                        </div>
                       <div class="invalid-feedback">A senha deve ter pelo menos 6 caracteres.</div>
                     </div>
 
                     <div class="mb-3 position-relative">
                       <label for="confirmPassword" class="form-label">Confirme sua senha</label>
-                      <input type="password" class="form-control bg-dark text-light" id="confirmPassword" minlength="6"
-                        required>
-                      <i class="bi bi-eye-slash position-absolute toggle-password" data-target="confirmPassword"
-                        style="cursor: pointer;"></i>
+                      <div class="input-group">
+                        <input type="password" class="form-control bg-dark text-light" id="confirmPassword" minlength="6"
+                          required>
+                          <span class="input-group-text toggle-password bg-dark text-white" style="cursor: pointer;" data-target="confirmPassword">
+                            <i class="bi bi-eye-slash"></i>
+                          </span>
+                        </div>
                       <div class="invalid-feedback">As senhas não coincidem.</div>
                     </div>
                   </div>
