@@ -24,8 +24,8 @@ templates = Jinja2Templates(directory="templates")
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "12345",
-    "database": "clinicaa"
+    "password": "123456",
+    "database": "ondehoje2"
 }
 
 # Função para obter conexão com MySQL
@@ -41,7 +41,7 @@ async def index(request: Request):
     show_login_modal = request.session.pop("show_login_modal", False)
     nome_usuario = request.session.get("nome_usuario", None)
 
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse("telaEntrada.html", {
         "request": request,
         "login_error": login_error,
         "show_login_modal": "block" if show_login_modal else "none",
