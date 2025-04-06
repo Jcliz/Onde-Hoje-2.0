@@ -26,7 +26,7 @@ INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, complemento, t
 CREATE TABLE estabelecimento (
   ID_estabelecimento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   nome VARCHAR(50) NOT NULL,
-  foto BLOB NOT NULL,
+  foto MEDIUMBLOB NOT NULL,
   rua VARCHAR(60) NOT NULL,
   bairro VARCHAR(60) NOT NULL,
   numero INT NOT NULL
