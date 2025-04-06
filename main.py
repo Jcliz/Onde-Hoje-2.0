@@ -12,13 +12,14 @@ from datetime import date, datetime
 app = FastAPI()
 
 # Configuração de sessão (chave secreta para cookies de sessão)
-app.add_middleware(SessionMiddleware, secret_key="clinica")
+app.add_middleware(SessionMiddleware, secret_key="ondehoje")
 
 # Configuração de arquivos estáticos
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+app.mount("/public", StaticFiles(directory="/public"), name="public")
+app.mount("/components", StaticFiles(directory="/components"), name="components")
 
-# Configuração de templates Jinja2
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="src/pages")
 
 # Configuração do banco de dados
 DB_CONFIG = {
@@ -32,89 +33,91 @@ DB_CONFIG = {
 def get_db():
     return pymysql.connect(**DB_CONFIG)
 
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     if request.session.get("user_logged_in"):
-        return RedirectResponse(url="/medListar", status_code=303)
+        return RedirectResponse(url="src/pages/estabelecimentos", status_code=303)
 
     login_error = request.session.pop("login_error", None)
-    show_login_modal = request.session.pop("show_login_modal", False)
-    nome_usuario = request.session.get("nome_usuario", None)
 
     return templates.TemplateResponse("telaEntrada.html", {
         "request": request,
         "login_error": login_error,
-        "show_login_modal": "block" if show_login_modal else "none",
-        "nome_usuario": nome_usuario
     })
 
 @app.post("/login")
 async def login(
     request: Request,
-    Login: str = Form(...),
-    Senha: str = Form(...),
-    db = Depends(get_db)
+    email: str = Form(...),
+    senha: str = Form(...),
+    db=Depends(get_db)
 ):
     try:
         with db.cursor() as cursor:
 
-            cursor.execute("SELECT * FROM Usuario WHERE Login = %s AND Senha = MD5(%s)", (Login, Senha))
+            cursor.execute(
+                "SELECT * FROM Usuario WHERE email = %s AND senha = MD5(%s)", (email, senha))
             user = cursor.fetchone()
 
             if user:
                 request.session["user_logged_in"] = True
                 request.session["nome_usuario"] = user[1]
-                return RedirectResponse(url="/medListar", status_code=303)
+                return RedirectResponse(url="/estabelecimentos", status_code=303)
             else:
                 request.session["login_error"] = "Usuário ou senha inválidos."
-                request.session["show_login_modal"] = True
                 return RedirectResponse(url="/", status_code=303)
     finally:
         db.close()
+
 
 @app.get("/logout")
 async def logout(request: Request):
     # Encerra a sessão do usuário e retorna à página inicial.
     request.session.clear()  # remove todos os dados de sessão
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/telaEntrada", status_code=303)
+
 
 @app.post("/cadastro", name="cadastro")
 async def cadastrar_usuario(
     request: Request,
     nome: str = Form(...),
-    Login: str = Form(...),
-    Celular: str = Form(...),
-    Senha1: str = Form(...),
-    db = Depends(get_db)
+    dt_nascimento: date = Form(...),
+    email: str = Form(...),
+    senha: str = Form(...),
+    cpf: str = Form(...),
+    cep: str = Form(...),
+    complemento: str = Form(...),
+    db=Depends(get_db)
 ):
     try:
         with db.cursor() as cursor:
-
-            cursor.execute("SELECT ID_Usuario FROM Usuario WHERE Login = %s", (Login,))
+            cursor.execute(
+                "SELECT ID_Usuario FROM Usuario WHERE login = %s", (login))
             if cursor.fetchone():
                 request.session["nao_autenticado"] = True
-                request.session["mensagem_header"] = "Cadastro"
                 request.session["mensagem"] = "Erro: Este login já está em uso!"
                 return RedirectResponse(url="/", status_code=303)
 
-            sql = "INSERT INTO Usuario (Nome, Celular, Login, Senha) VALUES (%s, %s, %s, MD5(%s))"
-            cursor.execute(sql, (nome, Celular, Login, Senha1))
+            sql = "INSERT INTO Usuario (nome, DT_nascimento, email, senha, cpf, cep, complemento, telefone) " \
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s MD5(%s))"
+            cursor.execute(sql, (nome, dt_nascimento, email, senha, cpf, cep, complemento))
             db.commit()
 
             request.session["nao_autenticado"] = True
-            request.session["mensagem_header"] = "Cadastro"
             request.session["mensagem"] = "Registro cadastrado com sucesso! Você já pode realizar login."
-            return RedirectResponse(url="/", status_code=303)
+            return RedirectResponse(url="/login", status_code=303)
 
     except Exception as e:
         request.session["nao_autenticado"] = True
-        request.session["mensagem_header"] = "Cadastro"
         request.session["mensagem"] = f"Erro ao cadastrar: {str(e)}"
         return RedirectResponse(url="/", status_code=303)
 
     finally:
         db.close()
 
+#TO-DO 
+#adaptar o resto do código apartir daqui
 @app.get("/medListar", name="medListar", response_class=HTMLResponse)
 async def listar_medicos(request: Request, db=Depends(get_db)):
     if not request.session.get("user_logged_in"):
@@ -164,6 +167,7 @@ async def listar_medicos(request: Request, db=Depends(get_db)):
         "nome_usuario": nome_usuario
     })
 
+
 @app.get("/medIncluir", response_class=HTMLResponse)
 async def medIncluir(request: Request, db=Depends(get_db)):
     if not request.session.get("user_logged_in"):
@@ -184,6 +188,7 @@ async def medIncluir(request: Request, db=Depends(get_db)):
         "hoje": agora,
         "nome_usuario": nome_usuario
     })
+
 
 @app.post("/medIncluir_exe")
 async def medIncluir_exe(
@@ -206,7 +211,8 @@ async def medIncluir_exe(
         with db.cursor() as cursor:
             sql = """INSERT INTO Medico (Nome, CRM, ID_Espec, Dt_Nasc, Foto)
                      VALUES (%s, %s, %s, %s, %s)"""
-            cursor.execute(sql, (Nome, CRM, Especialidade, DataNasc, foto_bytes))
+            cursor.execute(
+                sql, (Nome, CRM, Especialidade, DataNasc, foto_bytes))
             db.commit()
 
         request.session["mensagem_header"] = "Inclusão de Novo Médico"
@@ -227,6 +233,7 @@ async def medIncluir_exe(
         "hoje": agora,
         "nome_usuario": nome_usuario
     })
+
 
 @app.get("/medExcluir", response_class=HTMLResponse)
 async def med_excluir(request: Request, id: int, db=Depends(get_db)):
@@ -261,6 +268,7 @@ async def med_excluir(request: Request, id: int, db=Depends(get_db)):
         "nome_usuario": nome_usuario
     })
 
+
 @app.post("/medExcluir_exe")
 async def med_excluir_exe(request: Request, id: int = Form(...), db=Depends(get_db)):
 
@@ -292,6 +300,7 @@ async def med_excluir_exe(request: Request, id: int = Form(...), db=Depends(get_
         "nome_usuario": request.session.get("nome_usuario", None)
     })
 
+
 @app.get("/medAtualizar", response_class=HTMLResponse)
 async def med_atualizar(request: Request, id: int, db=Depends(get_db)):
     if not request.session.get("user_logged_in"):
@@ -311,6 +320,7 @@ async def med_atualizar(request: Request, id: int, db=Depends(get_db)):
         "especialidades": especialidades,
         "hoje": hoje
     })
+
 
 @app.post("/medAtualizar_exe")
 async def med_atualizar_exe(
@@ -336,7 +346,8 @@ async def med_atualizar_exe(
                 sql = """UPDATE Medico 
                          SET Nome=%s, CRM=%s, Dt_Nasc=%s, ID_Espec=%s, Foto=%s
                          WHERE ID_Medico=%s"""
-                cursor.execute(sql, (Nome, CRM, DataNasc, Especialidade, foto_bytes, id))
+                cursor.execute(sql, (Nome, CRM, DataNasc,
+                               Especialidade, foto_bytes, id))
             else:
                 sql = """UPDATE Medico 
                          SET Nome=%s, CRM=%s, Dt_Nasc=%s, ID_Espec=%s
@@ -360,6 +371,7 @@ async def med_atualizar_exe(
         "hoje": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "nome_usuario": request.session.get("nome_usuario", None)
     })
+
 
 @app.post("/reset_session")
 async def reset_session(request: Request):

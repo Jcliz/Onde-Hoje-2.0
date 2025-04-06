@@ -17,7 +17,7 @@ CREATE TABLE usuario (
   senha VARCHAR(255) NOT NULL,
   cpf VARCHAR(11) NOT NULL UNIQUE,
   cep VARCHAR(8) NOT NULL,
-  complemento VARCHAR(25),
+  complemento VARCHAR(25) NOT NULL,
   telefone VARCHAR(11),
   PRIMARY KEY (ID_usuario)
 );
