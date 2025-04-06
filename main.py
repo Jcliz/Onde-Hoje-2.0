@@ -57,7 +57,7 @@ async def login(
         with db.cursor() as cursor:
 
             cursor.execute(
-                "SELECT * FROM Usuario WHERE email = %s AND senha = MD5(%s)", (email, senha))
+                "SELECT * FROM usuario WHERE email = %s AND senha = MD5(%s)", (email, senha))
             user = cursor.fetchone()
 
             if user:
@@ -93,7 +93,7 @@ async def cadastrar_usuario(
     try:
         with db.cursor() as cursor:
             cursor.execute(
-                "SELECT ID_Usuario FROM Usuario WHERE login = %s", (login))
+                "SELECT ID_usuario FROM usuario WHERE login = %s", (login))
             if cursor.fetchone():
                 request.session["nao_autenticado"] = True
                 request.session["mensagem"] = "Erro: Este login já está em uso!"
@@ -116,51 +116,38 @@ async def cadastrar_usuario(
     finally:
         db.close()
 
-#TO-DO 
-#adaptar o resto do código apartir daqui
-@app.get("/medListar", name="medListar", response_class=HTMLResponse)
-async def listar_medicos(request: Request, db=Depends(get_db)):
+@app.get("/estabelecimentos", name="estabelecimentos", response_class=HTMLResponse)
+async def listar_estabelecimentos(request: Request, db=Depends(get_db)):
     if not request.session.get("user_logged_in"):
-        return RedirectResponse(url="/", status_code=303)
+        return RedirectResponse(url="/login", status_code=303)
 
     with db.cursor(pymysql.cursors.DictCursor) as cursor:
-        # Consulta SQL unindo Medico e Especialidade, ordenando por nome
         sql = """
-            SELECT M.ID_Medico, M.CRM, M.Nome, E.Nome_Espec AS Especialidade,
-                   M.Foto, M.Dt_Nasc
-            FROM Medico AS M 
-            JOIN Especialidade AS E ON M.ID_Espec = E.ID_Espec
-            ORDER BY M.Nome
+            SELECT nome, endereco FROM evento
         """
         cursor.execute(sql)
-        medicos = cursor.fetchall()  # lista de dicts com dados dos médicos
+        eventos = cursor.fetchall()  # lista de dicts com dados dos estabelecimentos
 
-    # Processa os dados (calcula idade e converte foto para base64 se necessário)
     hoje = date.today()
-    for med in medicos:
-        # Calcula idade baseado em Dt_Nasc (formato date/datetime do MySQL)
-        dt_nasc = med["Dt_Nasc"]
-        if isinstance(dt_nasc, str):
-            # Se vier como string "YYYY-MM-DD", converte para date
-            ano, mes, dia = map(int, dt_nasc.split("-"))
-            dt_nasc = date(ano, mes, dia)
-        idade = hoje.year - dt_nasc.year
-        # Ajusta se aniversário ainda não ocorreu no ano corrente
-        if (dt_nasc.month, dt_nasc.day) > (hoje.month, hoje.day):
-            idade -= 1
-        med["idade"] = idade
 
-        # Converter foto blob para base64 (se houver)
-        if med["Foto"]:
-            med["Foto_base64"] = base64.b64encode(med["Foto"]).decode('utf-8')
+    #TO-DO
+    #adicionar bloco de comando abaixo para estabelecimentos 
+    #criar coluna para foto no bd
+    #criar tabela de estabelecimentos
+    for event in eventos:
+         # Converter foto blob para base64 (se houver)
+        if event["foto"]:
+            event["Foto_base64"] = base64.b64encode(event["foto"]).decode('utf-8')
         else:
-            med["Foto_base64"] = None
+            event["Foto_base64"] = None
 
     nome_usuario = request.session.get("nome_usuario", None)
     agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     # Renderiza o template 'medListar.html' com os dados dos médicos
-    return templates.TemplateResponse("medListar.html", {
+    #TO-DO
+    #arrumar este return após a tabela ser criada
+    return templates.TemplateResponse("estabelecimentos.html", {
         "request": request,
         "medicos": medicos,
         "hoje": agora,
