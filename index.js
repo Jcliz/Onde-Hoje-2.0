@@ -1,3 +1,10 @@
+//TO-DO
+//endpoint para CRUD de usuário
+//verificar funções relacionadas ao node nos scripts das paginas
+//endpoint para CRUD de avaliação
+//autenticação de usuário com senha criptografada
+//identificar, na interface, o usuário autenticado
+
 var express = require('express');
 var app = express();
 app.use(express.json());
@@ -152,7 +159,7 @@ router.put('/api/estabelecimentos/:id', (req, res) => {
                rua = '${estabelecimento.rua}', bairro = '${estabelecimento.bairro}',
                numero = '${estabelecimento.numero}' 
                WHERE id = ${id}`;
-               
+
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.status(200).json(estabelecimento);
