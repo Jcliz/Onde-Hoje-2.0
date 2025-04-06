@@ -18,7 +18,7 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "123456",
-    database: "ondehoje"
+    database: "ondehoje2"
 });
 
 //tentando conectar
@@ -28,23 +28,10 @@ con.connect(function (err) {
     console.log("Connected!");
 });
 
-const produtos = [];
+const estabelecimentos = [];
 let idUsuarios = 0;
 
 const router = express.Router();
-
-// Rota para listar todos os produtos
-router.get('/api/produtos', (req, res) => {
-    res.status(200).json(produtos);
-});
-
-// Rota para adicionar um produto
-router.post('/api/produtos', (req, res) => {
-    var produto = req.body;
-    produto.id = 1;
-    produtos.push(produto);
-    res.status(201).json(produto);
-});
 
 // Endpoint para listar todos os usuários
 app.get('/api/usuarios', (req, res) => {
@@ -58,8 +45,8 @@ app.get('/api/usuarios', (req, res) => {
 // Endpoint para salvar um usuário (criar ou atualizar)
 app.post('/api/usuarios', (req, res) => {
     const { email, senha } = req.body;
-    const sql = 'INSERT INTO usuario (email, senha, status) VALUES (?, ?, ?)';
-    con.query(sql, [email, senha, 1], (err, result) => {
+    const sql = 'INSERT INTO usuario (email, senha) VALUES (?, ?)';
+    con.query(sql, [email, senha], (err, result) => {
         if (err) throw err;
         res.json({ id: result.insertId, email, senha });
     });
@@ -79,7 +66,7 @@ app.put('/api/usuarios/:id', (req, res) => {
 // Endpoint para capturar um usuário por id
 router.get('/api/usuarios/:id', (req, res) => {
     const id = req.params.id;
-    let sql = `SELECT u.id, u.email, u.status FROM usuario u WHERE u.id = ${id}`;
+    let sql = `SELECT u.id, u.email FROM usuario u WHERE u.id = ${id}`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.status(200).json(result[0]);
@@ -119,6 +106,19 @@ router.post('/api/login', (req, res) => {
     });
 });
 
+// Rota para listar todos os estabelecimentos
+router.get('/api/estabelecimentos', (req, res) => {
+    res.status(200).json(estabelecimentos);
+});
+
+// Rota para adicionar um estabelecimento
+router.post('/api/estabelecimento', (req, res) => {
+    var estabelecimento = req.body;
+    estabelecimento.id = 1;
+    estabelecimentos.push(estabelecimento);
+    res.status(201).json(estabelecimento);
+});
+
 // Endpoint para listar todos os estabelecimentos
 router.get('/api/estabelecimentos', (req, res) => {
     let sql = "SELECT * FROM estabelecimento";
@@ -131,8 +131,9 @@ router.get('/api/estabelecimentos', (req, res) => {
 // Endpoint para adicionar um novo estabelecimento
 router.post('/api/estabelecimentos', (req, res) => {
     var estabelecimento = req.body;
-    var sql = `INSERT INTO estabelecimento (nome, endereco, avaliacao) VALUES 
-               ('${estabelecimento.nome}', '${estabelecimento.endereco}', ${estabelecimento.avaliacao})`;
+    var sql = `INSERT INTO estabelecimento (nome, rua, bairro, numero) VALUES 
+               ('${estabelecimento.nome}', '${estabelecimento.rua}', 
+               '${estabelecimento.bairro}', '${estabelecimento.numero}')`;
     con.query(sql, function (err, result) {
         if (err) {
             console.error("Erro ao inserir no banco de dados:", err);
@@ -147,8 +148,11 @@ router.post('/api/estabelecimentos', (req, res) => {
 router.put('/api/estabelecimentos/:id', (req, res) => {
     const id = req.params.id;
     var estabelecimento = req.body;
-    var sql = `UPDATE estabelecimento SET nome = '${estabelecimento.nome}', endereco = '${estabelecimento.endereco}', 
-               avaliacao = ${estabelecimento.avaliacao} WHERE id = ${id}`;
+    var sql = `UPDATE estabelecimento SET nome = '${estabelecimento.nome}', 
+               rua = '${estabelecimento.rua}', bairro = '${estabelecimento.bairro}',
+               numero = '${estabelecimento.numero}' 
+               WHERE id = ${id}`;
+               
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.status(200).json(estabelecimento);
@@ -178,7 +182,7 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
 app.use(router);
 
 app.get('/', (req, res) => {
-    res.redirect('/src/pages/cadastro/cadastro.html');
+    res.redirect('/src/pages/telaEntrada/telaentrada.html');
 });
 
 // Iniciando o servidor
