@@ -1,5 +1,4 @@
 //TO-DO
-//endpoint para CRUD de usuário
 //verificar funções relacionadas ao node nos scripts das paginas
 //endpoint para CRUD de avaliação
 //autenticação de usuário com senha criptografada
@@ -50,7 +49,7 @@ app.get('/api/usuarios', (req, res) => {
     });
 });
 
-// Endpoint para salvar um usuário (criar ou atualizar)
+// Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios', (req, res) => {
     const { email, senha } = req.body;
     const sql = 'INSERT INTO usuario (email, senha) VALUES (?, ?)';

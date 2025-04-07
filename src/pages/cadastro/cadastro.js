@@ -6,47 +6,42 @@ const numero = document.querySelector('#number');
 const mensagem = document.querySelector('.invalid-feedback');
 const cpf = document.getElementById('cpf').value;
 const nome = document.getElementById('name').value;
-
-// // Remover a classe is-invalid e reposicionar o ícone ao carregar a página
-// document.addEventListener('DOMContentLoaded', () => {
-//   const senha = document.getElementById('password');
-//   const senhaConfirm = document.getElementById('confirmPassword');
-//   senha.classList.remove('is-invalid');
-//   senhaConfirm.classList.remove('is-invalid');
-//   senha.nextElementSibling.style.right = '0.75rem'; // Resetar posição do ícone
-//   senhaConfirm.nextElementSibling.style.right = '0.75rem'; // Resetar posição do ícone
-// });
+const dataNasc = document.getElementById('dob').value;
+const senha = document.getElementById('password');
 
 function validarSenha() {
-  const senha = document.getElementById('password');
   const senhaConfirm = document.getElementById('confirmPassword');
-  const senhaError = senha.nextElementSibling.nextElementSibling; // Ajustado para pular o ícone
-  const senhaConfirmError = senhaConfirm.nextElementSibling.nextElementSibling;
+  const senhaError = senha.parentElement.querySelector('.invalid-feedback');
+  const senhaConfirmError = senhaConfirm.parentElement.querySelector('.invalid-feedback');
 
   let isValid = true;
 
   if (senha.value.length < 6) {
     senha.classList.add('is-invalid');
-    senhaError.style.display = 'block';
-    senhaError.textContent = 'A senha deve ter pelo menos 6 caracteres.';
-    // senha.nextElementSibling.style.right = '3rem'; 
+    if (senhaError) {
+      senhaError.style.display = 'block';
+      senhaError.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+    }
     isValid = false;
   } else {
     senha.classList.remove('is-invalid');
-    senhaError.style.display = 'none';
-    // senha.nextElementSibling.style.right = '0.75rem'; 
+    if (senhaError) {
+      senhaError.style.display = 'none';
+    }
   }
 
   if (senha.value !== senhaConfirm.value) {
     senhaConfirm.classList.add('is-invalid');
-    senhaConfirmError.style.display = 'block';
-    senhaConfirmError.textContent = 'As senhas não coincidem.';
-    // senhaConfirm.nextElementSibling.style.right = '3rem';
+    if (senhaConfirmError) {
+      senhaConfirmError.style.display = 'block';
+      senhaConfirmError.textContent = 'As senhas não coincidem.';
+    }
     isValid = false;
   } else {
     senhaConfirm.classList.remove('is-invalid');
-    senhaConfirmError.style.display = 'none';
-    // senhaConfirm.nextElementSibling.style.right = '0.75rem';
+    if (senhaConfirmError) {
+      senhaConfirmError.style.display = 'none';
+    }
   }
 
   return isValid;
@@ -55,95 +50,100 @@ function validarSenha() {
 document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
-// function processarLogin(event) {
-//   event.preventDefault();
+function processarCadastro(event) {
+  event.preventDefault();
 
-//   // Se a validação for bem-sucedida, chama a função enviarDados
-//   if (validarSenha()) {
-//     enviarDados();
-//   }
-// }
+  // Se a validação for bem-sucedida, chama a função enviarDados
+  if (validarSenha()) {
+    enviarDados();
+  }
+}
 
-// async function cadastrarUsuario(email, senha, status) {
-//   try {
-//     const response = await fetch('/api/usuarios', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ email, senha, status }),
-//     });
+async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, complemento, status) {
+  try {
+    const response = await fetch('/api/usuarios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nome, dataNascimento, email, senha, cpf, cep, complemento, status }),
+    });
 
-//     if (response.ok) {
-//       const data = await response.json();
-//       alert('Usuário cadastrado com sucesso!');
-//       window.location.href = '/TelaInicial/telainicial.html';
-//     } else {
-//       alert('Erro ao cadastrar o usuário.');
-//     }
-//   } catch (error) {
-//     console.error('Erro:', error);
-//     alert('Erro ao enviar os dados. Tente novamente.');
-//   }
-// }
+    if (response.ok) {
+      const data = await response.json();
+      alert('Usuário cadastrado com sucesso!');
+      window.location.href = '/topRoles/topRoles.html';
+    } else {
+      alert('Erro ao cadastrar o usuário.');
+    }
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao enviar os dados. Tente novamente.');
+  }
+}
 
-// function enviarDados() {
-//   const email = document.getElementById('email').value;
-//   const senha = document.getElementById('senha').value;
+function enviarDados() {
+  const email = document.getElementById('email').value;
 
-//   // Chamar a função cadastrarUsuario com os dados capturados
-//   cadastrarUsuario(email, senha, true);
-// }
+  // Chamar a função cadastrarUsuario com os dados capturados
+  cadastrarUsuario(nome, dataNasc, email, senha.value, cpf.value, cep.value, numero.value, true);
+}
 
-// document.addEventListener('DOMContentLoaded', function () {
-//   var inputs = document.querySelectorAll('.form-control');
+document.addEventListener('DOMContentLoaded', function () {
+  var inputs = document.querySelectorAll('.form-control');
 
-//   inputs.forEach(function (input) {
-//     var label = input.previousElementSibling;
+  inputs.forEach(function (input) {
+    var label = input.previousElementSibling;
 
-//     input.addEventListener('focus', function () {
-//       input.classList.add('active');
-//       label.classList.add('active');
-//     });
+    input.addEventListener('focus', function () {
+      input.classList.add('active');
+      if (label) {
+        label.classList.add('active');
+      }
+    });
 
-//     input.addEventListener('blur', function () {
-//       if (input.value.trim() === '') {
-//         input.classList.remove('active');
-//         label.classList.remove('active');
-//       }
-//     });
+    input.addEventListener('blur', function () {
+      if (input.value.trim() === '') {
+        input.classList.remove('active');
+        if (label) {
+          label.classList.remove('active');
+        }
+      }
+    });
 
-//     if (input.value.trim() !== '') {
-//       input.classList.add('active');
-//       label.classList.add('active');
-//     }
-//   });
-// });
+    if (input.value.trim() !== '') {
+      input.classList.add('active');
+      if (label) {
+        label.classList.add('active');
+      }
+    }
+  });
+});
 
-// document.addEventListener('DOMContentLoaded', function () {
-//   var senhaInputs = document.querySelectorAll('.password-field');
+document.addEventListener('DOMContentLoaded', function () {
+  var senhaInputs = document.querySelectorAll('.password-field');
 
-//   senhaInputs.forEach(function (input) {
-//     var label = input.previousElementSibling;
+  senhaInputs.forEach(function (input) {
+    var label = input.previousElementSibling;
 
-//     input.addEventListener('focus', function () {
-//       input.classList.add('active');
-//       label.classList.add('active');
-//     });
+    input.addEventListener('focus', function () {
+      input.classList.add('active');
+      label.classList.add('active');
+    });
 
-//     input.addEventListener('blur', function () {
-//       if (input.value.trim() === '') {
-//         input.classList.remove('active');
-//         label.classList.remove('active');
-//       }
-//     });
+    input.addEventListener('blur', function () {
+      if (input.value.trim() === '') {
+        input.classList.remove('active');
+        label.classList.remove('active');
+      }
+    });
 
-//     if (input.value.trim() !== '') {
-//       input.classList.add('active');
-//       label.classList.add('active');
-//     }
-//   });
-// });
+    if (input.value.trim() !== '') {
+      input.classList.add('active');
+      label.classList.add('active');
+    }
+  });
+});
 
 //verificação de CEP e auto completamento
 async function validarCEP(input) {
