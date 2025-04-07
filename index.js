@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.use(express.static(__dirname + '/components'));
 app.use(express.static(__dirname + '/src/pages'));
+app.use(express.static(__dirname + '/src/static'));
 app.use(express.static(__dirname + '/public'));
 
 // Adicione esta linha para servir arquivos HTML corretamente
