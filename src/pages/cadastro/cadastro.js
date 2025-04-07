@@ -50,6 +50,9 @@ function validarSenha() {
 document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
+//TO-DO
+//chamar no HTML
+//criar o form no html
 function processarCadastro(event) {
   event.preventDefault();
 
@@ -72,7 +75,7 @@ async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, co
     if (response.ok) {
       const data = await response.json();
       alert('Usuário cadastrado com sucesso!');
-      window.location.href = '/topRoles/topRoles.html';
+      window.location.href = '/login/login.html';
     } else {
       alert('Erro ao cadastrar o usuário.');
     }
