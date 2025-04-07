@@ -4,9 +4,6 @@ const bairro = document.querySelector('#bairro');
 const cidade = document.querySelector('#cidade');
 const numero = document.querySelector('#number');
 const mensagem = document.querySelector('.invalid-feedback');
-const cpf = document.getElementById('cpf').value;
-const nome = document.getElementById('name').value;
-const dataNasc = document.getElementById('dob').value;
 const senha = document.getElementById('password');
 
 function validarSenha() {
@@ -53,13 +50,36 @@ document.getElementById('confirmPassword').addEventListener('focusout', validarS
 //TO-DO
 //chamar no HTML
 //criar o form no html
+//após clicar em limpar o campo de cep fica liberado para usar
 function processarCadastro(event) {
   event.preventDefault();
 
-  // Se a validação for bem-sucedida, chama a função enviarDados
-  if (validarSenha()) {
-    enviarDados();
+  //atualização dos valores dos campos no momento do envio
+  const nome = document.getElementById('name').value;
+  const dataNasc = document.getElementById('dob').value;
+  const email = document.getElementById('email').value;
+  const senha = document.getElementById('password').value;
+  const cpf = document.getElementById('cpf').value;
+  const cep = document.getElementById('cep').value;
+  const numero = document.getElementById('number').value;
+
+  const nomeValido = validarNome(document.getElementById('name'));
+  const emailValido = validarEmail(document.getElementById('email'));
+  const senhaValida = validarSenha();
+  const cpfValido = validarCPF(document.getElementById('cpf'));
+  const idadeValida = validarIdade(document.getElementById('dob'));
+  const cepValido = document.getElementById('cep').classList.contains('is-invalid') === false;
+
+  if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido) {
+    enviarDados(nome, dataNasc, email, senha, cpf, cep, numero);
+
+  } else {
+    alert('Por favor, corrija os erros antes de continuar.');
   }
+}
+
+function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero) {
+  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, true);
 }
 
 async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, complemento, status) {
@@ -75,7 +95,7 @@ async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, co
     if (response.ok) {
       const data = await response.json();
       alert('Usuário cadastrado com sucesso!');
-      window.location.href = '/login/login.html';
+      window.location.href = '/login/login.html'; // Redireciona para a tela de login
     } else {
       alert('Erro ao cadastrar o usuário.');
     }
@@ -83,13 +103,6 @@ async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, co
     console.error('Erro:', error);
     alert('Erro ao enviar os dados. Tente novamente.');
   }
-}
-
-function enviarDados() {
-  const email = document.getElementById('email').value;
-
-  // Chamar a função cadastrarUsuario com os dados capturados
-  cadastrarUsuario(nome, dataNasc, email, senha.value, cpf.value, cep.value, numero.value, true);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -204,13 +217,15 @@ function validarCPF(input) {
 
   if (cpfValid.test(input.value)) {
     input.value = input.value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-
     input.classList.remove('is-invalid');
     cpfError.style.display = 'none';
+    return true;
+    
   } else {
     input.classList.add('is-invalid');
     cpfError.style.display = 'block';
     cpfError.textContent = 'Por favor, insira um CPF válido (ex: 123.456.789-00).';
+    return false;
   }
 }
 
@@ -233,13 +248,19 @@ function validarNome(input) {
     input.classList.add('is-invalid');
     nomeError.style.display = 'block';
     nomeError.textContent = 'Por favor, preencha o campo entre 3 - 50 letras.';
+    return false;
+
   } else if (nomeValid.test(input.value)) {
     input.classList.remove('is-invalid');
     nomeError.style.display = 'none';
+    return true;
+
   } else {
     input.classList.add('is-invalid');
     nomeError.style.display = 'block';
     nomeError.textContent = 'Por favor, insira um nome válido';
+    return false;
+
   }
 }
 
@@ -255,13 +276,19 @@ function validarEmail(input) {
     input.classList.add('is-invalid');
     emailError.style.display = 'block';
     emailError.textContent = 'Por favor, insira um e-mail válido.';
+    return false;
+
   } else if (emailValid.test(input.value)) {
     input.classList.remove('is-invalid');
     emailError.style.display = 'none';
+    return true;
+
   } else {
     input.classList.add('is-invalid');
     emailError.style.display = 'block';
     emailError.textContent = 'Por favor, insira um e-mail válido (exemplo@dominio.com).';
+    return false;
+
   }
 }
 
@@ -281,7 +308,7 @@ function validarIdade(input) {
     idadeError.style.display = 'block';
     idadeError.textContent = 'Por favor, insira uma data de nascimento válida.';
     document.getElementById("continue").style.display = 'none';
-    return;
+    return false;
   }
 
   let idade = hoje.getFullYear() - data_nasc.getFullYear();
@@ -296,11 +323,14 @@ function validarIdade(input) {
     idadeError.style.display = 'block';
     idadeError.textContent = 'Você precisa ser maior de 18 anos para se cadastrar na plataforma.';
     document.getElementById("continue").style.display = 'none';
+    return false;
+
   } else {
     input.classList.remove('is-invalid');
     idadeError.style.display = 'none';
     idadeError.textContent = `Idade: ${idade} anos`;
     document.getElementById("continue").style.display = 'block';
+    return true;
   }
 }
 
@@ -315,10 +345,13 @@ function validarNumeroComplemento(input) {
   if (numeroValid.test(input.value)) {
     input.classList.remove('is-invalid');
     numeroError.style.display = 'none';
+    return true;
+
   } else {
     input.classList.add('is-invalid');
     numeroError.style.display = 'block';
     numeroError.textContent = 'Campo inválido.';
+    return false;
   }
 }
 
@@ -336,10 +369,11 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
       targetInput.type = 'text';
       this.querySelector('i').classList.remove('bi-eye-slash');
       this.querySelector('i').classList.add('bi-eye');
+
     } else {
       targetInput.type = 'password';
       this.querySelector('i').classList.remove('bi-eye');
-      this.querySelector('i').classList.add('bi-eye-slash'); 
+      this.querySelector('i').classList.add('bi-eye-slash');
     }
   });
 });
