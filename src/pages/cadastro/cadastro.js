@@ -325,17 +325,18 @@ document.getElementById('number').addEventListener('focusout', function () {
 
 document.querySelectorAll('.toggle-password').forEach(icon => {
   icon.addEventListener('click', function () {
+
     const targetId = this.getAttribute('data-target');
     const targetInput = document.getElementById(targetId);
 
     if (targetInput.type === 'password') {
       targetInput.type = 'text';
-      this.classList.remove('bi-eye-slash');
-      this.classList.add('bi-eye');
+      this.querySelector('i').classList.remove('bi-eye-slash');
+      this.querySelector('i').classList.add('bi-eye');
     } else {
       targetInput.type = 'password';
-      this.classList.remove('bi-eye');
-      this.classList.add('bi-eye-slash');
+      this.querySelector('i').classList.remove('bi-eye');
+      this.querySelector('i').classList.add('bi-eye-slash'); 
     }
   });
 });
