@@ -51,15 +51,17 @@ app.get('/api/usuarios', (req, res) => {
 
 // Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios', (req, res) => {
-    const { email, senha } = req.body;
-    const sql = 'INSERT INTO usuario (email, senha) VALUES (?, ?)';
-    con.query(sql, [email, senha], (err, result) => {
+    const { nome, dataNascimento, email, senha, cpf, cep, complemento } = req.body;
+    const sql = 'INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, complemento) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    con.query(sql, [nome, dataNascimento, email, senha, cpf, cep, complemento], (err, result) => {
         if (err) throw err;
         res.json({ id: result.insertId, email, senha });
     });
 });
 
 // Endpoint para atualizar um usuário
+//TO-DO
+//arrumar no cadastro.js a requisição, pois o usuário poderá mudar todos seus dados não só email e senha
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { email, senha } = req.body;
@@ -73,7 +75,7 @@ app.put('/api/usuarios/:id', (req, res) => {
 // Endpoint para capturar um usuário por id
 router.get('/api/usuarios/:id', (req, res) => {
     const id = req.params.id;
-    let sql = `SELECT u.id, u.email FROM usuario u WHERE u.id = ${id}`;
+    let sql = `SELECT u.id, u.nome, u.email FROM usuario u WHERE u.id = ${id}`;
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.status(200).json(result[0]);

@@ -79,17 +79,17 @@ function processarCadastro(event) {
 }
 
 function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero) {
-  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, true);
+  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero);
 }
 
-async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, complemento, status) {
+async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, complemento) {
   try {
     const response = await fetch('/api/usuarios', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ nome, dataNascimento, email, senha, cpf, cep, complemento, status }),
+      body: JSON.stringify({ nome, dataNascimento, email, senha, cpf, cep, complemento }),
     });
 
     if (response.ok) {
