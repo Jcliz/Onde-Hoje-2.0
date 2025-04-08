@@ -110,7 +110,7 @@ router.post('/api/login', (req, res) => {
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {
             // Senão, retorna erro de credenciais inválidas
-            res.status(401).json({ message: 'Credenciais inválidas' });
+            res.status(401).json({ message: 'Senha ou e-mail inválido.' });
         }
     });
 });

@@ -1,14 +1,18 @@
 const email = document.getElementById('email').value.trim();
 const senha = document.getElementById('password').value.trim();
 
-async function loginUsuario(email, senha, status) {
+async function loginUsuario() {
+  //atualização dos dados
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('password').value.trim();
+
   try {
     const response = await fetch('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, senha, status }),
+      body: JSON.stringify({ email, senha }),
     });
 
     if (response.ok) {
@@ -27,7 +31,7 @@ async function loginUsuario(email, senha, status) {
 }
 
 function enviarDados() {
-  loginUsuario(email, senha);
+  loginUsuario();
 }
 
 
