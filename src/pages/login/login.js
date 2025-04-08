@@ -18,7 +18,7 @@ async function loginUsuario() {
     if (response.ok) {
       const data = await response.json();
       alert('Login bem-sucedido!');
-      window.location.href = '/topRoles/topRoles';
+      window.location.href = '/topRoles/topRoles.html';
     } else {
       const errorData = await response.json();
       alert(errorData.message || 'Erro ao realizar login.');

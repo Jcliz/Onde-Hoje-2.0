@@ -19,3 +19,34 @@ function validarEmail(input) {
 document.getElementById('email').addEventListener('focusout', function () {
   validarEmail(this);
 });
+
+async function verificarEmail() {
+  const email = document.getElementById('email').value.trim();
+
+  try {
+    const response = await fetch('/api/esqueceuSenha', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      alert('E-mail enviado!');
+      window.location.href = '/src/pages/retorno/retornoHome.html';
+    } else {
+      const errorData = await response.json();
+      alert(errorData.message || 'E-mail não encontrado.');
+    }
+  
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao tentar recuperar a senha. Tente novamente.');
+  }
+}
+
+function enviarDados() {
+  verificarEmail();
+}

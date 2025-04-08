@@ -1,5 +1,4 @@
 //TO-DO
-//verificar funções relacionadas ao node nos scripts das paginas
 //endpoint para CRUD de avaliação
 //autenticação de usuário com senha criptografada
 //identificar, na interface, o usuário autenticado
@@ -46,6 +45,33 @@ app.get('/api/usuarios', (req, res) => {
     con.query(sql, (err, result) => {
         if (err) throw err;
         res.json(result);
+    });
+});
+
+//endpoint para listar e-mails de usuários
+app.get('/api/usuarios', (req, res) => {
+    const sql = 'SELECT email FROM usuario';
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json(result);
+    });
+});
+
+//endpoint para encontrar email no bd
+router.post('/api/esqueceuSenha', (req, res) => {
+    const { email } = req.body;
+
+    let sql = `SELECT email FROM usuario WHERE email = ?`;
+
+    con.query(sql, [email], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Erro no servidor' });
+        }
+        if (result.length > 0) {
+            res.status(200).json({ message: 'E-mail enviado!'});
+        } else {
+            res.status(401).json({ message: 'E-mail não encontrado.' });
+        }
     });
 });
 
