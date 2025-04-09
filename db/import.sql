@@ -18,7 +18,8 @@ CREATE TABLE usuario (
   complemento VARCHAR(25) NOT NULL,
   genero ENUM('Masculino', 'Feminino', 'Outro') DEFAULT 'Outro',
   telefone VARCHAR(11) UNIQUE,
-  foto MEDIUMBLOB
+  foto MEDIUMBLOB,
+  role VARCHAR(4) NOT NULL DEFAULT 'user'
 );
 
 INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, complemento, telefone, foto) VALUES
