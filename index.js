@@ -23,7 +23,7 @@ var mysql = require('mysql2');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "123456",
+    password: "1234",
     database: "ondehoje2"
 });
 
@@ -57,6 +57,18 @@ app.get('/api/usuarios', (req, res) => {
     });
 });
 
+// app.get('/api/generos', (req, res) => {
+//     const sql = 'SELECT DISTINCT genero FROM usuario WHERE genero IS NOT NULL';
+//     con.query(sql, (err, result) => {
+//       if (err) {
+//         console.error('Erro ao buscar gêneros:', err);
+//         res.status(500).send('Erro ao buscar gêneros');
+//         return;
+//       }
+//       res.json(result);
+//     });
+//   });
+  
 //endpoint para encontrar email no bd
 router.post('/api/esqueceuSenha', (req, res) => {
     const { email } = req.body;

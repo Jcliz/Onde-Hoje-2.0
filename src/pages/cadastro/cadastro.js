@@ -377,3 +377,31 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
     }
   });
 });
+
+// document.addEventListener('DOMContentLoaded', async function () {
+//   const select = document.getElementById('genero');
+
+//   try {
+//     const response = await fetch('/api/generos');
+//     const tipos = await response.json();
+
+//     // opção padrão
+//     const defaultOption = document.createElement('option');
+//     defaultOption.text = 'Selecione...';
+//     defaultOption.value = '';
+//     defaultOption.disabled = true;
+//     defaultOption.selected = true;
+//     select.appendChild(defaultOption);
+
+//     // adicionar opções
+//     tipos.forEach(tipo => {
+//       const option = document.createElement('option');
+//       option.value = tipo.genero;
+//       option.textContent = tipo.genero;
+//       select.appendChild(option);
+//     });
+
+//   } catch (error) {
+//     console.error('Erro ao carregar gêneros:', error);
+//   }
+// });

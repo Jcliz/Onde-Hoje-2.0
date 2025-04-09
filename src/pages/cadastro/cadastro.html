@@ -34,11 +34,27 @@
                           <div class="invalid-feedback">Por favor, preencha o campo com entre 3 e 50 caracteres.</div>
                         </div>
                       </div>
-                      <div class="mb-3">
-                        <label for="dob" class="form-label">Data de Nascimento</label>
-                        <input type="date" class="form-control bg-dark text-light" id="dob" required>
-                        <div class="invalid-feedback">Você precisa ser maior de 18 anos para se cadastrar na plataforma.
+
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label for="dob" class="form-label">Data de Nascimento</label>
+                          <input type="date" class="form-control bg-dark text-light" id="dob" required>
+                          <div class="invalid-feedback">Você precisa ser maior de 18 anos para se cadastrar na
+                            plataforma.
+                          </div>
                         </div>
+
+                        <div class="col-md-6">
+                          <label for="genero" class="form-label">Gênero</label>
+                          <select class="form-control bg-dark text-light" id="genero" required>
+                            <option value="" disabled selected selected>Selecione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                            <option value="Outro">Outro</option>
+                          </select>
+                          <div class="invalid-feedback">Por favor, selecione uma opção.</div>
+                        </div>
+
                       </div>
                       <div id="idade" class="text-light"></div>
                       <div class="mb-3">
@@ -77,34 +93,52 @@
                     </div>
                     <div class="col-lg-6 p-4 text-light" id="infos">
                       <h3 class="fw-normal">Dados Pessoais</h3>
-                      <div class="mb-3">
-                        <label for="cpf" class="form-label">CPF</label>
-                        <input type="text" class="form-control bg-dark text-light" id="cpf"
-                          placeholder="_ _ _ _ _ _ _ _ _ _ _" maxlength="11" required>
-                        <div class="invalid-feedback">Por favor, insira um CPF válido (ex: 123.456.789-00).</div>
+                      <div class="row">
+                        <div class="col-md mb-3">
+                          <label for="name" class="form-label">Telefone</label>
+                          <input placeholder="(99) 99999-9999" type="tel" class="form-control bg-dark text-light" id="telefone" minlength="3"
+                            maxlength="50" required>
+                          <div class="invalid-feedback">Por favor, preencha o telefone no formato válido.</div>
+                        </div>
                       </div>
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label for="cpf" class="form-label">CPF</label>
+                          <input type="text" class="form-control bg-dark text-light" id="cpf"
+                            placeholder="_ _ _ _ _ _ _ _ _ _ _" maxlength="11" required>
+                          <div class="invalid-feedback">Por favor, insira um CPF válido (ex: 123.456.789-00).</div>
+                        </div>
 
-                      <div class="mb-3">
-                        <label for="cep" class="form-label">CEP</label>
-                        <input type="text" class="form-control bg-dark text-light" id="cep"
-                          placeholder="_ _ _ _ _ _ _ _" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                          maxlength="8" required>
-                        <div class="invalid-feedback">CEP inválido.</div>
+                        <div class="col-md-6">
+                          <label for="cep" class="form-label">CEP</label>
+                          <input type="text" class="form-control bg-dark text-light" id="cep"
+                            placeholder="_ _ _ _ _ _ _ _" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            maxlength="8" required>
+                          <div class="invalid-feedback">CEP inválido.</div>
+                        </div>
                       </div>
 
                       <div class="row mb-3">
-                        <div class="col-md-8">
+                        <div class="col-md-6">
+
                           <label for="street" class="form-label">Rua</label>
-                          <input type="text" class="form-control bg-dark text-light" id="street" required>
+                          <input placeholder="Avenida, Rua, Alameda..." type="text" class="form-control bg-dark text-light" id="street" required>
+                        </div>
+                        
+                        <div class="col-md-2">
+
+                          <label for="street" class="form-label ms-3">N°</label>
+                          <input placeholder="00" type="text" class="form-control bg-dark text-light" id="street" required>
                         </div>
 
                         <div class="col-md-4">
                           <label for="number" class="form-label">Complemento</label>
                           <input type="text" class="form-control bg-dark text-light" id="number" maxlength="20"
-                            placeholder="000, Ap 23A" required>
+                            placeholder="Apto 00" required>
                           <div class="invalid-feedback">
                             Por favor, insira um número válido seguido de complemento (ex: 123, Ap 23A).</div>
                         </div>
+                        
 
                       </div>
                       <div class="row mb-3">

@@ -14,7 +14,9 @@ CREATE TABLE usuario (
   senha VARCHAR(255) NOT NULL,
   cpf VARCHAR(14) NOT NULL UNIQUE,
   cep VARCHAR(9) NOT NULL,
+  numero VARCHAR(10) NOT NULL,
   complemento VARCHAR(25) NOT NULL,
+  genero ENUM('Masculino', 'Feminino', 'Outro') DEFAULT 'Outro',
   telefone VARCHAR(11) UNIQUE,
   foto MEDIUMBLOB
 );
