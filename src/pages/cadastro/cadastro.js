@@ -149,7 +149,7 @@ async function validarCEP(input) {
       input.classList.add('is-invalid');
     }
   }
-
+  
   //reativa o campo de CEP ao resetar o formulário
   document.querySelector('form').addEventListener('reset', function () {
     input.disabled = false;
@@ -161,8 +161,15 @@ async function validarCEP(input) {
   });
 }
 
-document.getElementById('cep').addEventListener('focusout', async () => {
-  await validarCEP(document.getElementById('cep'));
+//apenas números no campo de CEP
+document.querySelectorAll('#cep').forEach(cepInput => {
+  cepInput.addEventListener('input', () => {
+    cepInput.value = cepInput.value.replace(/\D/g, '');
+  });
+
+  cepInput.addEventListener('focusout', () => {
+    validarCEP(cepInput);
+  });
 });
 
 //verificação de CPF
