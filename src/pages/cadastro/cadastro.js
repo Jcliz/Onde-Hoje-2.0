@@ -370,16 +370,18 @@ document.getElementById('number').addEventListener('focusout', function () {
 
 function validarTelefone(input) {
   const telefoneError = input.nextElementSibling;
-  const telefoneValid = /^[0-9]{11}$/;
+  const telefoneValid = /^[0-9]{10,11}$/;
 
   if (telefoneValid.test(input.value)) {
+    //máscara ao telefone
+    input.value = input.value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
     input.classList.remove('is-invalid');
     telefoneError.style.display = 'none';
     return true;
   } else {
     input.classList.add('is-invalid');
     telefoneError.style.display = 'block';
-    telefoneError.textContent = 'Por favor, insira um telefone válido com 11 dígitos.';
+    telefoneError.textContent = 'Por favor, insira um telefone válido com 10 ou 11 dígitos.';
     return false;
   }
 }
