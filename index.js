@@ -12,7 +12,6 @@ app.use(express.static(__dirname + '/src/pages'));
 app.use(express.static(__dirname + '/src/static'));
 app.use(express.static(__dirname + '/public'));
 
-// Adicione esta linha para servir arquivos HTML corretamente
 app.use(express.static(__dirname));
 
 //importante o modulo de mysql
@@ -23,12 +22,11 @@ var mysql = require('mysql2');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
+    password: "123456",
     database: "ondehoje2"
 });
 
 //tentando conectar
-//a variável con tem a conexão agora
 con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
@@ -57,18 +55,6 @@ app.get('/api/usuarios', (req, res) => {
     });
 });
 
-// app.get('/api/generos', (req, res) => {
-//     const sql = 'SELECT DISTINCT genero FROM usuario WHERE genero IS NOT NULL';
-//     con.query(sql, (err, result) => {
-//       if (err) {
-//         console.error('Erro ao buscar gêneros:', err);
-//         res.status(500).send('Erro ao buscar gêneros');
-//         return;
-//       }
-//       res.json(result);
-//     });
-//   });
-  
 //endpoint para encontrar email no bd
 router.post('/api/esqueceuSenha', (req, res) => {
     const { email } = req.body;
@@ -80,7 +66,7 @@ router.post('/api/esqueceuSenha', (req, res) => {
             return res.status(500).json({ message: 'Erro no servidor' });
         }
         if (result.length > 0) {
-            res.status(200).json({ message: 'E-mail enviado!'});
+            res.status(200).json({ message: 'E-mail enviado!' });
         } else {
             res.status(401).json({ message: 'E-mail não encontrado.' });
         }
@@ -89,17 +75,62 @@ router.post('/api/esqueceuSenha', (req, res) => {
 
 // Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios', (req, res) => {
-    const { nome, dataNascimento, email, senha, cpf, cep, complemento } = req.body;
-    const sql = 'INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, complemento) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    con.query(sql, [nome, dataNascimento, email, senha, cpf, cep, complemento], (err, result) => {
-        if (err) throw err;
-        res.json({ id: result.insertId, email, senha });
+    const { nome, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;
+
+    // Verificar se o CPF já existe
+    const checkCpf = 'SELECT cpf FROM usuario WHERE cpf = ?';
+    const checkTelefone = 'SELECT telefone FROM usuario WHERE telefone = ?';
+    const checkEmail = 'SELECT email FROM usuario WHERE email = ?';
+
+    con.query(checkCpf, [cpf], (err, result) => {
+        if (err) {
+            console.error('Erro ao verificar CPF:', err);
+            return res.status(500).json({ message: 'Erro no servidor' });
+        }
+
+        if (result.length > 0) {
+            return res.status(400).json({ message: 'CPF já cadastrado.' });
+        }
+
+        // Verificar se o telefone já existe
+        con.query(checkTelefone, [telefone], (err, result) => {
+            if (err) {
+                console.error('Erro ao verificar telefone:', err);
+                return res.status(500).json({ message: 'Erro no servidor' });
+            }
+
+            if (result.length > 0) {
+                return res.status(400).json({ message: 'Telefone já cadastrado.' });
+            }
+
+            // Verificar se o email já existe
+            con.query(checkEmail, [email], (err, result) => {
+                if (err) {
+                    console.error('Erro ao verificar email:', err);
+                    return res.status(500).json({ message: 'Erro no servidor' });
+                }
+
+                if (result.length > 0) {
+                    return res.status(400).json({ message: 'Email já cadastrado.' });
+                }
+
+                // Inserir o novo usuário
+                const sql = 'INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                con.query(sql, [nome, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
+                    if (err) {
+                        console.error('Erro ao inserir usuário:', err);
+                        return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
+                    }
+                    res.json({ id: result.insertId, email, senha });
+                });
+            });
+        });
     });
 });
 
 // Endpoint para atualizar um usuário
 //TO-DO
-//arrumar no cadastro.js a requisição, pois o usuário poderá mudar todos seus dados não só email e senha
+//arrumar no crud de usuario a requisição, pois o usuário poderá mudar todos seus dados não só email e senha
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { email, senha } = req.body;

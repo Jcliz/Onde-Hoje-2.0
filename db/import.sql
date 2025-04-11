@@ -10,22 +10,24 @@ CREATE TABLE usuario (
   ID_usuario INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   nome VARCHAR(50) NOT NULL,
   DT_nascimento DATE NOT NULL,
-  email VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL,
   cpf VARCHAR(14) NOT NULL UNIQUE,
   cep VARCHAR(9) NOT NULL,
   numero VARCHAR(10) NOT NULL,
   complemento VARCHAR(25) NOT NULL,
-  genero ENUM('Masculino', 'Feminino', 'Outro') DEFAULT 'Outro',
-  telefone VARCHAR(11) UNIQUE,
+  genero ENUM('Masculino', 'Feminino', 'Outro') DEFAULT 'Outro' NOT NULL,
+  telefone VARCHAR(16) UNIQUE,
   foto MEDIUMBLOB,
   role VARCHAR(4) NOT NULL DEFAULT 'user'
 );
 
-INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, complemento, telefone, foto) VALUES
-('João Silva', '1990-05-15', 'joao.silva@example.com', 'senha123', '12345678901', '12345678', '520, Ap 52A', '41999998888', ''),
-('Maria Oliveira', '1985-08-22', 'maria.oliveira@example.com', 'senha456', '98765432100', '87654321', '62, Casa', '41988887777', ''),
-('Carlos Pereira', '1992-11-30', 'carlos.pereira@example.com', 'senha789', '45678912300', '56789012', '511, Sobrado', '41977776666', '');
+INSERT INTO usuario 
+(nome, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone, foto) 
+VALUES
+('João Silva', '1990-05-15', 'joao.silva@example.com', 'senha123', '12345678901', '12345678', '520', 'Ap 52A', 'Masculino', '41999998888', ''),
+('Maria Oliveira', '1985-08-22', 'maria.oliveira@example.com', 'senha456', '98765432100', '87654321', '62', 'Casa', 'Feminino', '41988887777', ''),
+('Carlos Pereira', '1992-11-30', 'carlos.pereira@example.com', 'senha789', '45678912300', '56789012', '511', 'Sobrado', 'Masculino', '41977776666', '');
 
 CREATE TABLE estabelecimento (
   ID_estabelecimento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

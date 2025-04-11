@@ -1,43 +1,105 @@
-const cep = document.querySelector('#cep');
-const rua = document.querySelector('#street');
-const bairro = document.querySelector('#bairro');
-const cidade = document.querySelector('#cidade');
-const numero = document.querySelector('#number');
-const mensagem = document.querySelector('.invalid-feedback');
-const senha = document.getElementById('password');
-const telefone = document.getElementById('telefone');
+function processarCadastro(event) {
+  event.preventDefault();
+
+  const submitButton = document.querySelector('#continue');
+  submitButton.disabled = true;
+
+  const nome = document.getElementById('name').value.trim();
+  const dataNasc = document.getElementById('dob').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('password').value.trim();
+  const cpf = document.getElementById('cpf').value.trim();
+  const cep = document.getElementById('cep'); // Corrigido para obter o elemento DOM
+  const numero = document.getElementById('number').value.trim();
+  const complemento = document.getElementById('complemento').value.trim();
+  const genero = document.getElementById('genero').value.trim();
+  const telefone = document.getElementById('telefone').value.trim();
+
+  const nomeValido = validarNome(document.getElementById('name'));
+  const emailValido = validarEmail(document.getElementById('email'));
+  const senhaValida = validarSenha();
+  const cpfValido = validarCPF(document.getElementById('cpf'));
+  const idadeValida = validarIdade(document.getElementById('dob'));
+  const cepValido = !cep.classList.contains('is-invalid'); // Corrigido para verificar corretamente
+  const telefoneValido = validarTelefone(document.getElementById('telefone'));
+
+  if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido && telefoneValido) {
+    enviarDados(nome, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
+  } else {
+    alert('Por favor, corrija os erros antes de continuar.');
+    submitButton.disabled = false; // Reabilitar o botão se houver erros
+  }
+}
+
+function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
+  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone);
+}
+
+async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
+  try {
+    const response = await fetch('/api/usuarios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nome,
+        dataNascimento: dataNasc, // Corrigido para usar o nome correto
+        email,
+        senha,
+        cpf,
+        cep,
+        numero,
+        complemento,
+        genero,
+        telefone
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      alert('Usuário cadastrado com sucesso!');
+      window.location.href = '/login/login.html';
+    } else {
+      const errorData = await response.json();
+      alert(errorData.message || 'Erro ao cadastrar o usuário.');
+    }
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao enviar os dados. Tente novamente.');
+  } finally {
+    document.querySelector('#continue').disabled = false; // Reabilitar o botão após a resposta
+  }
+}
 
 function validarSenha() {
+  const senha = document.getElementById('password');
   const senhaConfirm = document.getElementById('confirmPassword');
   const senhaError = senha.parentElement.querySelector('.invalid-feedback');
   const senhaConfirmError = senhaConfirm.parentElement.querySelector('.invalid-feedback');
 
   let isValid = true;
 
-  if (senha.value.length < 6) {
-    senha.classList.add('is-invalid');
-    if (senhaError) {
+  if (senhaError) {
+    if (senha.value.length < 6) {
+      senha.classList.add('is-invalid');
       senhaError.style.display = 'block';
       senhaError.textContent = 'A senha deve ter pelo menos 6 caracteres.';
-    }
-    isValid = false;
-  } else {
-    senha.classList.remove('is-invalid');
-    if (senhaError) {
+      isValid = false;
+    } else {
+      senha.classList.remove('is-invalid');
       senhaError.style.display = 'none';
     }
   }
 
-  if (senha.value !== senhaConfirm.value) {
-    senhaConfirm.classList.add('is-invalid');
-    if (senhaConfirmError) {
+  if (senhaConfirmError) {
+    if (senhaConfirm.value.length === 0 || senha.value !== senhaConfirm.value) {
+      senhaConfirm.classList.add('is-invalid');
       senhaConfirmError.style.display = 'block';
       senhaConfirmError.textContent = 'As senhas não coincidem.';
-    }
-    isValid = false;
-  } else {
-    senhaConfirm.classList.remove('is-invalid');
-    if (senhaConfirmError) {
+      isValid = false;
+    } else {
+      senhaConfirm.classList.remove('is-invalid');
       senhaConfirmError.style.display = 'none';
     }
   }
@@ -45,67 +107,15 @@ function validarSenha() {
   return isValid;
 }
 
-document.getElementById('password').addEventListener('focusout', validarSenha);
-document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
-
-//TO-DO
-//após clicar em limpar o campo de cep fica liberado para usar
-function processarCadastro(event) {
-  event.preventDefault();
-
-  //atualização dos valores dos campos no momento do envio
-  const nome = document.getElementById('name').value;
-  const dataNasc = document.getElementById('dob').value;
-  const email = document.getElementById('email').value;
-  const senha = document.getElementById('password').value;
-  const cpf = document.getElementById('cpf').value;
-  const cep = document.getElementById('cep').value;
-  const numero = document.getElementById('number').value;
-
-  const nomeValido = validarNome(document.getElementById('name'));
-  const emailValido = validarEmail(document.getElementById('email'));
-  const senhaValida = validarSenha();
-  const cpfValido = validarCPF(document.getElementById('cpf'));
-  const idadeValida = validarIdade(document.getElementById('dob'));
-  const cepValido = document.getElementById('cep').classList.contains('is-invalid') === false;
-
-  if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido) {
-    enviarDados(nome, dataNasc, email, senha, cpf, cep, numero);
-
-  } else {
-    alert('Por favor, corrija os erros antes de continuar.');
-  }
-}
-
-function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero) {
-  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero);
-}
-
-async function cadastrarUsuario(nome, dataNascimento, email, senha, cpf, cep, complemento) {
-  try {
-    const response = await fetch('/api/usuarios', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ nome, dataNascimento, email, senha, cpf, cep, complemento }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      alert('Usuário cadastrado com sucesso!');
-      window.location.href = '/login/login.html'; // Redireciona para a tela de login
-    } else {
-      alert('Erro ao cadastrar o usuário.');
-    }
-  } catch (error) {
-    console.error('Erro:', error);
-    alert('Erro ao enviar os dados. Tente novamente.');
-  }
-}
+document.getElementById('password').addEventListener('input', validarSenha); // Validar em tempo real
+document.getElementById('confirmPassword').addEventListener('input', validarSenha); // Validar em tempo real
 
 //verificação de CEP e auto completamento
 async function validarCEP(input) {
+  const rua = document.querySelector('#street');
+  const bairro = document.querySelector('#bairro');
+  const cidade = document.querySelector('#cidade');
+
   const onlyNumbers = /^[0-9]+$/;
   const cepValid = /^[0-9]{8}$/;
 
@@ -151,8 +161,8 @@ async function validarCEP(input) {
   });
 }
 
-cep.addEventListener('focusout', async () => {
-  await validarCEP(cep);
+document.getElementById('cep').addEventListener('focusout', async () => {
+  await validarCEP(document.getElementById('cep'));
 });
 
 //verificação de CPF
@@ -267,15 +277,28 @@ document.getElementById('dob').addEventListener('input', function () {
 
 //apenas numeros no campo de numero
 document.getElementById('number').addEventListener('input', function () {
-  this.value = this.value.replace(/[^0-9]/g, ''); 
+  this.value = this.value.replace(/[^0-9]/g, '');
 });
 
 function validarTelefone(input) {
   const telefoneValid = /^[0-9]{10,11}$/;
 
-  if (telefoneValid.test(input.value)) {
-    //máscara ao telefone
-    input.value = input.value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+  // Remover a máscara antes de validar
+  const telefoneSemMascara = input.value.replace(/\D/g, '');
+
+  if (telefoneValid.test(telefoneSemMascara)) {
+    if (telefoneSemMascara.length === 11 && telefoneSemMascara[2] !== '9') {
+      input.classList.add('is-invalid');
+      return false;
+    }
+
+    // Aplicar a máscara novamente
+    if (telefoneSemMascara.length === 11) {
+      input.value = telefoneSemMascara.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
+    } else {
+      input.value = telefoneSemMascara.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+    }
+
     input.classList.remove('is-invalid');
     return true;
 
