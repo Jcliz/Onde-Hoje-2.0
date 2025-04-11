@@ -5,6 +5,7 @@ const cidade = document.querySelector('#cidade');
 const numero = document.querySelector('#number');
 const mensagem = document.querySelector('.invalid-feedback');
 const senha = document.getElementById('password');
+const telefone = document.getElementById('telefone');
 
 function validarSenha() {
   const senhaConfirm = document.getElementById('confirmPassword');
@@ -48,8 +49,6 @@ document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
 //TO-DO
-//chamar no HTML
-//criar o form no html
 //após clicar em limpar o campo de cep fica liberado para usar
 function processarCadastro(event) {
   event.preventDefault();
@@ -202,6 +201,16 @@ async function validarCEP(input) {
 
     console.log(error);
   }
+
+  //reativa o campo de CEP ao resetar o formulário
+  document.querySelector('form').addEventListener('reset', function () {
+    input.disabled = false;
+    input.value = '';
+    input.classList.remove('is-invalid');
+    if (cepError) {
+      cepError.style.display = 'none';
+    }
+  });
 }
 
 cep.addEventListener('focusout', async () => {
@@ -220,7 +229,7 @@ function validarCPF(input) {
     input.classList.remove('is-invalid');
     cpfError.style.display = 'none';
     return true;
-    
+
   } else {
     input.classList.add('is-invalid');
     cpfError.style.display = 'block';
@@ -359,6 +368,31 @@ document.getElementById('number').addEventListener('focusout', function () {
   validarNumeroComplemento(this);
 });
 
+function validarTelefone(input) {
+  const telefoneError = input.nextElementSibling;
+  const telefoneValid = /^[0-9]{11}$/;
+
+  if (telefoneValid.test(input.value)) {
+    input.classList.remove('is-invalid');
+    telefoneError.style.display = 'none';
+    return true;
+  } else {
+    input.classList.add('is-invalid');
+    telefoneError.style.display = 'block';
+    telefoneError.textContent = 'Por favor, insira um telefone válido com 11 dígitos.';
+    return false;
+  }
+}
+
+document.getElementById('telefone').addEventListener('focusout', function () {
+  validarTelefone(this);
+});
+
+document.getElementById('telefone').addEventListener('input', function () {
+  this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+//olho para mostrar a senha
 document.querySelectorAll('.toggle-password').forEach(icon => {
   icon.addEventListener('click', function () {
 
@@ -378,30 +412,32 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
   });
 });
 
+
+
 // document.addEventListener('DOMContentLoaded', async function () {
-//   const select = document.getElementById('genero');
-
-//   try {
-//     const response = await fetch('/api/generos');
-//     const tipos = await response.json();
-
-//     // opção padrão
-//     const defaultOption = document.createElement('option');
-//     defaultOption.text = 'Selecione...';
-//     defaultOption.value = '';
-//     defaultOption.disabled = true;
-//     defaultOption.selected = true;
-//     select.appendChild(defaultOption);
-
-//     // adicionar opções
-//     tipos.forEach(tipo => {
-//       const option = document.createElement('option');
-//       option.value = tipo.genero;
-//       option.textContent = tipo.genero;
-//       select.appendChild(option);
-//     });
-
-//   } catch (error) {
-//     console.error('Erro ao carregar gêneros:', error);
-//   }
-// });
+ //   const select = document.getElementById('genero');
+ 
+ //   try {
+ //     const response = await fetch('/api/generos');
+ //     const tipos = await response.json();
+ 
+ //     // opção padrão
+ //     const defaultOption = document.createElement('option');
+ //     defaultOption.text = 'Selecione...';
+ //     defaultOption.value = '';
+ //     defaultOption.disabled = true;
+ //     defaultOption.selected = true;
+ //     select.appendChild(defaultOption);
+ 
+ //     // adicionar opções
+ //     tipos.forEach(tipo => {
+ //       const option = document.createElement('option');
+ //       option.value = tipo.genero;
+ //       option.textContent = tipo.genero;
+ //       select.appendChild(option);
+ //     });
+ 
+ //   } catch (error) {
+ //     console.error('Erro ao carregar gêneros:', error);
+ //   }
+ // });
