@@ -22,7 +22,7 @@ var mysql = require('mysql2');
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "123456",
+    password: "1234",
     database: "ondehoje2"
 });
 
@@ -264,7 +264,7 @@ app.get('/', (req, res) => {
 });
 
 // Iniciando o servidor
-const port = 3000;
+const port = 3001;
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

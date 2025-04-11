@@ -21,8 +21,31 @@ section {
 }
 
 #infos {
-    background-image: linear-gradient(to top, rgb(33, 37, 41), rgb(99, 101, 104), rgb(33, 37, 41));
-}
+    position: relative;
+    background-color: #1D1D27;
+    overflow: hidden;
+  }
+  
+  /* Camada de luzes difusas */
+  #infos::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 10% 90%, #70452f 20%, transparent 1%),
+      radial-gradient(circle at 90% 10%, #70452f 20%, transparent 10%);
+    filter: blur(90px);
+    opacity: 0.8;
+    z-index: 0;
+  }
+  
+  /* Conteúdo acima do efeito */
+  #infos > * {
+    position: relative;
+    z-index: 1;
+  }
+  
+  
 
 input::placeholder {
     color: white !important;
