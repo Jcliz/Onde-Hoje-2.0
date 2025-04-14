@@ -24,28 +24,28 @@ section {
     position: relative;
     background-color: #1D1D27;
     overflow: hidden;
-  }
-  
-  /* Camada de luzes difusas */
-  #infos::before {
+}
+
+/* Camada de luzes difusas */
+#infos::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: 
-      radial-gradient(circle at 10% 90%, #70452f 20%, transparent 1%),
-      radial-gradient(circle at 90% 10%, #70452f 20%, transparent 10%);
+    background-image:
+        radial-gradient(circle at 10% 90%, #70452f 20%, transparent 1%),
+        radial-gradient(circle at 90% 10%, #70452f 20%, transparent 10%);
     filter: blur(90px);
     opacity: 0.8;
     z-index: 0;
-  }
-  
-  /* Conteúdo acima do efeito */
-  #infos > * {
+}
+
+/* Conteúdo acima do efeito */
+#infos>* {
     position: relative;
     z-index: 1;
-  }
-  
-  
+}
+
+
 
 input::placeholder {
     color: white !important;
@@ -65,7 +65,7 @@ input::placeholder {
 }
 
 .position-relative .form-control.is-invalid+.toggle-password {
-     right: 0.75rem;
+    right: 0.75rem;
 }
 
 .position-relative .form-control:not(.is-invalid)+.toggle-password {
@@ -74,4 +74,29 @@ input::placeholder {
 
 .position-relative .invalid-feedback {
     margin-top: 0.5rem;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* edge */
+input[type="date"]::-ms-clear {
+    filter: invert(1);
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2rem;
 }
