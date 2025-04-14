@@ -7,7 +7,7 @@ function gerarNickAleatorio() {
   const adjetivo = adjetivos[Math.floor(Math.random() * adjetivos.length)];
   const nome = nomes[Math.floor(Math.random() * nomes.length)];
 
-  return `${adjetivo}${nome}${numero}`;
+  return `${nome}${adjetivo}${numero}`;
 }
 
 function processarCadastro(event) {

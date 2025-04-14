@@ -1,7 +1,5 @@
 //TO-DO
 //endpoint para CRUD de avaliação
-//autenticação de usuário com senha criptografada
-//identificar, na interface, o usuário autenticado
 const estabelecimentos = [];
 var express = require('express');
 var app = express();
