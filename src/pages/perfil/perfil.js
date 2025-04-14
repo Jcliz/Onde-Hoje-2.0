@@ -68,3 +68,26 @@ function toggleText() {
 function logout() {
     window.location.href = "/logout";
 }
+
+function abrirModal(campoId, label) {
+    const campo = document.getElementById(campoId);
+    document.getElementById('novoValor').value = campo.textContent;
+    document.getElementById('campoAtual').value = campoId;
+    document.getElementById('labelCampo').textContent = `Editar ${label}`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('editarModal'));
+    modal.show();
+}
+
+document.getElementById('formEditar').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const campoId = document.getElementById('campoAtual').value;
+    const novoValor = document.getElementById('novoValor').value;
+
+    document.getElementById(campoId).textContent = novoValor;
+
+
+    const modalElement = bootstrap.Modal.getInstance(document.getElementById('editarModal'));
+    modalElement.hide();
+});

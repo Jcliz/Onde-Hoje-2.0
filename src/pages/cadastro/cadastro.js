@@ -134,7 +134,7 @@ async function validarCEP(input) {
   const cepValid = /^[0-9]{8}$/;
 
   try {
-    if (!onlyNumbers.test(input.value) || !cepValid.test(input.value)) {
+    if (!onlyNumbers.test(input.value) && !cepValid.test(input.value)) {
       throw { cep_error: 'CEP inválido.' };
     }
 
