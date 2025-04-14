@@ -37,7 +37,7 @@ function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero, complemento
 
 async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
   try {
-    const response = await fetch('/api/usuarios', {
+    const response = await fetch('/api/usuarios/criar', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
