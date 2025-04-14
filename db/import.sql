@@ -9,6 +9,7 @@ SET time_zone = "+00:00";
 CREATE TABLE usuario (
   ID_usuario INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   nome VARCHAR(50) NOT NULL,
+  nick VARCHAR(50) NOT NULL UNIQUE,
   DT_nascimento DATE NOT NULL,
   email VARCHAR(50) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL,
@@ -23,11 +24,11 @@ CREATE TABLE usuario (
 );
 
 INSERT INTO usuario 
-(nome, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone, foto) 
+(nome, nick, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone, foto) 
 VALUES
-('João Silva', '1990-05-15', 'joao.silva@example.com', MD5('senha123'), '12345678901', '80620-070', '520', 'Ap 52A', 'Masculino', '41999998888', ''),
-('Maria Oliveira', '1985-08-22', 'maria.oliveira@example.com', MD5('senha456'), '98765432100', '87654321', '62', 'Casa', 'Feminino', '41988887777', ''),
-('Carlos Pereira', '1992-11-30', 'carlos.pereira@example.com', MD5('senha789'), '45678912300', '56789012', '511', 'Sobrado', 'Masculino', '41977776666', '');
+('João Silva', 'joaozinho', '1990-05-15', 'joao.silva@example.com', MD5('senha123'), '12345678901', '80620070', '520', 'Ap 52A', 'Masculino', '41999998888', ''),
+('Maria Oliveira', 'mariaaa23', '1985-08-22', 'maria.oliveira@example.com', MD5('senha456'), '98765432100', '87654321', '62', 'Casa', 'Feminino', '41988887777', ''),
+('Carlos Pereira', 'carlos', '1992-11-30', 'carlos.pereira@example.com', MD5('senha789'), '45678912300', '56789012', '511', 'Sobrado', 'Masculino', '41977776666', '');
 
 CREATE TABLE estabelecimento (
   ID_estabelecimento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

@@ -1,3 +1,15 @@
+//gerador de nick's aleatórios
+function gerarNickAleatorio() {
+  const adjetivos = ['Furioso', 'Preguiçoso', 'Malandro', 'Feliz', 'Silencioso'];
+  const nomes = ['Tigre', 'Ninja', 'Panda', 'Falcão', 'Mago'];
+  const numero = Math.floor(Math.random() * 1000);
+
+  const adjetivo = adjetivos[Math.floor(Math.random() * adjetivos.length)];
+  const nome = nomes[Math.floor(Math.random() * nomes.length)];
+
+  return `${adjetivo}${nome}${numero}`;
+}
+
 function processarCadastro(event) {
   event.preventDefault();
 
@@ -5,6 +17,7 @@ function processarCadastro(event) {
   submitButton.disabled = true;
 
   const nome = document.getElementById('name').value.trim();
+  const nick = gerarNickAleatorio();
   const dataNasc = document.getElementById('dob').value.trim();
   const email = document.getElementById('email').value.trim();
   const senha = document.getElementById('password').value.trim();
@@ -24,18 +37,18 @@ function processarCadastro(event) {
   const telefoneValido = validarTelefone(document.getElementById('telefone'));
 
   if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido && telefoneValido) {
-    enviarDados(nome, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
+    enviarDados(nome, nick, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
   } else {
     alert('Por favor, corrija os erros antes de continuar.');
     submitButton.disabled = false;
   }
 }
 
-function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
-  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone);
+function enviarDados(nome, nick, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
+  cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone);
 }
 
-async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
+async function cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
   try {
     const response = await fetch('/api/usuarios/criar', {
       method: 'POST',
@@ -44,6 +57,7 @@ async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, 
       },
       body: JSON.stringify({
         nome,
+        nick,
         dataNascimento: dataNasc,
         email,
         senha,

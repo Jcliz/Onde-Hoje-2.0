@@ -104,12 +104,13 @@ app.get('/api/session', (req, res) => {
     if (req.session.user_logged_in) {
         res.json({
             estaAutenticado: true,
-            ID_usuario: req.session.ID_usuario, 
+            ID_usuario: req.session.ID_usuario,
             nomeUsuario: req.session.nomeUsuario || "Usuário",
             email: req.session.email,
             telefone: req.session.telefone,
             cep: req.session.cep,
-            numero: req.session.numero
+            numero: req.session.numero,
+            nick: req.session.nick
         });
     } else {
         res.json({ estaAutenticado: false });
@@ -144,6 +145,7 @@ app.post('/api/login', (req, res) => {
             req.session.telefone = result[0].telefone;
             req.session.cep = result[0].cep;
             req.session.numero = result[0].numero;
+            req.session.nick = result[0].nick;
 
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {
@@ -154,12 +156,12 @@ app.post('/api/login', (req, res) => {
 
 // Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios/criar', (req, res) => {
-    const { nome, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;
+    const { nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;
 
-    // Verificar se o CPF já existe
     const checkCpf = 'SELECT cpf FROM usuario WHERE cpf = ?';
     const checkTelefone = 'SELECT telefone FROM usuario WHERE telefone = ?';
     const checkEmail = 'SELECT email FROM usuario WHERE email = ?';
+    const checkNick = 'SELECT nick FROM usuario WHERE nick = ?'
 
     con.query(checkCpf, [cpf], (err, result) => {
         if (err) {
@@ -199,20 +201,33 @@ app.post('/api/usuarios/criar', (req, res) => {
                     return res.status(400).json({ message: 'Email já cadastrado.' });
                 }
 
-                // Inserir o novo usuário
-                const sql = 'INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, MD5(?), ?, ?, ?, ?, ?, ?)';
-                con.query(sql, [nome, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
+                con.query(checkNick, [nick], (err, result) => {
+                    if (err) {
+                        req.session.nao_autenticado = true;
+                        console.error('Erro ao criar o nick aleatório:', err);
+                        return res.status(500).json({ message: 'Erro no servidor' });
+                    }
+
+                    if (result.length > 0) {
+                        req.session.nao_autenticado = true;
+                        return res.status(400).json({ message: 'Nick aleatório gerado já existe. Tente novamente.' });
+                    }
+
+                    // Inserir o novo usuário
+                    const sql = 'INSERT INTO usuario (nome, nick, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, ?, MD5(?), ?, ?, ?, ?, ?, ?)';
+                con.query(sql, [nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
                     if (err) {
                         req.session.nao_autenticado = true;
                         console.error('Erro ao inserir usuário:', err);
                         return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
                     }
                     req.session.nao_autenticado = true;
-                    res.json({ id: result.insertId, email, senha });
+                    res.status(200).json({ message: 'Usuário cadastrado!' });
                 });
             });
         });
     });
+});
 });
 
 //endpoint para encontrar email no bd
