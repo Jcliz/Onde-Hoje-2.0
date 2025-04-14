@@ -119,8 +119,10 @@
                                 <div class="mb-3 fw-bold fs-4 text-white">Recursos Adicionais</div>
 
                                 <div class="mb-2 d-flex align-items-center justify-content-between">
-                                    <button class="btn OH-btt2 fw-bold  text-white  btn-md px-3 ml-auto">Mudar
-                                        senha</button>
+                                    <button class="btn OH-btt2 fw-bold text-white btn-md px-3" data-bs-toggle="modal" data-bs-target="#modalSenha">
+                                        Mudar senha
+                                    </button>
+                                    
                                     <button class="btn OH-btt2 fw-bold  text-white btn-md px-3">Preferências</button>
                                     <button class="btn OH-btt2 fw-bold  text-white btn-md px-3">Acessibilidade</button>
                                     <button class="btn OH-btt2 fw-bold  text-white btn-md px-3">Autenticação
@@ -145,6 +147,33 @@
 
 
     <div id="footer-container"></div>
+
+    <div class="modal fade" id="modalSenha" tabindex="-1" aria-labelledby="modalSenhaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content OH-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalSenhaLabel">Alterar Senha</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formSenha">
+          <div class="mb-3">
+            <label for="senhaAtual" class="form-label">Senha Atual</label>
+            <input type="password" class="form-control OH-bg text-white" id="senha" required>
+          </div>
+          <div class="mb-3">
+            <label for="novaSenha" class="form-label">Nova Senha</label>
+            <input type="password" class="form-control OH-bg text-white" id="novaSenha" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmarSenha" class="form-label">Confirmar Nova Senha</label>
+            <input type="password" class="form-control OH-bg text-white" id="confirmarSenha" required>
+          </div>
+          <button type="submit" class="btn btn-success fw-bold">Salvar</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
     <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
         <div class="modal-dialog">

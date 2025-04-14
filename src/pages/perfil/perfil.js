@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             let telefone = document.getElementById('telefone');
             let endereco = document.getElementById('endereco');
             let nick = document.getElementById('nick');
+            let senha = document.getElementById('senha');
 
             try {
                 const APIcepResponse = await fetch(`https://viacep.com.br/ws/${sessionData.cep}/json/`);
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 telefone.textContent = sessionData.telefone;
                 endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
                 nick.textContent = sessionData.nick;
+                senha.textContent = sessionData.senha;
 
             } catch (error) {
                 console.error("Erro ao buscar informações do CEP:", error);
