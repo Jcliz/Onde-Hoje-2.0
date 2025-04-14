@@ -27,7 +27,7 @@ function processarCadastro(event) {
     enviarDados(nome, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
   } else {
     alert('Por favor, corrija os erros antes de continuar.');
-    submitButton.disabled = false; // Reabilitar o botão se houver erros
+    submitButton.disabled = false;
   }
 }
 
@@ -44,7 +44,7 @@ async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, 
       },
       body: JSON.stringify({
         nome,
-        dataNascimento: dataNasc, // Corrigido para usar o nome correto
+        dataNascimento: dataNasc,
         email,
         senha,
         cpf,
@@ -68,7 +68,7 @@ async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, 
     console.error('Erro:', error);
     alert('Erro ao enviar os dados. Tente novamente.');
   } finally {
-    document.querySelector('#continue').disabled = false; // Reabilitar o botão após a resposta
+    document.querySelector('#continue').disabled = false;
   }
 }
 

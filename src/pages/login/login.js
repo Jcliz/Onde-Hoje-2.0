@@ -17,7 +17,7 @@ async function loginUsuario() {
     if (response.ok) {
       const data = await response.json();
       alert('Login bem-sucedido!');
-      window.location.href = '/src/pages/perfil/perfil.html';
+      window.location.href = '/src/pages/telaEntrada/telaentrada.html';
     } else {
       const errorData = await response.json();
       alert(errorData.message || 'Erro ao realizar login.');
@@ -33,7 +33,7 @@ document.querySelector('form').addEventListener('submit', function (event) {
   loginUsuario();
 });
 
-// Alternar visibilidade da senha
+//alternar visibilidade da senha
 document.querySelectorAll('.toggle-password').forEach(icon => {
   icon.addEventListener('click', function () {
     const targetId = this.getAttribute('data-target');
@@ -51,7 +51,7 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
   });
 });
 
-// Validação de e-mail
+//validação de e-mail
 function validarEmail(input) {
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

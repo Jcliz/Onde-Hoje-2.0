@@ -28,3 +28,7 @@ function toggleText() {
         button.innerHTML = "Seguir";
     }
 }
+
+function logout() {
+    window.location.href = "/logout";
+}

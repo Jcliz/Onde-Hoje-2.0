@@ -99,11 +99,27 @@ app.get('/', (req, res) => {
     res.redirect('/src/pages/telaEntrada/telaentrada.html');
 });
 
-// endpoint para fazer login e verificar as credenciais
+//endpoint para o fetch dos dados da sessão
+app.get('/api/session', (req, res) => {
+    if (req.session.user_logged_in) {
+        res.json({ estaAutenticado: true, nomeUsuario: req.session.nomeUsuario || "Usuário" });
+    } else {
+        res.json({ estaAutenticado: false });
+    }
+});
+
+//logout do usuário
+app.get('/logout', (req, res) => {
+    console.log("Rota /logout foi acessada");
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+});
+
+//endpoint para fazer login e verificar as credenciais
 app.post('/api/login', (req, res) => {
     const { email, senha } = req.body;
 
-    // Verifica no banco de dados se o email e a senha correspondem a um usuário
     let sql = `SELECT * FROM usuario WHERE email = ? AND senha = MD5(?)`;
 
     con.query(sql, [email, senha], (err, result) => {
@@ -113,25 +129,16 @@ app.post('/api/login', (req, res) => {
         }
 
         if (result.length > 0) {
-            // Se encontrou um usuário com as credenciais fornecidas, retorna sucesso
-            res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
             req.session.user_logged_in = true;
             req.session.ID_Usuario = result[0].ID_Usuario;
-
+            req.session.nomeUsuario = result[0].nome; //nome do usuário na sessão
+            res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {
-            // Senão, retorna erro de credenciais inválidas
             res.status(401).json({ message: 'Senha ou e-mail inválido.' });
         }
     });
 });
 
-// Rota de logout
-app.get('/logout', (req, res) => {
-    console.log("Rota /logout foi acessada");
-    req.session.destroy(() => {
-        res.redirect('/');
-    });
-});
 
 
 // Endpoint para salvar um usuário (criar)

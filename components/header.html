@@ -11,14 +11,11 @@
     <style>
         body {
             padding-top: 60px;
-            
-            /* Ajuste inicial para compensar a altura do header */
         }
 
         @media (max-width: 768px) {
             body {
                 padding-top: 70px;
-                /* Ajuste maior para telas menores, caso necessário */
             }
         }
     </style>
@@ -39,15 +36,19 @@
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item"><a class="nav-link text-secondary"
                                 href="/src/pages/telaEntrada/telaentrada.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/src/pages/perfil/perfil.html">Perfil</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/src/pages/avaliacao/avaliacao.html">Avaliação</a></li>
+                        <li class="nav-item"><a class="nav-link text-white"
+                                href="/src/pages/perfil/perfil.html">Perfil</a></li>
+                        <li class="nav-item"><a class="nav-link text-white"
+                                href="/src/pages/avaliacao/avaliacao.html">Avaliação</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="#">About</a></li>
                     </ul>
                 </div>
 
                 <div class="text-end ms-2">
-                    <a href="/src/pages/login/login.html" class="btn fw-bold btn-outline-light me-2">Login</a>
-                    <a href="/src/pages/cadastro/cadastro.html" class="btn fw-bold btn-warning"
+                    <span id="user-info" class="text-white fw-bold me-3 d-none"></span>
+                    <a href="/src/pages/login/login.html" id="login-btn"
+                        class="btn fw-bold btn-outline-light me-2">Login</a>
+                    <a href="/src/pages/cadastro/cadastro.html" id="signup-btn" class="btn fw-bold btn-warning"
                         style="background-color: #CCA281; border: 1px solid #CCA281;">Sign-up</a>
                 </div>
             </nav>
