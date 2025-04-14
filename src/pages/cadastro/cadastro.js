@@ -247,9 +247,10 @@ document.getElementById('email').addEventListener('focusout', function () {
 function validarIdade(input) {
   const data_nasc = new Date(input.value);
   const hoje = new Date();
+  const minimo = new Date('1925-04-14')
 
   //verifica se a data de nascimento está completa
-  if (isNaN(data_nasc.getTime()) || input.value.length < 10) {
+  if (isNaN(data_nasc.getTime()) || input.value.length < 10 || minimo > data_nasc.getTime()) {
     input.classList.add('is-invalid');
     return false;
   }
