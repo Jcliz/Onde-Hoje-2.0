@@ -102,7 +102,15 @@ app.get('/', (req, res) => {
 //endpoint para o fetch dos dados da sessão
 app.get('/api/session', (req, res) => {
     if (req.session.user_logged_in) {
-        res.json({ estaAutenticado: true, nomeUsuario: req.session.nomeUsuario || "Usuário" });
+        res.json({
+            estaAutenticado: true,
+            ID_usuario: req.session.ID_usuario, 
+            nomeUsuario: req.session.nomeUsuario || "Usuário",
+            email: req.session.email,
+            telefone: req.session.telefone,
+            cep: req.session.cep,
+            numero: req.session.numero
+        });
     } else {
         res.json({ estaAutenticado: false });
     }
@@ -130,16 +138,19 @@ app.post('/api/login', (req, res) => {
 
         if (result.length > 0) {
             req.session.user_logged_in = true;
-            req.session.ID_Usuario = result[0].ID_Usuario;
-            req.session.nomeUsuario = result[0].nome; //nome do usuário na sessão
+            req.session.ID_usuario = result[0].ID_usuario;
+            req.session.nomeUsuario = result[0].nome;
+            req.session.email = result[0].email;
+            req.session.telefone = result[0].telefone;
+            req.session.cep = result[0].cep;
+            req.session.numero = result[0].numero;
+
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {
             res.status(401).json({ message: 'Senha ou e-mail inválido.' });
         }
     });
 });
-
-
 
 // Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios/criar', (req, res) => {

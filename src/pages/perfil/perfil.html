@@ -33,11 +33,12 @@
                                 <input type="file" id="inputFoto" accept="image/*" class="d-none" />
                             </div>
                             <div>
-                                <h4 class="mb-0 fw-bold text-white">gabru3k</h4>
-                                <span class="text-white">#1234</span>
+                                <h4 class="mb-0 fw-bold text-white" id="nomeUsuario"></h4>
+                                <span class="text-white" id="id"></span>
                             </div>
                         </div>
-                        <button class="btn  OH-btt2 text-white fw-semibold">Informações de Cadastro</button>
+                        <button class="btn btn-danger fw-bold text-white btn-md px-3"
+                                        onclick="logout()">Logout</button>
                     </div>
 
                     <!-- Informações pessoais -->
@@ -57,7 +58,7 @@
                             <div class="col">
                                 <div class="text-white small">E-mail</div>
                                 <div class="text-white d-flex align-items-center justify-content-between">
-                                    <span>**********@email.com</span>
+                                    <span id="email"></span>
                                     <div class="d-flex align-items-center ms-auto gap-2">
                                         <span class="input-group-text btn btn-sm toggle-password OH-dark text-white"
                                             style="cursor: pointer;" data-target="email">
@@ -74,7 +75,7 @@
                             <div class="col">
                                 <div class="text-white small">Endereço</div>
                                 <div class="text-white d-flex align-items-center justify-content-between">
-                                    <span>Rua Mineirinho, 100</span>
+                                    <span id="endereco"></span>
                                     <div class="d-flex align-items-center ms-auto gap-2">
                                         <span class="input-group-text btn btn-sm toggle-password OH-dark text-white"
                                             style="cursor: pointer;" data-target="email">
@@ -89,9 +90,9 @@
 
                         <div class="row mb-3 align-items-center">
                             <div class="col">
-                                <div class="text-white small">Contato</div>
+                                <div class="text-white small">Telefone</div>
                                 <div class="text-white d-flex align-items-center justify-content-between">
-                                    <span>**********3490</span>
+                                    <span id="telefone"></span>
                                     <div class="d-flex align-items-center ms-auto gap-2">
                                         <span class="input-group-text btn btn-sm toggle-password OH-dark text-white"
                                             style="cursor: pointer;" data-target="email">
@@ -122,8 +123,6 @@
                                         avançadas</button>
                                     <button class="btn btn-danger fw-bold  text-white btn-md px-3">Desativar
                                         conta</button>
-                                    <button class="btn btn-danger fw-bold text-white btn-md px-3"
-                                        onclick="logout()">Logout</button>
                                 </div>
 
                             </div>

@@ -9,7 +9,7 @@ function processarCadastro(event) {
   const email = document.getElementById('email').value.trim();
   const senha = document.getElementById('password').value.trim();
   const cpf = document.getElementById('cpf').value.trim();
-  const cep = document.getElementById('cep'); // Corrigido para obter o elemento DOM
+  const cep = document.getElementById('cep');
   const numero = document.getElementById('number').value.trim();
   const complemento = document.getElementById('complemento').value.trim();
   const genero = document.getElementById('genero').value.trim();
@@ -20,7 +20,7 @@ function processarCadastro(event) {
   const senhaValida = validarSenha();
   const cpfValido = validarCPF(document.getElementById('cpf'));
   const idadeValida = validarIdade(document.getElementById('dob'));
-  const cepValido = !cep.classList.contains('is-invalid'); // Corrigido para verificar corretamente
+  const cepValido = !cep.classList.contains('is-invalid');
   const telefoneValido = validarTelefone(document.getElementById('telefone'));
 
   if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido && telefoneValido) {

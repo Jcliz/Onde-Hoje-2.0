@@ -1,8 +1,42 @@
+document.addEventListener("DOMContentLoaded", async function () {
+    fetch("/api/session")
+        .then(response => response.json())
+        .then(async sessionData => {
+            if (!sessionData.estaAutenticado) {
+                alert("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
+                window.location.href = "/src/pages/login/login.html";
+                return;
+            }
+
+            let nomeUsuario = document.getElementById('nomeUsuario');
+            let idUsuario = document.getElementById('id');
+            let email = document.getElementById('email');
+            let telefone = document.getElementById('telefone');
+            let endereco = document.getElementById('endereco');
+
+            try {
+                const APIcepResponse = await fetch(`https://viacep.com.br/ws/${sessionData.cep}/json/`);
+                const APIcep = await APIcepResponse.json();
+
+                nomeUsuario.textContent = sessionData.nomeUsuario;
+                idUsuario.textContent = `#${sessionData.ID_usuario}`;
+                email.textContent = sessionData.email;
+                telefone.textContent = sessionData.telefone;
+                endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
+                
+            } catch (error) {
+                console.error("Erro ao buscar informações do CEP:", error);
+                endereco.textContent = "Endereço não encontrado.";
+            }
+        })
+        .catch(error => console.error("Erro ao verificar sessão:", error));
+});
+
 var menuButton = document.getElementById("menu-button");
 var menu = document.getElementById("menu");
 var content = document.getElementById("content");
 
-menuButton.addEventListener("click", function() {
+menuButton.addEventListener("click", function () {
     if (menu.classList.contains("menu-show")) {
         menu.classList.remove("menu-show");
         menu.classList.add("menu-hide");
@@ -16,7 +50,7 @@ menuButton.addEventListener("click", function() {
 
 function toggleText() {
     const button = document.getElementById("toggleButton");
-    
+
     // Verifica o estado atual do botão e alterna entre "Seguir" e o SVG
     if (button.innerHTML.trim() === "Seguir") {
         button.innerHTML = `
