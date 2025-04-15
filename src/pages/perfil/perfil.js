@@ -1,3 +1,4 @@
+//fetch de atributos do usuário autenticado
 document.addEventListener("DOMContentLoaded", async function () {
     fetch("/api/session")
         .then(response => response.json())
@@ -26,7 +27,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 telefone.textContent = sessionData.telefone;
                 endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
                 nick.textContent = sessionData.nick;
-                senha.textContent = sessionData.senha;
 
             } catch (error) {
                 console.error("Erro ao buscar informações do CEP:", error);
@@ -36,26 +36,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         .catch(error => console.error("Erro ao verificar sessão:", error));
 });
 
-var menuButton = document.getElementById("menu-button");
-var menu = document.getElementById("menu");
-var content = document.getElementById("content");
-
-menuButton.addEventListener("click", function () {
-    if (menu.classList.contains("menu-show")) {
-        menu.classList.remove("menu-show");
-        menu.classList.add("menu-hide");
-        content.classList.add("content-expanded");
-    } else {
-        menu.classList.remove("menu-hide");
-        menu.classList.add("menu-show");
-        content.classList.remove("content-expanded");
-    }
-});
-
 function toggleText() {
     const button = document.getElementById("toggleButton");
 
-    // Verifica o estado atual do botão e alterna entre "Seguir" e o SVG
     if (button.innerHTML.trim() === "Seguir") {
         button.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
@@ -76,7 +59,7 @@ function abrirModal(campoId, label) {
     document.getElementById('novoValor').value = campo.textContent;
     document.getElementById('campoAtual').value = campoId;
     document.getElementById('labelCampo').textContent = `Editar ${label}`;
-    
+
     const modal = new bootstrap.Modal(document.getElementById('editarModal'));
     modal.show();
 }
@@ -92,4 +75,26 @@ document.getElementById('formEditar').addEventListener('submit', function (e) {
 
     const modalElement = bootstrap.Modal.getInstance(document.getElementById('editarModal'));
     modalElement.hide();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleButtons = document.querySelectorAll(".toggle-password");
+
+    toggleButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const targetId = button.dataset.target;
+            const targetSpan = document.getElementById(targetId);
+
+            if (targetSpan.dataset.visible === "true") {
+                targetSpan.dataset.visible = "false";
+                targetSpan.dataset.originalText = targetSpan.textContent;
+                targetSpan.textContent = "••••••••";
+                button.innerHTML = `<i class="bi bi-eye-slash"></i>`;
+            } else {
+                targetSpan.dataset.visible = "true";
+                targetSpan.textContent = targetSpan.dataset.originalText;
+                button.innerHTML = `<i class="bi bi-eye"></i>`;
+            }
+        });
+    });
 });
