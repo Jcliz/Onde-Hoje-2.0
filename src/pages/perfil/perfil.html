@@ -178,8 +178,8 @@
         </div>
     </div>
 
-    <!--modal email-->
-    <div class="modal fade" id="modalEmail" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <!--modal geral-->
+    <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content OH-dark text-white">
                 <div class="modal-header">
@@ -188,11 +188,10 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEmail">
+                    <form id="formEditar">
                         <div class="mb-3">
-                            <label for="novoValorEmail" class="form-label" id="labelCampoEmail"></label>
-                            <input type="text" class="form-control OH-bg text-white" id="novoValorEmail" minlength="5"
-                                maxlength="100" placeholder="exemplo@provedor.com" required>
+                            <label for="novoValor" class="form-label" id="labelCampo"></label>
+                            <input type="text" class="form-control OH-bg text-white" id="novoValor" required>
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
@@ -212,7 +211,7 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formCep">
+                    <form id="formEditar">
                         <div class="mb-3">
                             <label for="novoValorCEP" class="form-label" id="labelCampoCEP"></label>
                             <input type="text" placeholder="CEP" class="form-control OH-bg text-white" id="novoValorCEP"
@@ -229,7 +228,7 @@
         </div>
     </div>
 
-    <!--modal telefone-->
+        <!--modal telefone-->
     <div class="modal fade" id="modalTelefone" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content OH-dark text-white">
@@ -239,12 +238,11 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formTel">
+                    <form id="formEditar">
                         <div class="mb-3">
                             <label for="novoValorTel" class="form-label" id="labelCampoTel"></label>
-                            <input type="text" placeholder="Digite aqui..." class="form-control OH-bg text-white"
-                                id="novoValorTel" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                maxlength="11" required>
+                            <input type="text" placeholder="Digite aqui..." class="form-control OH-bg text-white" id="novoValorTel"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="11" required>
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
