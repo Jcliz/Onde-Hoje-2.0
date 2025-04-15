@@ -17,9 +17,7 @@ function logout() {
 }
 
 function abrirModal(campoId, label) {
-    document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
-    document.getElementById('campoAtual').value = campoId;
-
+    let novoValorEmail = document.getElementById('novoValorEmail');
     let novoValorCEP = document.getElementById('novoValorCEP');
     let novoValorTel = document.getElementById('novoValorTel');
 
@@ -28,7 +26,7 @@ function abrirModal(campoId, label) {
 
         const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
         modalCEP.show();
-        
+
         novoValorCEP.addEventListener('focusout', () => {
             novoValorCEP.value = novoValorCEP.value.replace(/(\d{5})(\d{3})/, '$1-$2');
         });
@@ -47,15 +45,34 @@ function abrirModal(campoId, label) {
             }
         });
 
-    } else {
-        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
+    } else if (campoId == 'email') {
+        document.getElementById('labelCampoEmail').innerText = `Novo(a) ${label}`;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalEmail'));
         modal.show();
+
+        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        novoValorEmail.addEventListener('focusout', () => {
+            if (novoValorEmail.value.length < 5 || novoValorEmail.value.length > 50) {
+                novoValorEmail.classList.add('is-invalid');
+    
+            } else if (emailValid.test(novoValorEmail.value)) {
+                novoValorEmail.classList.remove('is-invalid');
+
+            } else {
+                novoValorEmail.classList.add('is-invalid');
+            }
+        });
     }
 }
 
 document.getElementById('formEditar').addEventListener('submit', function (e) {
     e.preventDefault();
 
+    //TO-DO
+    //fazer a requisição
+    //corrigir submit modal email
     const modalElement = bootstrap.Modal.getInstance(document.getElementById('editarModal'));
     modalElement.hide();
 });
@@ -98,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
         console.error("Erro ao verificar sessão:", error);
     }
-    
+
     // função de mostrar/esconder campos sensíveis
     const toggleButtons = document.querySelectorAll(".toggle-password");
 
