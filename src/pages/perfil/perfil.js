@@ -20,10 +20,12 @@ function abrirModal(campoId, label) {
     document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
     document.getElementById('campoAtual').value = campoId;
 
-    let novoValor = document.getElementById('novoValor');
     let novoValorCEP = document.getElementById('novoValorCEP');
+    let novoValorTel = document.getElementById('novoValorTel');
 
     if (campoId == 'endereco') {
+        document.getElementById('labelCampoCEP').innerText = `Novo(a) ${label}`;
+
         const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
         modalCEP.show();
         
@@ -32,15 +34,16 @@ function abrirModal(campoId, label) {
         });
 
     } else if (campoId == 'telefone') {
-        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
+        document.getElementById('labelCampoTel').innerText = `Novo(a) ${label}`;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalTelefone'));
         modal.show();
 
-        //arrumar a questão da máscara
-        novoValor.addEventListener('focusout', () => {
-            if (novoValor.length === 11) {
-                novoValor.value = novoValor.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
+        novoValorTel.addEventListener('focusout', () => {
+            if (novoValorTel.value.length === 11) {
+                novoValorTel.value = novoValorTel.value.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
             } else {
-                novoValor.value = novoValor.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+                novoValorTel.value = novoValorTel.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
             }
         });
 

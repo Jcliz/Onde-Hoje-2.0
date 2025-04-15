@@ -213,12 +213,36 @@
                 <div class="modal-body">
                     <form id="formEditar">
                         <div class="mb-3">
-                            <label for="novoValorCEP" class="form-label" id="labelCampo"></label>
+                            <label for="novoValorCEP" class="form-label" id="labelCampoCEP"></label>
                             <input type="text" placeholder="CEP" class="form-control OH-bg text-white" id="novoValorCEP"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8"
                                 style="margin-bottom: 1vh;" required>
                             <input type="text" class="form-control OH-bg text-white" id="complemento"
                                 placeholder="Complemento" required>
+                            <input type="hidden" id="campoAtual">
+                        </div>
+                        <button type="submit" class="btn btn-success fw-bold">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!--modal telefone-->
+    <div class="modal fade" id="modalTelefone" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content OH-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarModalLabel">Editar Informação</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditar">
+                        <div class="mb-3">
+                            <label for="novoValorTel" class="form-label" id="labelCampoTel"></label>
+                            <input type="text" placeholder="Digite aqui..." class="form-control OH-bg text-white" id="novoValorTel"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="11" required>
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
