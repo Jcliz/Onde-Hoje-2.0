@@ -1,41 +1,3 @@
-//fetch de atributos do usuário autenticado
-document.addEventListener("DOMContentLoaded", async function () {
-    fetch("/api/session")
-        .then(response => response.json())
-        .then(async sessionData => {
-            if (!sessionData.estaAutenticado) {
-                alert("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
-                window.location.href = "/src/pages/login/login.html";
-                return;
-            }
-
-            let nomeUsuario = document.getElementById('nomeUsuario');
-            let idUsuario = document.getElementById('id');
-            let email = document.getElementById('email');
-            let telefone = document.getElementById('telefone');
-            let endereco = document.getElementById('endereco');
-            let nick = document.getElementById('nick');
-            let senha = document.getElementById('senha');
-
-            try {
-                const APIcepResponse = await fetch(`https://viacep.com.br/ws/${sessionData.cep}/json/`);
-                const APIcep = await APIcepResponse.json();
-
-                nomeUsuario.textContent = sessionData.nomeUsuario;
-                idUsuario.textContent = `#${sessionData.ID_usuario}`;
-                email.textContent = sessionData.email;
-                telefone.textContent = sessionData.telefone;
-                endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
-                nick.textContent = sessionData.nick;
-
-            } catch (error) {
-                console.error("Erro ao buscar informações do CEP:", error);
-                endereco.textContent = "Endereço não encontrado.";
-            }
-        })
-        .catch(error => console.error("Erro ao verificar sessão:", error));
-});
-
 function toggleText() {
     const button = document.getElementById("toggleButton");
 
@@ -55,29 +17,86 @@ function logout() {
 }
 
 function abrirModal(campoId, label) {
-    const campo = document.getElementById(campoId);
-    document.getElementById('novoValor').value = campo.textContent;
+    document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
     document.getElementById('campoAtual').value = campoId;
-    document.getElementById('labelCampo').textContent = `Editar ${label}`;
 
-    const modal = new bootstrap.Modal(document.getElementById('editarModal'));
-    modal.show();
+    let novoValor = document.getElementById('novoValor');
+    let novoValorCEP = document.getElementById('novoValorCEP');
+
+    if (campoId == 'endereco') {
+        const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
+        modalCEP.show();
+        
+        novoValorCEP.addEventListener('focusout', () => {
+            novoValorCEP.value = novoValorCEP.value.replace(/(\d{5})(\d{3})/, '$1-$2');
+        });
+
+    } else if (campoId == 'telefone') {
+        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
+        modal.show();
+
+        //arrumar a questão da máscara
+        novoValor.addEventListener('focusout', () => {
+            if (novoValor.length === 11) {
+                novoValor.value = novoValor.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
+            } else {
+                novoValor.value = novoValor.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+            }
+        });
+
+    } else {
+        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
+        modal.show();
+    }
 }
 
 document.getElementById('formEditar').addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const campoId = document.getElementById('campoAtual').value;
-    const novoValor = document.getElementById('novoValor').value;
-
-    document.getElementById(campoId).textContent = novoValor;
-
-
     const modalElement = bootstrap.Modal.getInstance(document.getElementById('editarModal'));
     modalElement.hide();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async function () {
+    // fetch de sessão
+    try {
+        const response = await fetch("/api/session");
+        const sessionData = await response.json();
+
+        if (!sessionData.estaAutenticado) {
+            alert("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
+            window.location.href = "/src/pages/login/login.html";
+            return;
+        }
+
+        let nomeUsuario = document.getElementById('nomeUsuario');
+        let idUsuario = document.getElementById('id');
+        let email = document.getElementById('email');
+        let telefone = document.getElementById('telefone');
+        let endereco = document.getElementById('endereco');
+        let nick = document.getElementById('nick');
+
+        try {
+            const APIcepResponse = await fetch(`https://viacep.com.br/ws/${sessionData.cep}/json/`);
+            const APIcep = await APIcepResponse.json();
+
+            endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
+        } catch (error) {
+            console.error("Erro ao buscar informações do CEP:", error);
+            endereco.textContent = "Endereço não encontrado.";
+        }
+
+        nomeUsuario.textContent = sessionData.nomeUsuario;
+        idUsuario.textContent = `#${sessionData.ID_usuario}`;
+        email.textContent = sessionData.email;
+        telefone.textContent = sessionData.telefone;
+        nick.textContent = sessionData.nick;
+
+    } catch (error) {
+        console.error("Erro ao verificar sessão:", error);
+    }
+    
+    // função de mostrar/esconder campos sensíveis
     const toggleButtons = document.querySelectorAll(".toggle-password");
 
     toggleButtons.forEach(button => {

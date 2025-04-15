@@ -25,3 +25,11 @@ body {
 .btn-primary:hover {
   background-color: #4752c4;
 }
+
+#cep {
+  color: white;
+}
+
+#modalCep input::placeholder {
+  color: white !important;
+}
