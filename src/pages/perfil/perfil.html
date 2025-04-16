@@ -188,10 +188,10 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEditar">
+                    <form id="formEditarNick">
                         <div class="mb-3">
                             <label for="novoValor" class="form-label" id="labelCampo"></label>
-                            <input type="text" class="form-control OH-bg text-white" placeholder="Digite aqui...." id="novoValor" required>
+                            <input type="text" class="form-control OH-bg text-white" minlength="1" maxlength="35" placeholder="Digite aqui...." id="novoValor" required>
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
@@ -214,7 +214,7 @@
                     <form id="formEditarEmail">
                         <div class="mb-3">
                             <label for="novoValor" class="form-label" id="labelCampoEmail"></label>
-                            <input type="text" class="form-control OH-bg text-white" placeholder="exemplo@provedor.com" id="novoValorEmail" minlength="5" maxlength="50">
+                            <input type="text" class="form-control OH-bg text-white" placeholder="exemplo@provedor.com" id="novoValorEmail" minlength="5" maxlength="50" required>
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
@@ -234,14 +234,14 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEditar">
+                    <form id="formEditarCep">
                         <div class="mb-3">
                             <label for="novoValorCEP" class="form-label" id="labelCampoCEP"></label>
                             <input type="text" placeholder="CEP" class="form-control OH-bg text-white" id="novoValorCEP"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8"
                                 style="margin-bottom: 1vh;" required>
                             <input type="text" class="form-control OH-bg text-white" id="complemento"
-                                placeholder="Complemento" required>
+                                placeholder="Complemento" minlength="4" maxlength="20" required>
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
@@ -261,7 +261,7 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEditar">
+                    <form id="formEditarTel">
                         <div class="mb-3">
                             <label for="novoValorTel" class="form-label" id="labelCampoTel"></label>
                             <input type="text" placeholder="Digite aqui..." class="form-control OH-bg text-white" id="novoValorTel"

@@ -1,76 +1,10 @@
-function toggleText() {
-    const button = document.getElementById("toggleButton");
-
-    if (button.innerHTML.trim() === "Seguir") {
-        button.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
-<g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(9.84615,9.84615)"><path d="M22.56641,4.73047l-1.79297,-1.21875c-0.49609,-0.33594 -1.17578,-0.20703 -1.50781,0.28516l-8.78906,12.96094l-4.03906,-4.03906c-0.42187,-0.42187 -1.10937,-0.42187 -1.53125,0l-1.53516,1.53516c-0.42187,0.42188 -0.42187,1.10938 0,1.53516l6.21094,6.21094c0.34766,0.34766 0.89453,0.61328 1.38672,0.61328c0.49219,0 0.98828,-0.30859 1.30859,-0.77344l10.57813,-15.60547c0.33594,-0.49219 0.20703,-1.16797 -0.28906,-1.50391z"></path></g></g>
-</svg>
-        `;
-    } else {
-        button.innerHTML = "Seguir";
-    }
-}
-
-function logout() {
-    window.location.href = "/logout";
-}
-
-function abrirModal(campoId, label) {
-    document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
-    document.getElementById('campoAtual').value = campoId;
-
-    let novoValorCEP = document.getElementById('novoValorCEP');
-    let novoValorTel = document.getElementById('novoValorTel');
-
-    if (campoId == 'endereco') {
-        document.getElementById('labelCampoCEP').innerText = `Novo(a) ${label}`;
-
-        const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
-        modalCEP.show();
-
-        novoValorCEP.addEventListener('focusout', () => {
-            novoValorCEP.value = novoValorCEP.value.replace(/(\d{5})(\d{3})/, '$1-$2');
-        });
-
-    } else if (campoId == 'telefone') {
-        document.getElementById('labelCampoTel').innerText = `Novo(a) ${label}`;
-
-        const modal = new bootstrap.Modal(document.getElementById('modalTelefone'));
-        modal.show();
-
-        novoValorTel.addEventListener('focusout', () => {
-            if (novoValorTel.value.length === 11) {
-                novoValorTel.value = novoValorTel.value.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
-            } else {
-                novoValorTel.value = novoValorTel.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-            }
-        });
-
-    } else if (campoId == 'email') {
-        document.getElementById('labelCampoEmail').innerText = `Novo(a) ${label}`;
-
-        const modalEmail = new bootstrap.Modal(document.getElementById('modalEmail'));
-        modalEmail.show();
-
-    } else {
-        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
-        modal.show();
-    }
-}
-
-document.getElementById('formEditar').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const modalElement = bootstrap.Modal.getInstance(document.getElementById('editarModal'));
-    modalElement.hide();
-});
+let sessionDataGlobal = null; //salvamento dos dados da sessão globalmente
 
 document.addEventListener("DOMContentLoaded", async function () {
-    // fetch de sessão
     try {
         const response = await fetch("/api/session");
         const sessionData = await response.json();
+        sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
             alert("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
@@ -78,20 +12,21 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
-        let nomeUsuario = document.getElementById('nomeUsuario');
-        let idUsuario = document.getElementById('id');
-        let email = document.getElementById('email');
-        let telefone = document.getElementById('telefone');
-        let endereco = document.getElementById('endereco');
-        let nick = document.getElementById('nick');
+        const nomeUsuario = document.getElementById('nomeUsuario');
+        const idUsuario = document.getElementById('id');
+        const email = document.getElementById('email');
+        const telefone = document.getElementById('telefone');
+        const endereco = document.getElementById('endereco');
+        const nick = document.getElementById('nick');
 
         try {
             const APIcepResponse = await fetch(`https://viacep.com.br/ws/${sessionData.cep}/json/`);
             const APIcep = await APIcepResponse.json();
 
+            if (APIcep.erro) throw "CEP inválido";
+
             endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
-        } catch (error) {
-            console.error("Erro ao buscar informações do CEP:", error);
+        } catch {
             endereco.textContent = "Endereço não encontrado.";
         }
 
@@ -105,24 +40,135 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Erro ao verificar sessão:", error);
     }
 
-    // função de mostrar/esconder campos sensíveis
-    const toggleButtons = document.querySelectorAll(".toggle-password");
-
-    toggleButtons.forEach(button => {
+    // Toggle campos sensíveis
+    document.querySelectorAll(".toggle-password").forEach(button => {
+        const targetSpan = document.getElementById(button.dataset.target);
+    
+        // Salva o texto original antes de esconder
+        if (!targetSpan.dataset.originalText) {
+            targetSpan.dataset.originalText = targetSpan.textContent;
+        }
+    
+        // Começa com os dados ocultos
+        targetSpan.textContent = "••••••••";
+        targetSpan.dataset.visible = "false";
+    
+        // Agora adiciona o listener
         button.addEventListener("click", () => {
-            const targetId = button.dataset.target;
-            const targetSpan = document.getElementById(targetId);
+            const visible = targetSpan.dataset.visible === "true";
+            targetSpan.dataset.visible = String(!visible);
+    
+            targetSpan.textContent = visible 
+                ? "••••••••" 
+                : targetSpan.dataset.originalText;
+    
+            button.innerHTML = visible 
+                ? `<i class="bi bi-eye-slash"></i>` 
+                : `<i class="bi bi-eye"></i>`;
+        });
+    });
+});
 
-            if (targetSpan.dataset.visible === "true") {
-                targetSpan.dataset.visible = "false";
-                targetSpan.dataset.originalText = targetSpan.textContent;
-                targetSpan.textContent = "••••••••";
-                button.innerHTML = `<i class="bi bi-eye-slash"></i>`;
-            } else {
-                targetSpan.dataset.visible = "true";
-                targetSpan.textContent = targetSpan.dataset.originalText;
-                button.innerHTML = `<i class="bi bi-eye"></i>`;
+async function abrirModal(campoId, label) {
+    document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
+    document.getElementById('campoAtual').value = campoId;
+
+    let novoValorCEP = document.getElementById('novoValorCEP');
+    let novoValorTel = document.getElementById('novoValorTel');
+    let novoValorEmail = document.getElementById('novoValorEmail');
+
+    // Reseta erros
+    [novoValorCEP, novoValorTel, novoValorEmail].forEach(el => el?.classList.remove('is-invalid'));
+
+    if (campoId === 'endereco') {
+        document.getElementById('labelCampoCEP').innerText = `Novo(a) ${label}`;
+        const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
+        modalCEP.show();
+
+        novoValorCEP.addEventListener('focusout', async () => {
+            const rawCep = novoValorCEP.value.replace(/\D/g, '');
+            novoValorCEP.value = rawCep.replace(/(\d{5})(\d{3})/, '$1-$2');
+
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
+                const data = await res.json();
+
+                if (data.erro) {
+                    novoValorCEP.classList.add('is-invalid');
+                } else {
+                    novoValorCEP.classList.remove('is-invalid');
+                }
+            } catch {
+                novoValorCEP.classList.add('is-invalid');
             }
         });
+
+    } else if (campoId === 'telefone') {
+        document.getElementById('labelCampoTel').innerText = `Novo(a) ${label}`;
+        const modal = new bootstrap.Modal(document.getElementById('modalTelefone'));
+        modal.show();
+
+        novoValorTel.addEventListener('focusout', () => {
+            const raw = novoValorTel.value.replace(/\D/g, '');
+            let formatted = '';
+
+            if (raw.length === 11) {
+                if (raw[2] === '9') {
+                    // Celular válido
+                    formatted = raw.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
+                    novoValorTel.classList.remove('is-invalid');
+                } else {
+                    // 11 dígitos, mas não é celular válido
+                    novoValorTel.classList.add('is-invalid');
+                    return;
+                }
+            } else if (raw.length === 10) {
+                // Fixo válido
+                formatted = raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+                novoValorTel.classList.remove('is-invalid');
+            } else {
+                // Número inválido
+                novoValorTel.classList.add('is-invalid');
+                return;
+            }
+
+            novoValorTel.value = formatted;
+        });
+
+    } else if (campoId === 'email') {
+        document.getElementById('labelCampoEmail').innerText = `Novo(a) ${label}`;
+        const modalEmail = new bootstrap.Modal(document.getElementById('modalEmail'));
+        modalEmail.show();
+
+        novoValorEmail.addEventListener('focusout', () => {
+            const emailVal = novoValorEmail.value.trim();
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regex.test(emailVal)) {
+                novoValorEmail.classList.add('is-invalid');
+            } else {
+                novoValorEmail.classList.remove('is-invalid');
+            }
+        });
+    } else {
+        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
+        modal.show();
+    }
+}
+
+document.querySelectorAll("form").forEach(form => {
+    form.addEventListener('submit', function (e) {
+        const invalidFields = form.querySelectorAll(".is-invalid");
+        if (invalidFields.length > 0) {
+            e.preventDefault(); //cancela envio
+            e.stopPropagation();
+            alert("Por favor, corrija os campos inválidos antes de salvar.");
+            return;
+        }
+
+        const modalId = form.closest(".modal")?.id;
+        if (modalId) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+            modal.hide();
+        }
     });
 });
