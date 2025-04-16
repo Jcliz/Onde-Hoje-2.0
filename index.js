@@ -1,10 +1,59 @@
 //TO-DO
 //endpoint para CRUD de avaliação
-//autenticação de usuário com senha criptografada
-//identificar, na interface, o usuário autenticado
-
+const estabelecimentos = [];
 var express = require('express');
 var app = express();
+const session = require('express-session');
+var mysql = require('mysql2');
+const nunjucks = require('nunjucks');
+const sessionMaxAge = 10 * 60 * 1000; // Expira após 10 minutos
+
+
+app.use(session({
+    secret: 'ondehoje',
+    resave: true,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+        maxAge: sessionMaxAge,
+        httpOnly: true,
+        secure: false //http
+    }
+}));
+
+
+app.use((req, res, next) => {
+    //verificação de horario atual para término de sessão
+    if (req.session.user_logged_in) {
+        req.session.cookie.expires = new Date(Date.now() + sessionMaxAge);
+    }
+    next();
+});
+
+//middleware para armazenar sessão nos templates
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
+app.use((req, res, next) => {
+    res.locals.user_logged_in = req.session.user_logged_in || false;
+    next();
+});
+
+// Configuração do Nunjucks
+const nunjucksEnv = nunjucks.configure('views', {
+    autoescape: true,
+    express: app,
+    watch: true
+});
+
+// Filtro de formatação de data
+nunjucksEnv.addFilter('date', function (value, format) {
+    const moment = require('moment');
+    return moment(value).format(format);
+});
+
 app.use(express.json());
 
 app.use(express.static(__dirname + '/components'));
@@ -14,11 +63,6 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(express.static(__dirname));
 
-//importante o modulo de mysql
-var mysql = require('mysql2');
-
-//criando a variável con que vai ter a referência de conexão
-//com o banco de dadosa
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -32,31 +76,160 @@ con.connect(function (err) {
     console.log("Connected!");
 });
 
-const estabelecimentos = [];
-let idUsuarios = 0;
+// Configuração do Multer para formulários com ou sem imagens
+const multer = require('multer');
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Apenas imagens são permitidas!'), false);
+        }
+        cb(null, true);
+    }
+});
 
-const router = express.Router();
+//rota principal
+app.get('/', (req, res) => {
+    if (req.session.user_logged_in) {
+        return res.redirect(303, '/src/pages/topRoles/topRoles.html');
+    }
+    res.redirect('/src/pages/telaEntrada/telaentrada.html');
+});
 
-// Endpoint para listar todos os usuários
-app.get('/api/usuarios', (req, res) => {
-    const sql = 'SELECT * FROM usuario';
-    con.query(sql, (err, result) => {
-        if (err) throw err;
-        res.json(result);
+//endpoint para o fetch dos dados da sessão
+app.get('/api/session', (req, res) => {
+    if (req.session.user_logged_in) {
+        res.json({
+            estaAutenticado: true,
+            ID_usuario: req.session.ID_usuario,
+            nomeUsuario: req.session.nomeUsuario || "Usuário",
+            email: req.session.email,
+            telefone: req.session.telefone,
+            cep: req.session.cep,
+            numero: req.session.numero,
+            nick: req.session.nick
+        });
+    } else {
+        res.json({ estaAutenticado: false });
+    }
+});
+
+//logout do usuário
+app.get('/logout', (req, res) => {
+    console.log("Rota /logout foi acessada");
+    req.session.destroy(() => {
+        res.redirect('/');
     });
 });
 
-//endpoint para listar e-mails de usuários
-app.get('/api/usuarios', (req, res) => {
-    const sql = 'SELECT email FROM usuario';
-    con.query(sql, (err, result) => {
-        if (err) throw err;
-        res.json(result);
+//endpoint para fazer login e verificar as credenciais
+app.post('/api/login', (req, res) => {
+    const { email, senha } = req.body;
+
+    let sql = `SELECT * FROM usuario WHERE email = ? AND senha = MD5(?)`;
+
+    con.query(sql, [email, senha], (err, result) => {
+        if (err) {
+            console.error('Erro ao consultar o banco de dados:', err);
+            return res.status(500).json({ message: 'Erro no servidor' });
+        }
+
+        if (result.length > 0) {
+            req.session.user_logged_in = true;
+            req.session.ID_usuario = result[0].ID_usuario;
+            req.session.nomeUsuario = result[0].nome;
+            req.session.email = result[0].email;
+            req.session.telefone = result[0].telefone;
+            req.session.cep = result[0].cep;
+            req.session.numero = result[0].numero;
+            req.session.nick = result[0].nick;
+
+            res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
+        } else {
+            res.status(401).json({ message: 'Senha ou e-mail inválido.' });
+        }
     });
+});
+
+// Endpoint para salvar um usuário (criar)
+app.post('/api/usuarios/criar', (req, res) => {
+    const { nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;
+
+    const checkCpf = 'SELECT cpf FROM usuario WHERE cpf = ?';
+    const checkTelefone = 'SELECT telefone FROM usuario WHERE telefone = ?';
+    const checkEmail = 'SELECT email FROM usuario WHERE email = ?';
+    const checkNick = 'SELECT nick FROM usuario WHERE nick = ?'
+
+    con.query(checkCpf, [cpf], (err, result) => {
+        if (err) {
+            req.session.nao_autenticado = true;
+            console.error('Erro ao verificar CPF:', err);
+            return res.status(500).json({ message: 'Erro no servidor' });
+        }
+
+        if (result.length > 0) {
+            req.session.nao_autenticado = true;
+            return res.status(400).json({ message: 'CPF já cadastrado.' });
+        }
+
+        // Verificar se o telefone já existe 
+        con.query(checkTelefone, [telefone], (err, result) => {
+            if (err) {
+                req.session.nao_autenticado = true;
+                console.error('Erro ao verificar telefone:', err);
+                return res.status(500).json({ message: 'Erro no servidor' });
+            }
+
+            if (result.length > 0) {
+                req.session.nao_autenticado = true;
+                return res.status(400).json({ message: 'Telefone já cadastrado.' });
+            }
+
+            // Verificar se o email já existe
+            con.query(checkEmail, [email], (err, result) => {
+                if (err) {
+                    req.session.nao_autenticado = true;
+                    console.error('Erro ao verificar email:', err);
+                    return res.status(500).json({ message: 'Erro no servidor' });
+                }
+
+                if (result.length > 0) {
+                    req.session.nao_autenticado = true;
+                    return res.status(400).json({ message: 'Email já cadastrado.' });
+                }
+
+                con.query(checkNick, [nick], (err, result) => {
+                    if (err) {
+                        req.session.nao_autenticado = true;
+                        console.error('Erro ao criar o nick aleatório:', err);
+                        return res.status(500).json({ message: 'Erro no servidor' });
+                    }
+
+                    if (result.length > 0) {
+                        req.session.nao_autenticado = true;
+                        return res.status(400).json({ message: 'Nick aleatório gerado já existe. Tente novamente.' });
+                    }
+
+                    // Inserir o novo usuário
+                    const sql = 'INSERT INTO usuario (nome, nick, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, ?, MD5(?), ?, ?, ?, ?, ?, ?)';
+                con.query(sql, [nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
+                    if (err) {
+                        req.session.nao_autenticado = true;
+                        console.error('Erro ao inserir usuário:', err);
+                        return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
+                    }
+                    req.session.nao_autenticado = true;
+                    res.status(200).json({ message: 'Usuário cadastrado!' });
+                });
+            });
+        });
+    });
+});
 });
 
 //endpoint para encontrar email no bd
-router.post('/api/esqueceuSenha', (req, res) => {
+app.post('/api/esqueceuSenha', (req, res) => {
     const { email } = req.body;
 
     let sql = `SELECT email FROM usuario WHERE email = ?`;
@@ -73,64 +246,8 @@ router.post('/api/esqueceuSenha', (req, res) => {
     });
 });
 
-// Endpoint para salvar um usuário (criar)
-app.post('/api/usuarios', (req, res) => {
-    const { nome, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;
-
-    // Verificar se o CPF já existe
-    const checkCpf = 'SELECT cpf FROM usuario WHERE cpf = ?';
-    const checkTelefone = 'SELECT telefone FROM usuario WHERE telefone = ?';
-    const checkEmail = 'SELECT email FROM usuario WHERE email = ?';
-
-    con.query(checkCpf, [cpf], (err, result) => {
-        if (err) {
-            console.error('Erro ao verificar CPF:', err);
-            return res.status(500).json({ message: 'Erro no servidor' });
-        }
-
-        if (result.length > 0) {
-            return res.status(400).json({ message: 'CPF já cadastrado.' });
-        }
-
-        // Verificar se o telefone já existe
-        con.query(checkTelefone, [telefone], (err, result) => {
-            if (err) {
-                console.error('Erro ao verificar telefone:', err);
-                return res.status(500).json({ message: 'Erro no servidor' });
-            }
-
-            if (result.length > 0) {
-                return res.status(400).json({ message: 'Telefone já cadastrado.' });
-            }
-
-            // Verificar se o email já existe
-            con.query(checkEmail, [email], (err, result) => {
-                if (err) {
-                    console.error('Erro ao verificar email:', err);
-                    return res.status(500).json({ message: 'Erro no servidor' });
-                }
-
-                if (result.length > 0) {
-                    return res.status(400).json({ message: 'Email já cadastrado.' });
-                }
-
-                // Inserir o novo usuário
-                const sql = 'INSERT INTO usuario (nome, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                con.query(sql, [nome, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
-                    if (err) {
-                        console.error('Erro ao inserir usuário:', err);
-                        return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
-                    }
-                    res.json({ id: result.insertId, email, senha });
-                });
-            });
-        });
-    });
-});
 
 // Endpoint para atualizar um usuário
-//TO-DO
-//arrumar no crud de usuario a requisição, pois o usuário poderá mudar todos seus dados não só email e senha
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { email, senha } = req.body;
@@ -142,7 +259,7 @@ app.put('/api/usuarios/:id', (req, res) => {
 });
 
 // Endpoint para capturar um usuário por id
-router.get('/api/usuarios/:id', (req, res) => {
+app.get('/api/usuarios/:id', (req, res) => {
     const id = req.params.id;
     let sql = `SELECT u.id, u.nome, u.email FROM usuario u WHERE u.id = ${id}`;
     con.query(sql, function (err, result) {
@@ -161,36 +278,13 @@ app.delete('/api/usuarios/:id', (req, res) => {
     });
 });
 
-// Novo: Endpoint para fazer login e verificar as credenciais
-router.post('/api/login', (req, res) => {
-    const { email, senha } = req.body;
-
-    // Verifica no banco de dados se o email e a senha correspondem a um usuário
-    let sql = `SELECT * FROM usuario WHERE email = '${email}' AND senha = '${senha}'`;
-
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.error('Erro ao consultar o banco de dados:', err);
-            return res.status(500).json({ message: 'Erro no servidor' });
-        }
-
-        if (result.length > 0) {
-            // Se encontrou um usuário com as credenciais fornecidas, retorna sucesso
-            res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
-        } else {
-            // Senão, retorna erro de credenciais inválidas
-            res.status(401).json({ message: 'Senha ou e-mail inválido.' });
-        }
-    });
-});
-
 // Rota para listar todos os estabelecimentos
-router.get('/api/estabelecimentos', (req, res) => {
+app.get('/api/estabelecimentos', (req, res) => {
     res.status(200).json(estabelecimentos);
 });
 
 // Rota para adicionar um estabelecimento
-router.post('/api/estabelecimento', (req, res) => {
+app.post('/api/estabelecimento', (req, res) => {
     var estabelecimento = req.body;
     estabelecimento.id = 1;
     estabelecimentos.push(estabelecimento);
@@ -198,7 +292,7 @@ router.post('/api/estabelecimento', (req, res) => {
 });
 
 // Endpoint para listar todos os estabelecimentos
-router.get('/api/estabelecimentos', (req, res) => {
+app.get('/api/estabelecimentos', (req, res) => {
     let sql = "SELECT * FROM estabelecimento";
     con.query(sql, function (err, result) {
         if (err) throw err;
@@ -207,11 +301,11 @@ router.get('/api/estabelecimentos', (req, res) => {
 });
 
 // Endpoint para adicionar um novo estabelecimento
-router.post('/api/estabelecimentos', (req, res) => {
+app.post('/api/estabelecimentos', (req, res) => {
     var estabelecimento = req.body;
     var sql = `INSERT INTO estabelecimento (nome, rua, bairro, numero) VALUES 
-               ('${estabelecimento.nome}', '${estabelecimento.rua}', 
-               '${estabelecimento.bairro}', '${estabelecimento.numero}')`;
+    ('${estabelecimento.nome}', '${estabelecimento.rua}', 
+    '${estabelecimento.bairro}', '${estabelecimento.numero}')`;
     con.query(sql, function (err, result) {
         if (err) {
             console.error("Erro ao inserir no banco de dados:", err);
@@ -223,13 +317,13 @@ router.post('/api/estabelecimentos', (req, res) => {
 });
 
 // Endpoint para atualizar um estabelecimento existente
-router.put('/api/estabelecimentos/:id', (req, res) => {
+app.put('/api/estabelecimentos/:id', (req, res) => {
     const id = req.params.id;
     var estabelecimento = req.body;
     var sql = `UPDATE estabelecimento SET nome = '${estabelecimento.nome}', 
-               rua = '${estabelecimento.rua}', bairro = '${estabelecimento.bairro}',
-               numero = '${estabelecimento.numero}' 
-               WHERE id = ${id}`;
+    rua = '${estabelecimento.rua}', bairro = '${estabelecimento.bairro}',
+    numero = '${estabelecimento.numero}' 
+    WHERE id = ${id}`;
 
     con.query(sql, function (err, result) {
         if (err) throw err;
@@ -238,7 +332,7 @@ router.put('/api/estabelecimentos/:id', (req, res) => {
 });
 
 // Endpoint para excluir um estabelecimento
-router.delete('/api/estabelecimentos/:id', (req, res) => {
+app.delete('/api/estabelecimentos/:id', (req, res) => {
     const id = req.params.id;
     var sql = `DELETE FROM estabelecimento WHERE id = ${id}`;
     con.query(sql, function (err, result) {
@@ -248,7 +342,7 @@ router.delete('/api/estabelecimentos/:id', (req, res) => {
 });
 
 // Endpoint para capturar um estabelecimento por ID
-router.get('/api/estabelecimentos/:id', (req, res) => {
+app.get('/api/estabelecimentos/:id', (req, res) => {
     const id = req.params.id;
     let sql = `SELECT * FROM estabelecimento WHERE id = ${id}`;
     con.query(sql, function (err, result) {
@@ -257,14 +351,9 @@ router.get('/api/estabelecimentos/:id', (req, res) => {
     });
 });
 
-app.use(router);
 
-app.get('/', (req, res) => {
-    res.redirect('/src/pages/telaEntrada/telaentrada.html');
-});
-
-// Iniciando o servidor
-const port = 3000;
+//iniciando o servidor
+const port = 3001;
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

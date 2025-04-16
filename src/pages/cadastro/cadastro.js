@@ -1,3 +1,15 @@
+//gerador de nick's aleatórios
+function gerarNickAleatorio() {
+  const adjetivos = ['Furioso', 'Preguiçoso', 'Malandro', 'Feliz', 'Silencioso'];
+  const nomes = ['Tigre', 'Ninja', 'Panda', 'Falcão', 'Mago'];
+  const numero = Math.floor(Math.random() * 1000);
+
+  const adjetivo = adjetivos[Math.floor(Math.random() * adjetivos.length)];
+  const nome = nomes[Math.floor(Math.random() * nomes.length)];
+
+  return `${nome}${adjetivo}${numero}`;
+}
+
 function processarCadastro(event) {
   event.preventDefault();
 
@@ -5,11 +17,12 @@ function processarCadastro(event) {
   submitButton.disabled = true;
 
   const nome = document.getElementById('name').value.trim();
+  const nick = gerarNickAleatorio();
   const dataNasc = document.getElementById('dob').value.trim();
   const email = document.getElementById('email').value.trim();
   const senha = document.getElementById('password').value.trim();
   const cpf = document.getElementById('cpf').value.trim();
-  const cep = document.getElementById('cep'); // Corrigido para obter o elemento DOM
+  const cep = document.getElementById('cep');
   const numero = document.getElementById('number').value.trim();
   const complemento = document.getElementById('complemento').value.trim();
   const genero = document.getElementById('genero').value.trim();
@@ -20,31 +33,32 @@ function processarCadastro(event) {
   const senhaValida = validarSenha();
   const cpfValido = validarCPF(document.getElementById('cpf'));
   const idadeValida = validarIdade(document.getElementById('dob'));
-  const cepValido = !cep.classList.contains('is-invalid'); // Corrigido para verificar corretamente
+  const cepValido = !cep.classList.contains('is-invalid');
   const telefoneValido = validarTelefone(document.getElementById('telefone'));
 
   if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido && telefoneValido) {
-    enviarDados(nome, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
+    enviarDados(nome, nick, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
   } else {
     alert('Por favor, corrija os erros antes de continuar.');
-    submitButton.disabled = false; // Reabilitar o botão se houver erros
+    submitButton.disabled = false;
   }
 }
 
-function enviarDados(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
-  cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone);
+function enviarDados(nome, nick, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
+  cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone);
 }
 
-async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
+async function cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, numero, complemento, genero, telefone) {
   try {
-    const response = await fetch('/api/usuarios', {
+    const response = await fetch('/api/usuarios/criar', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         nome,
-        dataNascimento: dataNasc, // Corrigido para usar o nome correto
+        nick,
+        dataNascimento: dataNasc,
         email,
         senha,
         cpf,
@@ -68,47 +82,44 @@ async function cadastrarUsuario(nome, dataNasc, email, senha, cpf, cep, numero, 
     console.error('Erro:', error);
     alert('Erro ao enviar os dados. Tente novamente.');
   } finally {
-    document.querySelector('#continue').disabled = false; // Reabilitar o botão após a resposta
+    document.querySelector('#continue').disabled = false;
   }
 }
 
 function validarSenha() {
   const senha = document.getElementById('password');
-  const senhaConfirm = document.getElementById('confirmPassword');
-  const senhaError = senha.parentElement.querySelector('.invalid-feedback');
-  const senhaConfirmError = senhaConfirm.parentElement.querySelector('.invalid-feedback');
+  const confirmSenha = document.getElementById('confirmPassword');
+
+  const senhaError = document.getElementById('feedbackSenha');
+  const confirmSenhaError = document.getElementById('feedbackSenhaDif');
 
   let isValid = true;
 
-  if (senhaError) {
-    if (senha.value.length < 6) {
-      senha.classList.add('is-invalid');
-      senhaError.style.display = 'block';
-      senhaError.textContent = 'A senha deve ter pelo menos 6 caracteres.';
-      isValid = false;
-    } else {
-      senha.classList.remove('is-invalid');
-      senhaError.style.display = 'none';
-    }
+  // Verifica se a senha tem pelo menos 6 caracteres
+  if (senha.value.length < 6) {
+    senha.classList.add('is-invalid');
+    senhaError.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
+    isValid = false;
+  } else {
+    senha.classList.remove('is-invalid');
+    senhaError.textContent = '';
   }
 
-  if (senhaConfirmError) {
-    if (senhaConfirm.value.length === 0 || senha.value !== senhaConfirm.value) {
-      senhaConfirm.classList.add('is-invalid');
-      senhaConfirmError.style.display = 'block';
-      senhaConfirmError.textContent = 'As senhas não coincidem.';
-      isValid = false;
-    } else {
-      senhaConfirm.classList.remove('is-invalid');
-      senhaConfirmError.style.display = 'none';
-    }
+  // Verifica se as senhas coincidem
+  if (confirmSenha.value !== senha.value || confirmSenha.value.length < 6) {
+    confirmSenha.classList.add('is-invalid');
+    confirmSenhaError.textContent = 'As senhas não coincidem ou são muito curtas.';
+    isValid = false;
+  } else {
+    confirmSenha.classList.remove('is-invalid');
+    confirmSenhaError.textContent = '';
   }
 
   return isValid;
 }
 
-document.getElementById('password').addEventListener('input', validarSenha); // Validar em tempo real
-document.getElementById('confirmPassword').addEventListener('input', validarSenha); // Validar em tempo real
+document.getElementById('password').addEventListener('focusout', validarSenha);
+document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
 //verificação de CEP e auto completamento
 async function validarCEP(input) {
@@ -120,7 +131,7 @@ async function validarCEP(input) {
   const cepValid = /^[0-9]{8}$/;
 
   try {
-    if (!onlyNumbers.test(input.value) || !cepValid.test(input.value)) {
+    if (!onlyNumbers.test(input.value) && !cepValid.test(input.value)) {
       throw { cep_error: 'CEP inválido.' };
     }
 
@@ -142,7 +153,7 @@ async function validarCEP(input) {
 
     input.classList.remove('is-invalid');
     input.value = input.value.replace(/(\d{5})(\d{3})/, '$1-$2');
-    input.disabled = true;
+    input.readOnly = true;
 
   } catch (error) {
     if (error?.cep_error) {
@@ -152,7 +163,7 @@ async function validarCEP(input) {
   
   //reativa o campo de CEP ao resetar o formulário
   document.querySelector('form').addEventListener('reset', function () {
-    input.disabled = false;
+    input.readOnly = false;
     input.value = '';
     input.classList.remove('is-invalid');
     if (error?.cep_error) {
@@ -254,9 +265,10 @@ document.getElementById('email').addEventListener('focusout', function () {
 function validarIdade(input) {
   const data_nasc = new Date(input.value);
   const hoje = new Date();
+  const minimo = new Date('1925-04-14')
 
   //verifica se a data de nascimento está completa
-  if (isNaN(data_nasc.getTime()) || input.value.length < 10) {
+  if (isNaN(data_nasc.getTime()) || input.value.length < 10 || minimo > data_nasc.getTime()) {
     input.classList.add('is-invalid');
     return false;
   }
