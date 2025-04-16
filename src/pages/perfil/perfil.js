@@ -172,3 +172,7 @@ document.querySelectorAll("form").forEach(form => {
         }
     });
 });
+
+function logout() {
+    window.location.href = "/logout";
+}
