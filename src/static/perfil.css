@@ -26,10 +26,10 @@ body {
   background-color: #4752c4;
 }
 
-#cep, #novoValorTel {
+#cep, #novoValorTel, #email {
   color: white;
 }
 
-#modalCep input::placeholder, #modalTelefone input::placeholder {
-  color: white !important;
+#modalCep input::placeholder, #modalTelefone input::placeholder, #modalEmail input::placeholder, #editarModal input::placeholder {
+  color: rgb(255, 255, 255, 0.7) !important;
 }

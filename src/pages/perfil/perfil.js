@@ -28,7 +28,7 @@ function abrirModal(campoId, label) {
 
         const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
         modalCEP.show();
-        
+
         novoValorCEP.addEventListener('focusout', () => {
             novoValorCEP.value = novoValorCEP.value.replace(/(\d{5})(\d{3})/, '$1-$2');
         });
@@ -46,6 +46,12 @@ function abrirModal(campoId, label) {
                 novoValorTel.value = novoValorTel.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
             }
         });
+
+    } else if (campoId == 'email') {
+        document.getElementById('labelCampoEmail').innerText = `Novo(a) ${label}`;
+
+        const modalEmail = new bootstrap.Modal(document.getElementById('modalEmail'));
+        modalEmail.show();
 
     } else {
         const modal = new bootstrap.Modal(document.getElementById('editarModal'));
@@ -98,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
         console.error("Erro ao verificar sessão:", error);
     }
-    
+
     // função de mostrar/esconder campos sensíveis
     const toggleButtons = document.querySelectorAll(".toggle-password");
 

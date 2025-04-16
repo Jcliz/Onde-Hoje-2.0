@@ -178,7 +178,7 @@
         </div>
     </div>
 
-    <!--modal geral-->
+    <!--modal nick-->
     <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content OH-dark text-white">
@@ -191,7 +191,30 @@
                     <form id="formEditar">
                         <div class="mb-3">
                             <label for="novoValor" class="form-label" id="labelCampo"></label>
-                            <input type="text" class="form-control OH-bg text-white" id="novoValor" required>
+                            <input type="text" class="form-control OH-bg text-white" placeholder="Digite aqui...." id="novoValor" required>
+                            <input type="hidden" id="campoAtual">
+                        </div>
+                        <button type="submit" class="btn btn-success fw-bold">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--modal email-->
+    <div class="modal fade" id="modalEmail" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content OH-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabelEmail">Editar Informação</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarEmail">
+                        <div class="mb-3">
+                            <label for="novoValor" class="form-label" id="labelCampoEmail"></label>
+                            <input type="text" class="form-control OH-bg text-white" placeholder="exemplo@provedor.com" id="novoValorEmail" minlength="5" maxlength="50">
                             <input type="hidden" id="campoAtual">
                         </div>
                         <button type="submit" class="btn btn-success fw-bold">Salvar</button>
