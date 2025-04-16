@@ -2,7 +2,15 @@
     background-color: #1d1d27;
 }
 
+.OH-dark:focus {
+    background-color: #1d1d27;
+}
+
 .OH-bg {
+    background-color: #191922;
+}
+
+.OH-bg:focus {
     background-color: #191922;
 }
 
