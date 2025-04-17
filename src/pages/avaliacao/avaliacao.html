@@ -15,7 +15,7 @@
     <div id="header-container" class="navbar navbar-expand-lg"></div>
     <main class="container py-5 d-flex justify-content-between">
         <!-- Lado esquerdo: Estabelecimentos visitados -->
-        <div class="OH-bg shadow w-25" style="border-radius: 15px;">
+        <div class="OH-dark shadow w-25" style="border-radius: 15px;">
     
             <!-- Título separado -->
             <div class="p-3">
@@ -56,14 +56,14 @@
         </div>              
         
         <div class="ms-3 w-75">
-            <div class="card OH-bg shadow p-4" style="border: 0;">
+            <div class="card OH-dark shadow p-4" style="border: 0; border-radius: 15px;">
                 <h2 class="text-center text-white mb-4">Avaliações</h2>
 
                 <form id="formAvaliacao" method="POST" action="/salvarAvaliacao">
                     <!-- Nome do estabelecimento selecionado -->
                     <div class="mb-4">
                         <label for="estabelecimento" class="form-label  text-white">Estabelecimento selecionado</label>
-                        <input type="text" class="form-control OH-dark text-white" id="estabelecimento" name="estabelecimento" readonly required>
+                        <input type="text" class="form-control OH-bg text-white" id="estabelecimento" name="estabelecimento" readonly required>
                     </div>
 
                     <!-- Avaliação com estrelas -->
