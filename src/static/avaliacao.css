@@ -1,72 +1,65 @@
-.select:hover {
-    background-color: rgb(59, 64, 70) !important;
-    font-weight: 700;
-    transition: background-color 0.8s, transform 0.8s ease;
+.estabelecimentos {
+    width: 30%;
+    max-height: 70vh;
+    overflow-y: scroll;
+    padding-right: 1rem;
+    border-right: 1px solid #ddd;
 }
 
-.select:active {
-    background-color: rgb(83, 89, 98) !important;
-    font-weight: 700;
-    transition: background-color 0.1s, transform 0.1s ease;
+.estabelecimento-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    background-color: #333;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-.selected:hover {
-    background-color: rgb(111, 0, 255) !important;
-    transition: background-color 0.6s, transform 0.6s ease;
-    font-weight: 600;
+.estabelecimento-card:hover {
+    transform: scale(1.05);
+    background-color: #444;
 }
 
-.menu-show {
-    width: 22vw;
+.estabelecimento-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
 }
 
-.menu-hide {
-    display: none;
-    width: 0;
-}
-
-.content-expanded {
-    width: 100% !important;
-    height: 90vh !important;
-}
-
-.botao {
-    color: white;
-    border: 0px;
-    background-color: rgb(33, 37, 41);
-    font-size: 200%;
-    margin-right: 2%;
-}
-
-.text {
-    margin: 0;
-    font-size: small;
-}
-
-.koulen-regular {
-    font-family: "Koulen", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.kulim-park-regular {
-    font-family: "Kulim Park", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.text-rate {
-    margin: 0;
-    font-size: medium;
-    color: white;
-    text-decoration: none;
-}
-
-.text-rate:hover {
-    text-decoration: none;
-    color: white;
-}
-
-.gradiente {
-    background: linear-gradient(180deg, #353535, #00000079);
+#comentario::placeholder {
+    color: #ffffff; /* Altere para a cor desejada */
+    opacity: 0.5;
+    background-color: #1d1d27 ; /* Altere para a opacidade desejada */
   }
+
+.estabelecimento-card h5 {
+    margin: 0;
+    color: #fff;
+}
+
+.star-rating {
+    direction: rtl;
+    display: flex;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: gold;
+}
