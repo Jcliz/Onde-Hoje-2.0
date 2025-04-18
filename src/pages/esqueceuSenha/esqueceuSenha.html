@@ -23,14 +23,13 @@
               <div class="card-body text-white">
                 <h3 class="fw-normal text-light text-center mb-4">Recuperação de Senha</h3>
                 <p class="text-center">Por favor, digite o e-mail relacionado à sua conta para recuperação.</p>
-                <form onsubmit="return enviarDados();">
+                <form onsubmit="return enviarDados(event);">
                   <div class="mb-3">
-                    <label for="email" class="form-label">E-mail</label>
                     <div class="input-group">
                       <span class="input-group-text OH-bg text-white">
                         <i class="bi bi-envelope"></i>
                       </span>
-                      <input type="email" class="form-control OH-bg text-light" id="email" required>
+                      <input type="email" placeholder="usuario@domínio.com" class="form-control OH-bg text-light" id="email" required>
                     </div>
                     <div class="invalid-feedback">Por favor, insira um e-mail válido.</div>
                   </div>

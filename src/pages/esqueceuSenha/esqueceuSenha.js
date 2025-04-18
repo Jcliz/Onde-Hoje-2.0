@@ -35,7 +35,7 @@ async function verificarEmail() {
     if (response.ok) {
       const data = await response.json();
       alert('E-mail enviado!');
-      window.location.href = '/src/pages/retorno/retornoHome.html';
+      window.location.href = '../retorno/retornoHome.html';
     } else {
       const errorData = await response.json();
       alert(errorData.message || 'E-mail não encontrado.');
@@ -47,6 +47,8 @@ async function verificarEmail() {
   }
 }
 
-function enviarDados() {
+function enviarDados(event) {
+  event.preventDefault(); 
   verificarEmail();
+  return false; 
 }
