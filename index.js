@@ -66,7 +66,7 @@ app.use(express.static(__dirname));
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
+    password: "123456",
     database: "ondehoje2"
 });
 
@@ -120,6 +120,59 @@ app.get('/logout', (req, res) => {
     console.log("Rota /logout foi acessada");
     req.session.destroy(() => {
         res.redirect('/');
+    });
+});
+
+//exclusão de usuário usuário
+app.delete('/api/usuarios/excluir', (req, res) => {
+    const { id } = req.body;
+
+    // Passo 1: Buscar todos os ID_rating das avaliações do usuário
+    const buscarRatings = 'SELECT ID_rating FROM avaliacao WHERE fk_ID_usuario = ?';
+
+    con.query(buscarRatings, [id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Erro ao buscar avaliações.' });
+        }
+
+        const ratingIds = results.map(row => row.ID_rating);
+
+        if (ratingIds.length === 0) {
+            continuarExclusao(); // se não houver avaliações, só continua
+        } else {
+            //deletar eventos associados às avaliações
+            const deletarEventos = 'DELETE FROM evento WHERE fk_ID_rating IN (?)';
+            con.query(deletarEventos, [ratingIds], (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ message: 'Erro ao excluir eventos relacionados às avaliações.' });
+                }
+
+                continuarExclusao(); //segue para deletar avaliações e usuário
+            });
+        }
+
+        //continuar a exclusão após os eventos
+        function continuarExclusao() {
+            const deletarAvaliacoes = 'DELETE FROM avaliacao WHERE fk_ID_usuario = ?';
+            con.query(deletarAvaliacoes, [id], (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ message: 'Erro ao excluir avaliações.' });
+                }
+
+                const deletarUsuario = 'DELETE FROM usuario WHERE ID_usuario = ?';
+                con.query(deletarUsuario, [id], (err) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json({ message: 'Erro ao excluir usuário.' });
+                    }
+
+                    res.json({ message: 'Usuário e dados relacionados excluídos com sucesso.' });
+                });
+            });
+        }
     });
 });
 
@@ -213,19 +266,19 @@ app.post('/api/usuarios/criar', (req, res) => {
 
                     // Inserir o novo usuário
                     const sql = 'INSERT INTO usuario (nome, nick, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, ?, MD5(?), ?, ?, ?, ?, ?, ?)';
-                con.query(sql, [nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
-                    if (err) {
+                    con.query(sql, [nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
+                        if (err) {
+                            req.session.nao_autenticado = true;
+                            console.error('Erro ao inserir usuário:', err);
+                            return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
+                        }
                         req.session.nao_autenticado = true;
-                        console.error('Erro ao inserir usuário:', err);
-                        return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
-                    }
-                    req.session.nao_autenticado = true;
-                    res.status(200).json({ message: 'Usuário cadastrado!' });
+                        res.status(200).json({ message: 'Usuário cadastrado!' });
+                    });
                 });
             });
         });
     });
-});
 });
 
 //endpoint para encontrar email no bd
@@ -255,26 +308,6 @@ app.put('/api/usuarios/:id', (req, res) => {
     con.query(sql, [email, senha, id], (err, result) => {
         if (err) throw err;
         res.json({ id, email, senha });
-    });
-});
-
-// Endpoint para capturar um usuário por id
-app.get('/api/usuarios/:id', (req, res) => {
-    const id = req.params.id;
-    let sql = `SELECT u.id, u.nome, u.email FROM usuario u WHERE u.id = ${id}`;
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        res.status(200).json(result[0]);
-    });
-});
-
-// Endpoint para excluir um usuário
-app.delete('/api/usuarios/:id', (req, res) => {
-    const { id } = req.params;
-    const sql = 'DELETE FROM usuario WHERE id = ?';
-    con.query(sql, [id], (err, result) => {
-        if (err) throw err;
-        res.json({ message: 'Usuário excluído' });
     });
 });
 

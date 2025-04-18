@@ -43,31 +43,58 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Toggle campos sensíveis
     document.querySelectorAll(".toggle-password").forEach(button => {
         const targetSpan = document.getElementById(button.dataset.target);
-    
+
         // Salva o texto original antes de esconder
         if (!targetSpan.dataset.originalText) {
             targetSpan.dataset.originalText = targetSpan.textContent;
         }
-    
+
         // Começa com os dados ocultos
         targetSpan.textContent = "••••••••";
         targetSpan.dataset.visible = "false";
-    
+
         // Agora adiciona o listener
         button.addEventListener("click", () => {
             const visible = targetSpan.dataset.visible === "true";
             targetSpan.dataset.visible = String(!visible);
-    
-            targetSpan.textContent = visible 
-                ? "••••••••" 
+
+            targetSpan.textContent = visible
+                ? "••••••••"
                 : targetSpan.dataset.originalText;
-    
-            button.innerHTML = visible 
-                ? `<i class="bi bi-eye-slash"></i>` 
+
+            button.innerHTML = visible
+                ? `<i class="bi bi-eye-slash"></i>`
                 : `<i class="bi bi-eye"></i>`;
         });
     });
 });
+
+async function excluirConta() {
+    const id = sessionDataGlobal.ID_usuario;
+
+    try {
+        const response = await fetch("/api/usuarios/excluir", {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert('Conta deletada com sucesso. Sentiremos a sua falta :(');
+            sessionDataGlobal.estaAutenticado = false;
+            window.location.href = '/logout';
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Erro ao excluir a conta.');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro na exclusão de usuário. Tente novamente.');
+    }
+}
 
 async function abrirModal(campoId, label) {
     document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
