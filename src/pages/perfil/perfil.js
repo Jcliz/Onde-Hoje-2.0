@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             if (APIcep.erro) throw "CEP inválido";
 
-            endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} - ${APIcep.localidade} ${APIcep.uf}`;
+            endereco.textContent = `${APIcep.logradouro}, ${APIcep.bairro} - ${sessionData.numero} (${sessionData.complemento}) - ${APIcep.localidade} ${APIcep.uf}`;
         } catch {
             endereco.textContent = "Endereço não encontrado.";
         }
@@ -93,6 +93,43 @@ async function excluirConta() {
     } catch (err) {
         console.error('Erro:', err);
         alert('Erro na exclusão de usuário. Tente novamente.');
+    }
+}
+
+async function atualizarDados() {
+    const nick = document.getElementById('novoValorNick')?.value || sessionDataGlobal.nick;
+    const email = document.getElementById('novoValorEmail')?.value || sessionDataGlobal.email;
+    const cep = document.getElementById('novoValorCEP')?.value || sessionDataGlobal.cep;
+    const numero = document.getElementById('numero')?.value || sessionDataGlobal.numero;
+    const complemento = document.getElementById('complemento')?.value || sessionDataGlobal.complemento;
+    const telefone = document.getElementById('novoValorTel')?.value || sessionDataGlobal.telefone;
+
+    try {
+        const response = await fetch("/api/usuarios/update", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nick,
+                email,
+                cep,
+                numero,
+                complemento,
+                telefone
+            })
+        });
+
+        if (response.ok) {
+            alert("Dados atualizados com sucesso!");
+            location.reload();
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Erro ao atualizar os dados.');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro na atualização de dados. Tente novamente.');
     }
 }
 
@@ -190,6 +227,8 @@ document.querySelectorAll("form").forEach(form => {
             e.stopPropagation();
             alert("Por favor, corrija os campos inválidos antes de salvar.");
             return;
+        } else {
+            atualizarDados();
         }
 
         const modalId = form.closest(".modal")?.id;

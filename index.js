@@ -108,6 +108,7 @@ app.get('/api/session', (req, res) => {
             telefone: req.session.telefone,
             cep: req.session.cep,
             numero: req.session.numero,
+            complemento: req.session.complemento,
             nick: req.session.nick
         });
     } else {
@@ -123,7 +124,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-//exclusão de usuário usuário
+//exclusão de usuário
 app.delete('/api/usuarios/excluir', (req, res) => {
     const { id } = req.body;
 
@@ -176,6 +177,115 @@ app.delete('/api/usuarios/excluir', (req, res) => {
     });
 });
 
+//update de usuário
+app.put('/api/usuarios/update', (req, res) => {
+    const { nick, email, cep, complemento, numero, telefone } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    const getUserSql = 'SELECT * FROM usuario WHERE ID_usuario = ?';
+    con.query(getUserSql, [idUsuario], (err, results) => {
+        if (err || results.length === 0) {
+            console.error('Erro ao buscar dados atuais do usuário:', err);
+            return res.status(500).json({ message: 'Erro no servidor' });
+        }
+
+        const user = results[0]
+
+        //lista de promessas para verificar apenas o que mudou e dados cadastrados
+        const verificacoes = [];
+
+        if (telefone && telefone !== user.telefone) {
+            verificacoes.push(new Promise((resolve, reject) => {
+                con.query('SELECT * FROM usuario WHERE telefone = ? AND ID_usuario != ?', [telefone, idUsuario], (err, result) => {
+                    if (err) reject('Erro ao verificar telefone');
+                    else if (result.length > 0) reject('Telefone já cadastrado');
+                    else resolve();
+                });
+            }));
+        }
+
+        if (email && email !== user.email) {
+            verificacoes.push(new Promise((resolve, reject) => {
+                con.query('SELECT * FROM usuario WHERE email = ? AND ID_usuario != ?', [email, idUsuario], (err, result) => {
+                    if (err) reject('Erro ao verificar email');
+                    else if (result.length > 0) reject('Email já cadastrado');
+                    else resolve();
+                });
+            }));
+        }
+
+        if (nick && nick !== user.nick) {
+            verificacoes.push(new Promise((resolve, reject) => {
+                con.query('SELECT * FROM usuario WHERE nick = ? AND ID_usuario != ?', [nick, idUsuario], (err, result) => {
+                    if (err) reject('Erro ao verificar nick');
+                    else if (result.length > 0) reject('Nick já cadastrado');
+                    else resolve();
+                });
+            }));
+        }
+
+        //executa todas as verificações
+        Promise.all(verificacoes)
+            .then(() => {
+                //monta dinamicamente os campos que devem ser atualizados
+                const campos = [];
+                const valores = [];
+
+                if (nick && nick !== user.nick) {
+                    campos.push("nick = ?");
+                    valores.push(nick);
+                }
+                if (email && email !== user.email) {
+                    campos.push("email = ?");
+                    valores.push(email);
+                }
+                if (cep && cep !== user.cep) {
+                    campos.push("cep = ?");
+                    valores.push(cep);
+                }
+                if (complemento && complemento !== user.complemento) {
+                    campos.push("complemento = ?");
+                    valores.push(complemento);
+                }
+                if (numero && numero !== user.numero) {
+                    campos.push("numero = ?");
+                    valores.push(numero);
+                }
+                if (telefone && telefone !== user.telefone) {
+                    campos.push("telefone = ?");
+                    valores.push(telefone);
+                }
+
+                if (campos.length === 0) {
+                    return res.status(200).json({ message: 'Nenhum dado alterado.' });
+                }
+
+                const sql = `UPDATE usuario SET ${campos.join(', ')} WHERE ID_usuario = ?`;
+                valores.push(idUsuario);
+
+                con.query(sql, valores, (err) => {
+                    if (err) {
+                        console.error('Erro ao atualizar usuário:', err);
+                        return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+                    }
+                
+                    //atualiza a sessão com os novos dados
+                    if (nick) req.session.nick = nick;
+                    if (email) req.session.email = email;
+                    if (cep) req.session.cep = cep;
+                    if (complemento) req.session.complemento = complemento;
+                    if (numero) req.session.numero = numero;
+                    if (telefone) req.session.telefone = telefone;
+                
+                    return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
+                });
+            })
+            .catch((msg) => {
+                return res.status(400).json({ message: msg });
+            });
+    });
+});
+
 //endpoint para fazer login e verificar as credenciais
 app.post('/api/login', (req, res) => {
     const { email, senha } = req.body;
@@ -196,6 +306,7 @@ app.post('/api/login', (req, res) => {
             req.session.telefone = result[0].telefone;
             req.session.cep = result[0].cep;
             req.session.numero = result[0].numero;
+            req.session.complemento = result[0].complemento;
             req.session.nick = result[0].nick;
 
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
@@ -212,55 +323,55 @@ app.post('/api/usuarios/criar', (req, res) => {
     const checkCpf = 'SELECT cpf FROM usuario WHERE cpf = ?';
     const checkTelefone = 'SELECT telefone FROM usuario WHERE telefone = ?';
     const checkEmail = 'SELECT email FROM usuario WHERE email = ?';
-    const checkNick = 'SELECT nick FROM usuario WHERE nick = ?'
+    const checkNick = 'SELECT nick FROM usuario WHERE nick = ?';
 
     con.query(checkCpf, [cpf], (err, result) => {
         if (err) {
-            req.session.nao_autenticado = true;
+            req.session.estaAutenticado = false;
             console.error('Erro ao verificar CPF:', err);
             return res.status(500).json({ message: 'Erro no servidor' });
         }
 
         if (result.length > 0) {
-            req.session.nao_autenticado = true;
+            req.session.estaAutenticado = false;
             return res.status(400).json({ message: 'CPF já cadastrado.' });
         }
 
-        // Verificar se o telefone já existe 
+        //erificar se o telefone já existe 
         con.query(checkTelefone, [telefone], (err, result) => {
             if (err) {
-                req.session.nao_autenticado = true;
+                req.session.estaAutenticado = false;
                 console.error('Erro ao verificar telefone:', err);
                 return res.status(500).json({ message: 'Erro no servidor' });
             }
 
             if (result.length > 0) {
-                req.session.nao_autenticado = true;
+                req.session.estaAutenticado = false;
                 return res.status(400).json({ message: 'Telefone já cadastrado.' });
             }
 
             // Verificar se o email já existe
             con.query(checkEmail, [email], (err, result) => {
                 if (err) {
-                    req.session.nao_autenticado = true;
+                    req.session.estaAutenticado = false;
                     console.error('Erro ao verificar email:', err);
                     return res.status(500).json({ message: 'Erro no servidor' });
                 }
 
                 if (result.length > 0) {
-                    req.session.nao_autenticado = true;
+                    req.session.estaAutenticado = false;
                     return res.status(400).json({ message: 'Email já cadastrado.' });
                 }
 
                 con.query(checkNick, [nick], (err, result) => {
                     if (err) {
-                        req.session.nao_autenticado = true;
+                        req.session.estaAutenticado = false;
                         console.error('Erro ao criar o nick aleatório:', err);
                         return res.status(500).json({ message: 'Erro no servidor' });
                     }
 
                     if (result.length > 0) {
-                        req.session.nao_autenticado = true;
+                        req.session.estaAutenticado = false;
                         return res.status(400).json({ message: 'Nick aleatório gerado já existe. Tente novamente.' });
                     }
 
@@ -268,11 +379,11 @@ app.post('/api/usuarios/criar', (req, res) => {
                     const sql = 'INSERT INTO usuario (nome, nick, DT_nascimento, email, senha, cpf, cep, numero, complemento, genero, telefone) VALUES (?, ?, ?, ?, MD5(?), ?, ?, ?, ?, ?, ?)';
                     con.query(sql, [nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone], (err, result) => {
                         if (err) {
-                            req.session.nao_autenticado = true;
+                            req.session.estaAutenticado = false;
                             console.error('Erro ao inserir usuário:', err);
                             return res.status(500).json({ message: 'Erro ao cadastrar o usuário.' });
                         }
-                        req.session.nao_autenticado = true;
+                        req.session.estaAutenticado = false;
                         res.status(200).json({ message: 'Usuário cadastrado!' });
                     });
                 });
@@ -298,92 +409,6 @@ app.post('/api/esqueceuSenha', (req, res) => {
         }
     });
 });
-
-
-// Endpoint para atualizar um usuário
-app.put('/api/usuarios/:id', (req, res) => {
-    const { id } = req.params;
-    const { email, senha } = req.body;
-    const sql = 'UPDATE usuario SET email = ?, senha = ? WHERE id = ?';
-    con.query(sql, [email, senha, id], (err, result) => {
-        if (err) throw err;
-        res.json({ id, email, senha });
-    });
-});
-
-// Rota para listar todos os estabelecimentos
-app.get('/api/estabelecimentos', (req, res) => {
-    res.status(200).json(estabelecimentos);
-});
-
-// Rota para adicionar um estabelecimento
-app.post('/api/estabelecimento', (req, res) => {
-    var estabelecimento = req.body;
-    estabelecimento.id = 1;
-    estabelecimentos.push(estabelecimento);
-    res.status(201).json(estabelecimento);
-});
-
-// Endpoint para listar todos os estabelecimentos
-app.get('/api/estabelecimentos', (req, res) => {
-    let sql = "SELECT * FROM estabelecimento";
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        res.status(200).json(result);
-    });
-});
-
-// Endpoint para adicionar um novo estabelecimento
-app.post('/api/estabelecimentos', (req, res) => {
-    var estabelecimento = req.body;
-    var sql = `INSERT INTO estabelecimento (nome, rua, bairro, numero) VALUES 
-    ('${estabelecimento.nome}', '${estabelecimento.rua}', 
-    '${estabelecimento.bairro}', '${estabelecimento.numero}')`;
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.error("Erro ao inserir no banco de dados:", err);
-            res.status(500).json({ error: "Erro ao inserir no banco de dados" });
-            return;
-        }
-        res.status(201).json({ id: result.insertId, ...estabelecimento });
-    });
-});
-
-// Endpoint para atualizar um estabelecimento existente
-app.put('/api/estabelecimentos/:id', (req, res) => {
-    const id = req.params.id;
-    var estabelecimento = req.body;
-    var sql = `UPDATE estabelecimento SET nome = '${estabelecimento.nome}', 
-    rua = '${estabelecimento.rua}', bairro = '${estabelecimento.bairro}',
-    numero = '${estabelecimento.numero}' 
-    WHERE id = ${id}`;
-
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        res.status(200).json(estabelecimento);
-    });
-});
-
-// Endpoint para excluir um estabelecimento
-app.delete('/api/estabelecimentos/:id', (req, res) => {
-    const id = req.params.id;
-    var sql = `DELETE FROM estabelecimento WHERE id = ${id}`;
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        res.status(200).send(`Estabelecimento com id ${id} excluído`);
-    });
-});
-
-// Endpoint para capturar um estabelecimento por ID
-app.get('/api/estabelecimentos/:id', (req, res) => {
-    const id = req.params.id;
-    let sql = `SELECT * FROM estabelecimento WHERE id = ${id}`;
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        res.status(200).json(result[0]);
-    });
-});
-
 
 //iniciando o servidor
 const port = 3001;
