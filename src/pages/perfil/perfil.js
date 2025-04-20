@@ -239,6 +239,28 @@ document.querySelectorAll("form").forEach(form => {
     });
 });
 
-function logout() {
-    window.location.href = "/logout";
+async function uploadFoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('foto', file);
+
+    try {
+        const response = await fetch('/api/usuarios/uploadFoto', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.mensagem || 'Upload feito com sucesso!');
+            document.getElementById('fotoPerfil').src = `/api/usuarios/foto?${Date.now()}`;
+        } else {
+            alert(data.erro || 'Erro ao enviar a foto');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Erro inesperado ao enviar a foto.');
+    }
 }

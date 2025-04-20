@@ -6,6 +6,8 @@ var app = express();
 const session = require('express-session');
 var mysql = require('mysql2');
 const nunjucks = require('nunjucks');
+const fs = require('fs');
+const path = require('path');
 const sessionMaxAge = 10 * 60 * 1000; // Expira após 10 minutos
 
 
@@ -97,6 +99,50 @@ app.get('/', (req, res) => {
     res.redirect('/src/pages/telaEntrada/telaentrada.html');
 });
 
+//endpoint para mostrar a foto de perfil vazia
+app.get('/api/usuarios/foto', (req, res) => {
+    const idUsuario = req.session.ID_usuario;
+
+    con.query('SELECT HEX(foto) AS foto FROM usuario WHERE ID_usuario = ?', [idUsuario], (err, result) => {
+        if (err || result.length === 0 || !result[0].foto) {
+            return res.redirect('/public/foto-placeholder.jpg'); //placeholder
+        }
+
+        const hex = result[0].foto;
+        const buffer = Buffer.from(hex, 'hex');
+
+        res.writeHead(200, {
+            'Content-Type': 'image/jpeg',
+            'Content-Length': buffer.length,
+        });
+        res.end(buffer);
+    });
+});
+
+//endpoint para upload de fotos de perfil
+app.post('/api/usuarios/uploadFoto', upload.single('foto'), async (req, res) => {
+    try {
+        const fotoBuffer = req.file?.buffer;
+
+        if (!fotoBuffer) {
+            return res.status(400).json({ erro: 'Imagem não enviada!' });
+        }
+
+        //converter para hexadecimal
+        const fotoHex = fotoBuffer.toString('hex');
+
+        const idUsuario = req.session.ID_usuario;
+        const sql = 'UPDATE usuario SET foto = UNHEX(?) WHERE ID_usuario = ?';
+        con.query(sql, [fotoHex, idUsuario]); 
+
+        res.status(200).json({ mensagem: 'Upload realizado com sucesso!' });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ erro: 'Erro ao salvar a imagem.' });
+    }
+});
+
 //endpoint para o fetch dos dados da sessão
 app.get('/api/session', (req, res) => {
     if (req.session.user_logged_in) {
@@ -181,6 +227,7 @@ app.delete('/api/usuarios/excluir', (req, res) => {
 app.put('/api/usuarios/update', (req, res) => {
     const { nick, email, cep, complemento, numero, telefone } = req.body;
     const idUsuario = req.session.ID_usuario;
+    const novaFoto = req.file ? req.file.buffer.toString('hex') : null;
 
     const getUserSql = 'SELECT * FROM usuario WHERE ID_usuario = ?';
     con.query(getUserSql, [idUsuario], (err, results) => {
@@ -256,6 +303,11 @@ app.put('/api/usuarios/update', (req, res) => {
                     valores.push(telefone);
                 }
 
+                if (novaFoto) {
+                    campos.push("foto = UNHEX(?)");
+                    valores.push(novaFoto);
+                }
+
                 if (campos.length === 0) {
                     return res.status(200).json({ message: 'Nenhum dado alterado.' });
                 }
@@ -268,7 +320,7 @@ app.put('/api/usuarios/update', (req, res) => {
                         console.error('Erro ao atualizar usuário:', err);
                         return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
                     }
-                
+
                     //atualiza a sessão com os novos dados
                     if (nick) req.session.nick = nick;
                     if (email) req.session.email = email;
@@ -276,7 +328,7 @@ app.put('/api/usuarios/update', (req, res) => {
                     if (complemento) req.session.complemento = complemento;
                     if (numero) req.session.numero = numero;
                     if (telefone) req.session.telefone = telefone;
-                
+
                     return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
                 });
             })

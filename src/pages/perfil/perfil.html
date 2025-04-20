@@ -24,14 +24,18 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="d-flex align-items-center">
                             <div class="position-relative me-3">
-                                <img src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
-                                    alt="Foto de Perfil" class="rounded-circle border border-light"
-                                    style="width: 96px; height: 96px; object-fit: cover;">
-                                <button class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle"
-                                    onclick="document.getElementById('inputFoto').click()" title="Alterar foto">
-                                    <i class="bi bi-camera-fill"></i>
-                                </button>
-                                <input type="file" id="inputFoto" accept="image/*" class="d-none" />
+                                <form>
+                                    <img id= "fotoPerfil" src="/api/usuarios/foto" alt="Foto de Perfil"
+                                        class="rounded-circle border border-light"
+                                        style="width: 96px; height: 96px; object-fit: cover;">
+                                    <button type="button"
+                                        class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle"
+                                        onclick="document.getElementById('inputFoto').click()" title="Alterar foto">
+                                        <input type="file" id="inputFoto" accept="image/*" class="d-none"
+                                            onchange="uploadFoto(this)" />
+                                        <i class="bi bi-camera-fill"></i>
+                                    </button>
+                                </form>
                             </div>
                             <div>
                                 <h4 class="mb-0 fw-bold text-white" id="nomeUsuario"></h4>
