@@ -25,7 +25,7 @@
                         <div class="d-flex align-items-center">
                             <div class="position-relative me-3">
                                 <form>
-                                    <img id= "fotoPerfil" src="/api/usuarios/foto" alt="Foto de Perfil"
+                                    <img id="fotoPerfil" src="/api/usuarios/foto" alt="Foto de Perfil"
                                         class="rounded-circle border border-light"
                                         style="width: 96px; height: 96px; object-fit: cover;">
                                     <button type="button"
@@ -151,18 +151,30 @@
                 <div class="modal-body">
                     <form id="formSenha">
                         <div class="mb-3">
-                            <label for="senhaAtual" class="form-label">Senha Atual</label>
-                            <input type="password" class="form-control OH-bg text-white" id="senha" required>
-                        </div>
-                        <div class="mb-3">
                             <label for="novaSenha" class="form-label">Nova Senha</label>
-                            <input type="password" class="form-control OH-bg text-white" id="novaSenha" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control OH-bg text-light" id="password" minlength="6"
+                                    required>
+                                <span class="input-group-text toggle-password OH-bg text-white" style="cursor: pointer;"
+                                    data-target="password">
+                                    <i class="bi bi-eye-slash"></i>
+                                </span>
+                            </div>
+                            <div class="invalid-feedback" id="feedbackSenha"></div>
                         </div>
                         <div class="mb-3">
                             <label for="confirmarSenha" class="form-label">Confirmar Nova Senha</label>
-                            <input type="password" class="form-control OH-bg text-white" id="confirmarSenha" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control OH-bg text-light" id="confirmPassword"
+                                    minlength="6" required>
+                                <span class="input-group-text toggle-password OH-bg text-white" style="cursor: pointer;"
+                                    data-target="confirmPassword">
+                                    <i class="bi bi-eye-slash"></i>
+                                </span>
+                            </div>
+                            <div class="invalid-feedback" id="feedbackSenhaDif"></div>
                         </div>
-                        <button type="submit" class="btn OH-btt1 text-white fw-bold">Salvar</button>
+                        <button type="submit" id="salvar" class="btn OH-btt1 text-white fw-bold">Salvar</button>
                     </form>
                 </div>
             </div>

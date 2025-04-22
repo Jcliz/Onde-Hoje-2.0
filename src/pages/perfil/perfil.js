@@ -103,6 +103,7 @@ async function atualizarDados() {
     const numero = document.getElementById('numero')?.value || sessionDataGlobal.numero;
     const complemento = document.getElementById('complemento')?.value || sessionDataGlobal.complemento;
     const telefone = document.getElementById('novoValorTel')?.value || sessionDataGlobal.telefone;
+    const senha = document.getElementById('password')?.value || sessionDataGlobal.senha;
 
     try {
         const response = await fetch("/api/usuarios/update", {
@@ -113,6 +114,7 @@ async function atualizarDados() {
             body: JSON.stringify({
                 nick,
                 email,
+                senha,
                 cep,
                 numero,
                 complemento,
@@ -263,4 +265,63 @@ async function uploadFoto(input) {
         console.error(err);
         alert('Erro inesperado ao enviar a foto.');
     }
+}
+
+function validarSenha() {
+    const senha = document.getElementById('password');
+    const confirmSenha = document.getElementById('confirmPassword');
+
+    const senhaError = document.getElementById('feedbackSenha');
+    const confirmSenhaError = document.getElementById('feedbackSenhaDif');
+
+    let isValid = true;
+
+    if (senha.value.length < 6) {
+        senha.classList.add('is-invalid');
+        senhaError.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
+        isValid = false;
+    } else {
+        senha.classList.remove('is-invalid');
+        senhaError.textContent = '';
+    }
+
+    //verifica se as senhas coincidem
+    if (confirmSenha.value !== senha.value || confirmSenha.value.length < 6) {
+        confirmSenha.classList.add('is-invalid');
+        confirmSenhaError.textContent = 'As senhas não coincidem ou são muito curtas.';
+        isValid = false;
+
+    } else {
+        confirmSenha.classList.remove('is-invalid');
+        confirmSenhaError.textContent = '';
+    }
+
+    return isValid;
+}
+
+document.getElementById('password').addEventListener('focusout', validarSenha);
+document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
+
+//olho para mostrar a senha
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', function () {
+
+        const targetId = this.getAttribute('data-target');
+        const targetInput = document.getElementById(targetId);
+
+        if (targetInput.type === 'password') {
+            targetInput.type = 'text';
+            this.querySelector('i').classList.remove('bi-eye-slash');
+            this.querySelector('i').classList.add('bi-eye');
+
+        } else {
+            targetInput.type = 'password';
+            this.querySelector('i').classList.remove('bi-eye');
+            this.querySelector('i').classList.add('bi-eye-slash');
+        }
+    });
+});
+
+function logout() {
+    window.location.href = "/logout"
 }

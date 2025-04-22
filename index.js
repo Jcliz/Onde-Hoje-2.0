@@ -149,13 +149,14 @@ app.get('/api/session', (req, res) => {
         res.json({
             estaAutenticado: true,
             ID_usuario: req.session.ID_usuario,
-            nomeUsuario: req.session.nomeUsuario || "Usuário",
+            nomeUsuario: req.session.nomeUsuario,
             email: req.session.email,
             telefone: req.session.telefone,
             cep: req.session.cep,
             numero: req.session.numero,
             complemento: req.session.complemento,
-            nick: req.session.nick
+            nick: req.session.nick,
+            senha: req.session.senha
         });
     } else {
         res.json({ estaAutenticado: false });
@@ -174,7 +175,6 @@ app.get('/logout', (req, res) => {
 app.delete('/api/usuarios/excluir', (req, res) => {
     const { id } = req.body;
 
-    // Passo 1: Buscar todos os ID_rating das avaliações do usuário
     const buscarRatings = 'SELECT ID_rating FROM avaliacao WHERE fk_ID_usuario = ?';
 
     con.query(buscarRatings, [id], (err, results) => {
@@ -186,7 +186,8 @@ app.delete('/api/usuarios/excluir', (req, res) => {
         const ratingIds = results.map(row => row.ID_rating);
 
         if (ratingIds.length === 0) {
-            continuarExclusao(); // se não houver avaliações, só continua
+            continuarExclusao();
+
         } else {
             //deletar eventos associados às avaliações
             const deletarEventos = 'DELETE FROM evento WHERE fk_ID_rating IN (?)';
@@ -196,7 +197,7 @@ app.delete('/api/usuarios/excluir', (req, res) => {
                     return res.status(500).json({ message: 'Erro ao excluir eventos relacionados às avaliações.' });
                 }
 
-                continuarExclusao(); //segue para deletar avaliações e usuário
+                continuarExclusao();
             });
         }
 
@@ -225,7 +226,7 @@ app.delete('/api/usuarios/excluir', (req, res) => {
 
 //update de usuário
 app.put('/api/usuarios/update', (req, res) => {
-    const { nick, email, cep, complemento, numero, telefone } = req.body;
+    const { nick, email, senha, cep, complemento, numero, telefone } = req.body;
     const idUsuario = req.session.ID_usuario;
     const novaFoto = req.file ? req.file.buffer.toString('hex') : null;
 
@@ -285,6 +286,10 @@ app.put('/api/usuarios/update', (req, res) => {
                 if (email && email !== user.email) {
                     campos.push("email = ?");
                     valores.push(email);
+                }
+                if (senha && senha !== user.senha) {
+                    campos.push("senha = MD5(?)")
+                    valores.push(senha)
                 }
                 if (cep && cep !== user.cep) {
                     campos.push("cep = ?");
@@ -360,6 +365,7 @@ app.post('/api/login', (req, res) => {
             req.session.numero = result[0].numero;
             req.session.complemento = result[0].complemento;
             req.session.nick = result[0].nick;
+            req.session.senha = result[0].senha;
 
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {
