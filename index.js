@@ -256,7 +256,7 @@ app.put('/api/usuarios/update', (req, res) => {
             verificacoes.push(new Promise((resolve, reject) => {
                 con.query('SELECT * FROM usuario WHERE email = ? AND ID_usuario != ?', [email, idUsuario], (err, result) => {
                     if (err) reject('Erro ao verificar email');
-                    else if (result.length > 0) reject('Email já cadastrado');
+                    else if (result.length > 0) reject('Email já cadastrado.');
                     else resolve();
                 });
             }));
@@ -267,6 +267,36 @@ app.put('/api/usuarios/update', (req, res) => {
                 con.query('SELECT * FROM usuario WHERE nick = ? AND ID_usuario != ?', [nick, idUsuario], (err, result) => {
                     if (err) reject('Erro ao verificar nick');
                     else if (result.length > 0) reject('Nick já cadastrado');
+                    else resolve();
+                });
+            }));
+        }
+
+        if (nick && nick === user.nick) {
+            verificacoes.push(Promise.reject('Você já está utilizando esse nick.'));
+        }
+
+        if (email && email === user.email) {
+            verificacoes.push(Promise.reject('Você já está utilizando esse e-mail.'));
+        }
+
+        if (numero && numero === user.numero) {
+            verificacoes.push(Promise.reject('Você já está utilizando esse número.'));
+        }
+
+        if (complemento && complemento === user.complemento) {
+            verificacoes.push(Promise.reject('Você já está utilizando esse complemento.'));
+        }
+
+        if (telefone && telefone === user.telefone) {
+            verificacoes.push(Promise.reject('Você já está utilizando esse telefone.'));
+        }
+
+        if (senha) {
+            verificacoes.push(new Promise((resolve, reject) => {
+                con.query('SELECT senha FROM usuario WHERE senha = MD5(?) AND ID_usuario = ?', [senha, idUsuario], (err, result) => {
+                    if (err) reject('Erro ao verificar a nova senha');
+                    else if (result.length > 0) reject('Senha já cadastrada anteriormente');
                     else resolve();
                 });
             }));

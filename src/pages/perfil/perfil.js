@@ -95,13 +95,13 @@ async function excluirConta() {
 }
 
 async function atualizarDados() {
-    const nick = document.getElementById('novoValorNick')?.value || sessionDataGlobal.nick;
-    const email = document.getElementById('novoValorEmail')?.value || sessionDataGlobal.email;
-    const cep = document.getElementById('novoValorCEP')?.value || sessionDataGlobal.cep;
-    const numero = document.getElementById('numero')?.value || sessionDataGlobal.numero;
-    const complemento = document.getElementById('complemento')?.value || sessionDataGlobal.complemento;
-    const telefone = document.getElementById('novoValorTel')?.value || sessionDataGlobal.telefone;
-    const senha = document.getElementById('password')?.value || sessionDataGlobal.senha;
+    const nick = document.getElementById('novoValorNick')?.value;
+    const email = document.getElementById('novoValorEmail')?.value;
+    const cep = document.getElementById('novoValorCEP')?.value;
+    const numero = document.getElementById('numero')?.value;
+    const complemento = document.getElementById('complemento')?.value;
+    const telefone = document.getElementById('novoValorTel')?.value;
+    const senha = document.getElementById('password')?.value;
 
     const response = await fetch("/api/usuarios/update", {
         method: 'PUT',
