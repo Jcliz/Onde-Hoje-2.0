@@ -30,7 +30,7 @@
                                         style="width: 96px; height: 96px; object-fit: cover;">
                                     <button type="button"
                                         class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle"
-                                        onclick="document.getElementById('inputFoto').click()" title="Alterar foto">
+                                        onclick="document.getElementById('inputFoto').click();" title="Alterar foto">
                                         <input type="file" id="inputFoto" accept="image/*" class="d-none"
                                             onchange="uploadFoto(this)" />
                                         <i class="bi bi-camera-fill"></i>
@@ -155,7 +155,7 @@
                             <div class="input-group">
                                 <input type="password" class="form-control OH-bg text-light" id="password" minlength="6"
                                     required>
-                                <span class="input-group-text toggle-password OH-bg text-white" style="cursor: pointer;"
+                                <span class="input-group-text toggle-password-modal OH-bg text-white" style="cursor: pointer;"
                                     data-target="password">
                                     <i class="bi bi-eye-slash"></i>
                                 </span>
@@ -167,7 +167,7 @@
                             <div class="input-group">
                                 <input type="password" class="form-control OH-bg text-light" id="confirmPassword"
                                     minlength="6" required>
-                                <span class="input-group-text toggle-password OH-bg text-white" style="cursor: pointer;"
+                                <span class="input-group-text toggle-password-modal OH-bg text-white" style="cursor: pointer;"
                                     data-target="confirmPassword">
                                     <i class="bi bi-eye-slash"></i>
                                 </span>

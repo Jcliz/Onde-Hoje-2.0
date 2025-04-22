@@ -151,12 +151,12 @@ app.get('/api/session', (req, res) => {
             ID_usuario: req.session.ID_usuario,
             nomeUsuario: req.session.nomeUsuario,
             email: req.session.email,
+            senha: req.session.senha,
             telefone: req.session.telefone,
             cep: req.session.cep,
             numero: req.session.numero,
             complemento: req.session.complemento,
-            nick: req.session.nick,
-            senha: req.session.senha
+            nick: req.session.nick
         });
     } else {
         res.json({ estaAutenticado: false });
@@ -329,6 +329,7 @@ app.put('/api/usuarios/update', (req, res) => {
                     //atualiza a sessão com os novos dados
                     if (nick) req.session.nick = nick;
                     if (email) req.session.email = email;
+                    if (senha) req.session.senha = senha;
                     if (cep) req.session.cep = cep;
                     if (complemento) req.session.complemento = complemento;
                     if (numero) req.session.numero = numero;

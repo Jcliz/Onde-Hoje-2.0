@@ -1,6 +1,6 @@
 let sessionDataGlobal = null; //salvamento dos dados da sessão globalmente
 
-document.addEventListener("DOMContentLoaded", async function () {
+async function carregarDados() {
     try {
         const response = await fetch("/api/session");
         const sessionData = await response.json();
@@ -40,20 +40,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Erro ao verificar sessão:", error);
     }
 
-    // Toggle campos sensíveis
     document.querySelectorAll(".toggle-password").forEach(button => {
         const targetSpan = document.getElementById(button.dataset.target);
 
-        // Salva o texto original antes de esconder
         if (!targetSpan.dataset.originalText) {
             targetSpan.dataset.originalText = targetSpan.textContent;
         }
 
-        // Começa com os dados ocultos
+        //começa com os dados ocultos
         targetSpan.textContent = "••••••••";
         targetSpan.dataset.visible = "false";
 
-        // Agora adiciona o listener
         button.addEventListener("click", () => {
             const visible = targetSpan.dataset.visible === "true";
             targetSpan.dataset.visible = String(!visible);
@@ -67,7 +64,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 : `<i class="bi bi-eye"></i>`;
         });
     });
-});
+}
+
+document.addEventListener("DOMContentLoaded", carregarDados());
 
 async function excluirConta() {
     const id = sessionDataGlobal.ID_usuario;
@@ -82,7 +81,6 @@ async function excluirConta() {
         });
 
         if (response.ok) {
-            const data = await response.json();
             alert('Conta deletada com sucesso. Sentiremos a sua falta :(');
             sessionDataGlobal.estaAutenticado = false;
             window.location.href = '/logout';
@@ -105,33 +103,30 @@ async function atualizarDados() {
     const telefone = document.getElementById('novoValorTel')?.value || sessionDataGlobal.telefone;
     const senha = document.getElementById('password')?.value || sessionDataGlobal.senha;
 
-    try {
-        const response = await fetch("/api/usuarios/update", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nick,
-                email,
-                senha,
-                cep,
-                numero,
-                complemento,
-                telefone
-            })
-        });
+    const response = await fetch("/api/usuarios/update", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            nick,
+            email,
+            senha,
+            cep,
+            numero,
+            complemento,
+            telefone
+        })
+    });
 
-        if (response.ok) {
-            alert("Dados atualizados com sucesso!");
-            location.reload();
-        } else {
-            const errorData = await response.json();
-            alert(errorData.message || 'Erro ao atualizar os dados.');
-        }
-    } catch (err) {
-        console.error('Erro:', err);
-        alert('Erro na atualização de dados. Tente novamente.');
+    if (response.ok) {
+        location.reload();
+        return response;
+
+    } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Erro ao atualizar os dados.');
+        throw new Error(errorData.message || 'Erro ao atualizar os dados.');
     }
 }
 
@@ -143,7 +138,7 @@ async function abrirModal(campoId, label) {
     let novoValorTel = document.getElementById('novoValorTel');
     let novoValorEmail = document.getElementById('novoValorEmail');
 
-    // Reseta erros
+    //reseta erros
     [novoValorCEP, novoValorTel, novoValorEmail].forEach(el => el?.classList.remove('is-invalid'));
 
     if (campoId === 'endereco') {
@@ -180,20 +175,16 @@ async function abrirModal(campoId, label) {
 
             if (raw.length === 11) {
                 if (raw[2] === '9') {
-                    // Celular válido
                     formatted = raw.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
                     novoValorTel.classList.remove('is-invalid');
                 } else {
-                    // 11 dígitos, mas não é celular válido
                     novoValorTel.classList.add('is-invalid');
                     return;
                 }
             } else if (raw.length === 10) {
-                // Fixo válido
                 formatted = raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
                 novoValorTel.classList.remove('is-invalid');
             } else {
-                // Número inválido
                 novoValorTel.classList.add('is-invalid');
                 return;
             }
@@ -222,22 +213,26 @@ async function abrirModal(campoId, label) {
 }
 
 document.querySelectorAll("form").forEach(form => {
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         const invalidFields = form.querySelectorAll(".is-invalid");
         if (invalidFields.length > 0) {
-            e.preventDefault(); //cancela envio
+            e.preventDefault(); // cancela envio
             e.stopPropagation();
             alert("Por favor, corrija os campos inválidos antes de salvar.");
             return;
-        } else {
-            atualizarDados();
         }
+
+        e.preventDefault();
+
+        await atualizarDados();
 
         const modalId = form.closest(".modal")?.id;
         if (modalId) {
             const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             modal.hide();
         }
+
+        alert("Dados atualizados com sucesso!");
     });
 });
 
@@ -255,6 +250,7 @@ async function uploadFoto(input) {
         });
 
         const data = await response.json();
+
         if (response.ok) {
             alert(data.mensagem || 'Upload feito com sucesso!');
             document.getElementById('fotoPerfil').src = `/api/usuarios/foto?${Date.now()}`;
@@ -303,7 +299,7 @@ document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
 //olho para mostrar a senha
-document.querySelectorAll('.toggle-password').forEach(icon => {
+document.querySelectorAll('.toggle-password-modal').forEach(icon => {
     icon.addEventListener('click', function () {
 
         const targetId = this.getAttribute('data-target');
