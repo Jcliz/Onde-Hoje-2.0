@@ -1,0 +1,35 @@
+body {
+  background-color: #313338;
+  color: #fff;
+}
+
+.card {
+  background-color: #1e1f22;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #4f545c;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5c6370;
+}
+
+.btn-primary {
+  background-color: #5865f2;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #4752c4;
+}
+
+#cep, #novoValorTel, #email, #confirmacao {
+  color: white;
+}
+
+#modalCep input::placeholder, #modalTelefone input::placeholder, #modalEmail input::placeholder, #editarModal input::placeholder, #modalExclusao input::placeholder {
+  color: rgb(255, 255, 255, 0.7) !important;
+}
