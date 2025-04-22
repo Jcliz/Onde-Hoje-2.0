@@ -137,9 +137,10 @@ async function abrirModal(campoId, label) {
     let novoValorCEP = document.getElementById('novoValorCEP');
     let novoValorTel = document.getElementById('novoValorTel');
     let novoValorEmail = document.getElementById('novoValorEmail');
+    let confirmacao = document.getElementById('confirmacao');
 
     //reseta erros
-    [novoValorCEP, novoValorTel, novoValorEmail].forEach(el => el?.classList.remove('is-invalid'));
+    [novoValorCEP, novoValorTel, novoValorEmail, confirmacao].forEach(el => el?.classList.remove('is-invalid'));
 
     if (campoId === 'endereco') {
         document.getElementById('labelCampoCEP').innerText = `Novo(a) ${label}`;
@@ -206,6 +207,19 @@ async function abrirModal(campoId, label) {
                 novoValorEmail.classList.remove('is-invalid');
             }
         });
+    } else if (campoId == 'exclusao') {
+        document.getElementById('labelCampoExclusao').innerText = label;
+        const modal = new bootstrap.Modal(document.getElementById('modalExclusao'));
+        modal.show();
+
+        confirmacao.addEventListener('input', () => {
+            if (confirmacao.value.trim() !== sessionDataGlobal.nick) {
+                confirmacao.classList.add('is-invalid');
+            } else {
+                confirmacao.classList.remove('is-invalid');
+            }
+        });
+
     } else {
         const modal = new bootstrap.Modal(document.getElementById('editarModal'));
         modal.show();
@@ -216,23 +230,27 @@ document.querySelectorAll("form").forEach(form => {
     form.addEventListener('submit', async function (e) {
         const invalidFields = form.querySelectorAll(".is-invalid");
         if (invalidFields.length > 0) {
-            e.preventDefault(); // cancela envio
+            e.preventDefault();
             e.stopPropagation();
-            alert("Por favor, corrija os campos inválidos antes de salvar.");
+            alert("Por favor, corrija os campos inválidos antes de continuar.");
             return;
         }
 
         e.preventDefault();
 
-        await atualizarDados();
+        if (form.id === 'formEditarExcluir') {
+            excluirConta(); //só executa essa função
+        } else {
+            await atualizarDados();
+            alert("Dados atualizados com sucesso!");
+        }
 
+        // Fecha o modal sempre, independente de qual form for
         const modalId = form.closest(".modal")?.id;
         if (modalId) {
             const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             modal.hide();
         }
-
-        alert("Dados atualizados com sucesso!");
     });
 });
 
@@ -295,8 +313,8 @@ function validarSenha() {
     return isValid;
 }
 
-document.getElementById('password').addEventListener('focusout', validarSenha);
-document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
+document.getElementById('password').addEventListener('input', validarSenha);
+document.getElementById('confirmPassword').addEventListener('input', validarSenha);
 
 //olho para mostrar a senha
 document.querySelectorAll('.toggle-password-modal').forEach(icon => {
