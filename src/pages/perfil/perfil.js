@@ -7,7 +7,7 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            alert("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
+            showModal("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
             window.location.href = "/src/pages/login/login.html";
             return;
         }
@@ -81,16 +81,16 @@ async function excluirConta() {
         });
 
         if (response.ok) {
-            alert('Conta deletada com sucesso. Sentiremos a sua falta :(');
+            showModal('Conta deletada com sucesso. Sentiremos a sua falta :(');
             sessionDataGlobal.estaAutenticado = false;
             window.location.href = '/logout';
         } else {
             const errorData = await response.json();
-            alert(errorData.message || 'Erro ao excluir a conta.');
+            showModal(errorData.message || 'Erro ao excluir a conta.');
         }
     } catch (err) {
         console.error('Erro:', err);
-        alert('Erro na exclusão de usuário. Tente novamente.');
+        showModal('Erro na exclusão de usuário. Tente novamente.');
     }
 }
 
@@ -125,7 +125,7 @@ async function atualizarDados() {
 
     } else {
         const errorData = await response.json();
-        alert(errorData.message || 'Erro ao atualizar os dados.');
+        showModal(errorData.message || 'Erro ao atualizar os dados.');
         throw new Error(errorData.message || 'Erro ao atualizar os dados.');
     }
 }
@@ -232,7 +232,7 @@ document.querySelectorAll("form").forEach(form => {
         if (invalidFields.length > 0) {
             e.preventDefault();
             e.stopPropagation();
-            alert("Por favor, corrija os campos inválidos antes de continuar.");
+            showModal("Por favor, corrija os campos inválidos antes de continuar.");
             return;
         }
 
@@ -242,7 +242,7 @@ document.querySelectorAll("form").forEach(form => {
             excluirConta(); //só executa essa função
         } else {
             await atualizarDados();
-            alert("Dados atualizados com sucesso!");
+            showModal("Dados atualizados com sucesso!");
         }
 
         // Fecha o modal sempre, independente de qual form for
@@ -270,14 +270,14 @@ async function uploadFoto(input) {
         const data = await response.json();
 
         if (response.ok) {
-            alert(data.mensagem || 'Upload feito com sucesso!');
+            showModal(data.mensagem || 'Upload feito com sucesso!');
             document.getElementById('fotoPerfil').src = `/api/usuarios/foto?${Date.now()}`;
         } else {
-            alert(data.erro || 'Erro ao enviar a foto');
+            showModal(data.erro || 'Erro ao enviar a foto');
         }
     } catch (err) {
         console.error(err);
-        alert('Erro inesperado ao enviar a foto.');
+        showModal('Erro inesperado ao enviar a foto.');
     }
 }
 
@@ -338,4 +338,30 @@ document.querySelectorAll('.toggle-password-modal').forEach(icon => {
 
 function logout() {
     window.location.href = "/logout"
+}
+
+function showModal(message) {
+    console.log(message);  // Verifique se a mensagem está sendo passada corretamente.
+
+    // Fechar qualquer modal já aberto
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        if (bootstrapModal) {
+            bootstrapModal.hide();
+        }
+    });
+
+    // Limpar os campos de input dentro do modal (caso existam)
+    const inputs = document.querySelectorAll('#alert-modal input');
+    inputs.forEach(input => {
+        input.value = ''; // Limpa o valor do input
+    });
+
+    // Exibir o novo modal
+    const modalMessage = document.getElementById('modal-message');
+    const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
+    
+    modalMessage.textContent = message;  // Aqui o texto é atribuído
+    modal.show();
 }

@@ -23,7 +23,7 @@
           <div class="col-md-10">
             <div class="card shadow-lg OH-dark" style="border-radius: 15px;">
               <div class="card-body text-white">
-                <form id="cadastroForm" onsubmit="processarCadastro(event);">
+                <form id="cadastroForm" onsubmit="processarCadastro(event);" >
                   <div class="row">
                     <div class="col-lg-6 p-4">
                       <h3 class="fw-normal text-light">Informações Pessoais</h3>
@@ -169,12 +169,10 @@
                       </div>
                       <div class="row mb-3 mt-2">
                         <div class="col-md-6">
-                          <button id="continue" type="submit" class="btn btn-secondary fw-bold w-100 mb-3"
-                            style="background-color: #CCA281; border-color: #CCA281;">Continue</button>
+                          <button id="continue" type="submit" class="btn text-white OH-btt2 fw-bold w-100 mb-3">Continue</button>
                         </div>
                         <div class="col-md-6">
-                          <button type="reset" class="btn btn-secondary fw-bold w-100 mb-3"
-                            style="background-color: #CCA281; border-color: #CCA281;">Limpar</button>
+                          <button type="reset" class="btn text-white OH-btt2 fw-bold w-100 mb-3">Limpar</button>
                         </div>
                       </div>
                     </div>
@@ -188,6 +186,25 @@
     </section>
   </main>
   <div id="footer-container"></div>
+
+  <div id="alert-modal" class="modal justify-content-center" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content OH-bg">
+        <div class="modal-header">
+          <h5 class="modal-title text-white">Aviso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-white">
+          <p id="modal-message"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="OH-btt2 btn text-white" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
 
   <script src="/components/header.js" defer></script>
   <script src="/components/footer.js" defer></script>

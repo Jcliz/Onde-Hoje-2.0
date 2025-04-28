@@ -39,7 +39,7 @@ function processarCadastro(event) {
   if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido && telefoneValido) {
     enviarDados(nome, nick, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
   } else {
-    alert('Por favor, corrija os erros antes de continuar.');
+    showModal('Por favor, corrija os erros antes de continuar.');
     submitButton.disabled = false;
   }
 }
@@ -72,15 +72,15 @@ async function cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, nu
 
     if (response.ok) {
       const data = await response.json();
-      alert('Usuário cadastrado com sucesso!');
-      window.location.href = '/login/login.html';
+      showModal('Usuário cadastrado com sucesso!');
+      window.location.href = '/src/pages/telaEntrada/telaentrada.html';
     } else {
       const errorData = await response.json();
-      alert(errorData.message || 'Erro ao cadastrar o usuário.');
+      showModal(errorData.message || 'Erro ao cadastrar o usuário.');
     }
   } catch (error) {
     console.error('Erro:', error);
-    alert('Erro ao enviar os dados. Tente novamente.');
+    showModal('Erro ao enviar os dados. Tente novamente.');
   } finally {
     document.querySelector('#continue').disabled = false;
   }
@@ -387,4 +387,12 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
     }
   });
 });
+
+function showModal(message) {
+  const modalMessage = document.getElementById('modal-message');
+  const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
+  
+  modalMessage.textContent = message;
+  modal.show();
+}
 
