@@ -90,25 +90,47 @@ function validarSenha() {
   const senha = document.getElementById('password');
   const confirmSenha = document.getElementById('confirmPassword');
 
-  const senhaError = document.getElementById('feedbackSenha');
+  const popup = document.getElementById('password-popup');
+  const popupList = document.getElementById('password-popup-list');
   const confirmSenhaError = document.getElementById('feedbackSenhaDif');
 
   let isValid = true;
+  let mensagensErro = [];
 
-  // Verifica se a senha tem pelo menos 6 caracteres
-  if (senha.value.length < 6) {
+  const valorSenha = senha.value;
+
+  // Validações dos requisitos
+  if (valorSenha.length < 8) {
+    mensagensErro.push('Pelo menos 8 caracteres');
+  }
+  if (!/[A-Z]/.test(valorSenha)) {
+    mensagensErro.push('Pelo menos uma letra maiúscula');
+  }
+  if (!/[a-z]/.test(valorSenha)) {
+    mensagensErro.push('Pelo menos uma letra minúscula');
+  }
+  if (!/\d/.test(valorSenha)) {
+    mensagensErro.push('Pelo menos um número');
+  }
+  if (!/[!@#$%^&*]/.test(valorSenha)) {
+    mensagensErro.push('Pelo menos um caractere especial (!@#$%^&*)');
+  }
+
+  // Atualiza o popup
+  if (mensagensErro.length > 0) {
+    popup.style.display = 'block';
+    popupList.innerHTML = mensagensErro.map(msg => `<li>${msg}</li>`).join('');
     senha.classList.add('is-invalid');
-    senhaError.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
     isValid = false;
   } else {
+    popup.style.display = 'none';
     senha.classList.remove('is-invalid');
-    senhaError.textContent = '';
   }
 
   // Verifica se as senhas coincidem
-  if (confirmSenha.value !== senha.value || confirmSenha.value.length < 6) {
+  if (confirmSenha.value !== valorSenha || confirmSenha.value.length < 8) {
     confirmSenha.classList.add('is-invalid');
-    confirmSenhaError.textContent = 'As senhas não coincidem ou são muito curtas.';
+    confirmSenhaError.textContent = 'As senhas não coincidem ou não atendem aos requisitos.';
     isValid = false;
   } else {
     confirmSenha.classList.remove('is-invalid');
@@ -118,8 +140,19 @@ function validarSenha() {
   return isValid;
 }
 
+// Valida ao sair do campo
 document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
+
+// Para esconder o popup quando o campo perde o foco
+document.getElementById('password').addEventListener('blur', function() {
+  setTimeout(() => { // pequeno delay para não sumir antes de validar
+    document.getElementById('password-popup').style.display = 'none';
+  }, 200);
+});
+
+// Para mostrar o popup enquanto digita
+document.getElementById('password').addEventListener('input', validarSenha);
 
 //verificação de CEP e auto completamento
 async function validarCEP(input) {
@@ -354,3 +387,4 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
     }
   });
 });
+
