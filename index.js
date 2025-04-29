@@ -68,7 +68,7 @@ app.use(express.static(__dirname));
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "123456",
+    password: "1234",
     database: "ondehoje2"
 });
 

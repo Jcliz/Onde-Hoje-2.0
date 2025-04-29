@@ -16,15 +16,15 @@ async function loginUsuario() {
 
     if (response.ok) {
       const data = await response.json();
-      alert('Login bem-sucedido!');
+      showModal('Login bem-sucedido!');
       window.location.href = '/src/pages/telaEntrada/telaentrada.html';
     } else {
       const errorData = await response.json();
-      alert(errorData.message || 'Erro ao realizar login.');
+      showModal(errorData.message || 'Erro ao realizar login.');
     }
   } catch (error) {
     console.error('Erro:', error);
-    alert('Erro ao tentar logar. Tente novamente.');
+    showModal('Erro ao tentar logar. Tente novamente.');
   }
 }
 
@@ -70,3 +70,11 @@ function validarEmail(input) {
 document.getElementById('email').addEventListener('focusout', function () {
   validarEmail(this);
 });
+
+function showModal(message) {
+  const modalMessage = document.getElementById('modal-message');
+  const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
+  
+  modalMessage.textContent = message;
+  modal.show();
+}

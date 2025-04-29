@@ -6,6 +6,12 @@ body {
     flex-direction: column;
 }
 
+/* Se quiser adicionar mais customizações */
+.modal {
+    display: none;
+  }
+
+  
 main {
     flex: 1;
     display: flex;
