@@ -17,7 +17,10 @@ async function loginUsuario() {
     if (response.ok) {
       const data = await response.json();
       showModal('Login bem-sucedido!');
-      window.location.href = '/src/pages/telaEntrada/telaentrada.html';
+      
+      setTimeout(() => {
+        window.location.href = '/src/pages/telaEntrada/telaentrada.html';
+      }, 3000); 
     } else {
       const errorData = await response.json();
       showModal(errorData.message || 'Erro ao realizar login.');

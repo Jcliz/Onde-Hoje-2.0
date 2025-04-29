@@ -73,11 +73,14 @@ async function cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, nu
     if (response.ok) {
       const data = await response.json();
       showModal('Usuário cadastrado com sucesso!');
-      window.location.href = '/src/pages/telaEntrada/telaentrada.html';
+      
+      setTimeout(() => {
+        window.location.href = '/src/pages/login/login.html';
+      }, 3000); 
     } else {
       const errorData = await response.json();
       showModal(errorData.message || 'Erro ao cadastrar o usuário.');
-    }
+    }    
   } catch (error) {
     console.error('Erro:', error);
     showModal('Erro ao enviar os dados. Tente novamente.');
