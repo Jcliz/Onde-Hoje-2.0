@@ -1,49 +1,10 @@
-function validarSenha() {
-  console.log('chamou a validação');
+const email = document.getElementById('email').value.trim();
+const senha = document.getElementById('password').value.trim();
 
-  const email = document.getElementById('email').value;
-  const senha = document.getElementById('senha').value;
-  const senhaConfirm = document.getElementById('senhaConfirm').value;
+async function loginUsuario() {
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('password').value.trim();
 
-  // Esconde os labels de erro antes de verificar
-  document.getElementById('campoObrigatorio').style.display = 'none';
-  document.getElementById('senhaTamanho').style.display = 'none';
-  document.getElementById('senhaPadrao').style.display = 'none';
-
-  // Verifica se os campos de email ou senha estão vazios
-  if (!email || !senha || !senhaConfirm) {
-    console.log('campos vazios');
-    document.getElementById('campoObrigatorio').style.display = 'block';
-    return false;
-  }
-
-  // Verifica o tamanho da senha
-  if (senha.length < 8 || senha.length > 16) {
-    console.log('tamanho da senha inválido');
-    document.getElementById('senhaTamanho').style.display = 'block';
-    return false;
-  }
-
-  // Verifica se a senha atende ao padrão (letra maiúscula e caractere especial)
-  if (!senha.match(/[A-Z]/) || !senha.match(/[^A-Za-z0-9]/)) {
-    console.log('senha não atende ao padrão');
-    document.getElementById('senhaPadrao').style.display = 'block';
-    return false;
-  }
-
-  // Verifica se a confirmação da senha é igual à senha
-  if (senha.trim() !== senhaConfirm.trim()) {
-    console.log('as senhas não coincidem');
-    document.getElementById('senhaObrigatorio').style.display = 'block'; 
-    return false;
-}
-
-  console.log('email: ' + email);
-  console.log('senha: ' + senha);
-  return true; // Retorna true se a validação for bem-sucedida
-}
-
-async function loginUsuario(email, senha) {
   try {
     const response = await fetch('/api/login', {
       method: 'POST',
@@ -55,94 +16,65 @@ async function loginUsuario(email, senha) {
 
     if (response.ok) {
       const data = await response.json();
-      alert('Login bem-sucedido!');
-      window.location.href = '/TelaInicial/telainicial.html';
+      showModal('Login bem-sucedido!');
+      window.location.href = '/src/pages/telaEntrada/telaentrada.html';
     } else {
       const errorData = await response.json();
-      alert(errorData.message || 'Erro ao realizar login.'); // Mensagem de fallback
+      showModal(errorData.message || 'Erro ao realizar login.');
     }
-    
   } catch (error) {
     console.error('Erro:', error);
-    alert('Erro ao tentar logar. Tente novamente.');
+    showModal('Erro ao tentar logar. Tente novamente.');
   }
 }
 
-function enviarDados() {
-  const email = document.getElementById('email').value.trim();
-  const senha = document.getElementById('senha').value.trim();
-
-  console.log('Chamando loginUsuario com email:', email); // Log para verificar
-
-  // Chama a função de login ao invés de cadastrar usuário
-  loginUsuario(email, senha);
-}
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  var inputs = document.querySelectorAll('.form-control');
-
-  inputs.forEach(function (input) {
-    var label = input.previousElementSibling;
-
-    input.addEventListener('focus', function () {
-      input.classList.add('active');
-      label.classList.add('active');
-    });
-
-    input.addEventListener('blur', function () {
-      if (input.value.trim() === '') {
-        input.classList.remove('active');
-        label.classList.remove('active');
-      }
-    });
-
-    if (input.value.trim() !== '') {
-      input.classList.add('active');
-      label.classList.add('active');
-    }
-  });
+document.querySelector('form').addEventListener('submit', function (event) {
+  event.preventDefault();
+  loginUsuario();
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-  var inputs = document.querySelectorAll('.password-form');
-
-  inputs.forEach(function (input) {
-    var label = input.previousElementSibling;
-
-    input.addEventListener('focus', function () {
-      input.classList.add('active');
-      label.classList.add('active');
-    });
-
-    input.addEventListener('blur', function () {
-      if (input.value.trim() === '') {
-        input.classList.remove('active');
-        label.classList.remove('active');
-      }
-    });
-
-    if (input.value.trim() !== '') {
-      input.classList.add('active');
-      label.classList.add('active');
-    }
-  });
-});
-
+//alternar visibilidade da senha
 document.querySelectorAll('.toggle-password').forEach(icon => {
   icon.addEventListener('click', function () {
-
     const targetId = this.getAttribute('data-target');
     const targetInput = document.getElementById(targetId);
 
     if (targetInput.type === 'password') {
       targetInput.type = 'text';
-      this.querySelector('i').classList.remove('bi-eye-slash'); // Remove a classe de olho fechado
-      this.querySelector('i').classList.add('bi-eye'); // Adiciona a classe de olho aberto
+      this.querySelector('i').classList.remove('bi-eye-slash');
+      this.querySelector('i').classList.add('bi-eye');
     } else {
       targetInput.type = 'password';
-      this.querySelector('i').classList.remove('bi-eye'); // Remove a classe de olho aberto
-      this.querySelector('i').classList.add('bi-eye-slash'); // Adiciona a classe de olho fechado
+      this.querySelector('i').classList.remove('bi-eye');
+      this.querySelector('i').classList.add('bi-eye-slash');
     }
   });
 });
+
+//validação de e-mail
+function validarEmail(input) {
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (input.value.length < 5 || input.value.length > 50) {
+    input.classList.add('is-invalid');
+    return false;
+  } else if (emailValid.test(input.value)) {
+    input.classList.remove('is-invalid');
+    return true;
+  } else {
+    input.classList.add('is-invalid');
+    return false;
+  }
+}
+
+document.getElementById('email').addEventListener('focusout', function () {
+  validarEmail(this);
+});
+
+function showModal(message) {
+  const modalMessage = document.getElementById('modal-message');
+  const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
+  
+  modalMessage.textContent = message;
+  modal.show();
+}
