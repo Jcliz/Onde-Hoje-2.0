@@ -139,7 +139,6 @@ async function abrirModal(campoId, label) {
     let novoValorEmail = document.getElementById('novoValorEmail');
     let confirmacao = document.getElementById('confirmacao');
 
-    //reseta erros
     [novoValorCEP, novoValorTel, novoValorEmail, confirmacao].forEach(el => el?.classList.remove('is-invalid'));
 
     if (campoId === 'endereco') {
@@ -225,6 +224,136 @@ async function abrirModal(campoId, label) {
         modal.show();
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnEditarTudo = document.getElementById('btnEditarTudo');
+    const modalEditarTudoElement = document.getElementById('modalEditarTudo');
+    const modalEditarTudo = new bootstrap.Modal(modalEditarTudoElement);
+    const formEditarTudo = document.getElementById('formEditarTudo');
+    const camposExibicao = {
+        nick: document.getElementById('nick'),
+        email: document.getElementById('email'),
+        endereco: document.getElementById('endereco'),
+        telefone: document.getElementById('telefone')
+    };
+
+    // Assumindo que você tem uma variável global chamada userData com os dados completos do perfil
+    let userData = {}; // Inicialize com um objeto vazio
+
+    // Exemplo de como você pode buscar os dados do perfil ao carregar a página
+    async function buscarDadosPerfil() {
+        try {
+            const response = await fetch('/api/usuarios/perfil'); // Substitua pela sua URL de busca de perfil
+            if (response.ok) {
+                userData = await response.json();
+                // Atualize a exibição inicial com os dados (possivelmente censurados)
+                camposExibicao.nick.textContent = userData.nick || '';
+                camposExibicao.email.textContent = userData.email_completo_exibicao || ''; // Exemplo de campo censurado
+                camposExibicao.endereco.textContent = `${userData.cep || ''}, ${userData.numero || ''}, ${userData.complemento || ''}`.replace(/,\s*$/, ''); // Exemplo de campo censurado
+                camposExibicao.telefone.textContent = userData.telefone_formatado_exibicao || ''; // Exemplo de campo censurado
+            } else {
+                console.error('Erro ao buscar dados do perfil');
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar dados do perfil:', error);
+        }
+    }
+
+    buscarDadosPerfil(); // Chama a função para buscar os dados ao carregar a página
+
+    // Preenche o modal com os valores completos ao abrir
+    modalEditarTudoElement.addEventListener('show.bs.modal', () => {
+        document.getElementById('novoNickTudo').value = userData.nick || '';
+        document.getElementById('novoEmailTudo').value = userData.email || ''; // Use o valor completo
+        document.getElementById('novoCepTudo').value = userData.cep || '';
+        document.getElementById('novoNumeroTudo').value = userData.numero || '';
+        document.getElementById('novoComplementoTudo').value = userData.complemento || '';
+        document.getElementById('novoTelefoneTudo').value = userData.telefone || ''; // Use o valor completo
+    });
+
+    btnEditarTudo.addEventListener('click', () => {
+        modalEditarTudo.show();
+    });
+
+    formEditarTudo.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const dadosParaEnviar = {};
+
+        const novoNick = document.getElementById('novoNickTudo').value;
+        const novoEmail = document.getElementById('novoEmailTudo').value;
+        const novoCep = document.getElementById('novoCepTudo').value;
+        const novoNumero = document.getElementById('novoNumeroTudo').value;
+        const novoComplemento = document.getElementById('novoComplementoTudo').value;
+        const novoTelefone = document.getElementById('novoTelefoneTudo').value;
+
+        if (novoNick !== userData.nick) {
+            dadosParaEnviar.nick = novoNick;
+        }
+        if (novoEmail !== userData.email) {
+            dadosParaEnviar.email = novoEmail;
+        }
+        if (novoCep !== userData.cep || novoNumero !== userData.numero || novoComplemento !== userData.complemento) {
+            dadosParaEnviar.endereco = `${novoCep}, ${novoNumero}, ${novoComplemento}`;
+        }
+        if (novoTelefone !== userData.telefone) {
+            dadosParaEnviar.telefone = novoTelefone;
+        }
+
+        if (Object.keys(dadosParaEnviar).length > 0) {
+            console.log('Enviando dados modificados:', dadosParaEnviar);
+
+            try {
+                const response = await fetch('/api/usuarios/perfil', { // Substitua pela sua URL de atualização
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosParaEnviar),
+                });
+
+                if (response.ok) {
+                    // Atualizar a variável userData e a exibição na página com os dados enviados
+                    if (dadosParaEnviar.nick) userData.nick = novoNick;
+                    if (dadosParaEnviar.email) userData.email = novoEmail;
+                    if (dadosParaEnviar.endereco) {
+                        userData.cep = novoCep;
+                        userData.numero = novoNumero;
+                        userData.complemento = novoComplemento;
+                    }
+                    if (dadosParaEnviar.telefone) userData.telefone = novoTelefone;
+
+                    camposExibicao.nick.textContent = userData.nick || '';
+                    camposExibicao.email.textContent = userData.email_completo_exibicao || ''; // Reexiba a versão censurada, se aplicável
+                    camposExibicao.endereco.textContent = `${userData.cep || ''}, ${userData.numero || ''}, ${userData.complemento || ''}`.replace(/,\s*$/, ''); // Reexiba a versão censurada, se aplicável
+                    camposExibicao.telefone.textContent = userData.telefone_formatado_exibicao || ''; // Reexiba a versão censurada, se aplicável
+
+                    modalEditarTudo.hide();
+                    const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
+                    document.getElementById('modal-message').textContent = 'Perfil atualizado com sucesso!';
+                    alertModal.show();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Erro ao atualizar o perfil:', errorData);
+                    const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
+                    document.getElementById('modal-message').textContent = 'Erro ao atualizar o perfil.';
+                    alertModal.show();
+                }
+            } catch (error) {
+                console.error('Erro de rede:', error);
+                const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
+                document.getElementById('modal-message').textContent = 'Erro de rede ao atualizar o perfil.';
+                alertModal.show();
+            }
+        } else {
+            modalEditarTudo.hide();
+            const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
+            document.getElementById('modal-message').textContent = 'Nenhuma informação foi alterada.';
+            alertModal.show();
+        }
+    });
+});
+
 
 document.querySelectorAll("form").forEach(form => {
     form.addEventListener('submit', async function (e) {
