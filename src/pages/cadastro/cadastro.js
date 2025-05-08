@@ -95,6 +95,7 @@ function validarSenha() {
 
   const popup = document.getElementById('password-popup');
   const popupList = document.getElementById('password-popup-list');
+
   const confirmSenhaError = document.getElementById('feedbackSenhaDif');
 
   let isValid = true;
@@ -134,6 +135,7 @@ function validarSenha() {
   if (confirmSenha.value !== valorSenha || confirmSenha.value.length < 8) {
     confirmSenha.classList.add('is-invalid');
     confirmSenhaError.textContent = 'As senhas não coincidem ou não atendem aos requisitos.';
+
     isValid = false;
   } else {
     confirmSenha.classList.remove('is-invalid');
@@ -365,6 +367,7 @@ function validarTelefone(input) {
 
 document.getElementById('telefone').addEventListener('focusout', function () {
   validarTelefone(this);
+
 });
 
 document.getElementById('telefone').addEventListener('input', function () {
