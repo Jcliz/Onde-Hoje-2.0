@@ -1,53 +1,45 @@
-<style>
-  footer {
-    margin-top: auto;
-    padding: 20px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 80%;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    background-color: transparent;
-    backdrop-filter: blur(10px);
-    z-index: 10;
-  }
-
-  footer::before,
-  footer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 20px;
-    z-index: -1;
-  }
-
-  footer::before {
-    left: 0;
-    background: linear-gradient(to right, transparent, transparent);
-  }
-
-  footer::after {
-    right: 0;
-    background: linear-gradient(to left, transparent, transparent);
-  }
-</style>
-
-<div class="container">
-  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-    <div class="col-md-4 d-flex align-items-center">
-      <img src="/public/logo-pequeno2.png" height="25" width="30" alt="Logo" class="me-2">
-      <span class="mb-3 mb-md-0 text-white" style="margin-left: 0;">© 2025 Onde Hoje, Inc</span>
-    </div>
-
-    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-      <li class="ms-3"><a class="text-white" href="#"><i class="bi bi-twitter" style="font-size: 24px;"></i></a></li>
-      <li class="ms-3"><a class="text-white" href="#"><i class="bi bi-instagram" style="font-size: 24px;"></i></a></li>
-      <li class="ms-3"><a class="text-white" href="#"><i class="bi bi-facebook" style="font-size: 24px;"></i></a></li>
+<link rel="stylesheet" href="/src/static/global.css">
+<div class="container-fluid p-4 OH-bg">
+  <footer class="d-flex flex-wrap justify-content-between align-items-start py-3 my-4 border-top">
+    
+    <!-- Coluna 1 -->
+    <ul class="nav flex-column flex-fill">
+      <li class="nav-item">
+        <a href="/sobre.html" class="nav-link px-2 text-white p-0">Sobre</a>
+        <small class="text-secondary ms-2">Conheça mais sobre nossos valores</small>
+      </li>
+      <li class="nav-item">
+        <a href="/contato.html" class="nav-link px-2 text-white p-0">Contate-nos</a>
+        <small class="text-secondary ms-2">Envie um e-mail para onde.hoje@email.com</small>
+      </li>
     </ul>
+    
+    <!-- Coluna 2 -->
+    <ul class="nav flex-column flex-fill">
+      <li class="nav-item">
+        <a href="/avaliar.html" class="nav-link px-2 text-white p-0">Avalie-nos</a>
+        <small class="text-secondary ms-2">Dê uma sugestão de melhoria ou feedback</small>
+      </li>
+      <li class="nav-item">
+        <a href="/localizacao.html" class="nav-link px-2 text-white p-0">Localização</a>
+        <small class="text-secondary ms-2">Avenida Onde Hoje, 69 - Curitiba, Paraná</small>
+      </li>
+    </ul>
+    
+    <!-- Coluna 3: Logo + Nome e Redes Sociais -->
+    <ul class="nav flex-column mt-3 flex-fill justify-content-center align-items-center">
+      <li class="nav-item mb-2 d-flex">
+        <img src="/public/logo-pequeno2.png" height="25" width="30" alt="Logo" class="me-2">
+        <span class="text-white">© 2025 Onde Hoje, Inc</span>
+      </li>
+      <li class="nav-item">
+        <div class="d-flex">
+          <a class="text-white me-3" href="#"><i class="bi bi-twitter" style="font-size: 24px;"></i></a>
+          <a class="text-white me-3" href="#"><i class="bi bi-instagram" style="font-size: 24px;"></i></a>
+          <a class="text-white" href="#"><i class="bi bi-facebook" style="font-size: 24px;"></i></a>
+        </div>
+      </li>
+    </ul>
+
   </footer>
 </div>

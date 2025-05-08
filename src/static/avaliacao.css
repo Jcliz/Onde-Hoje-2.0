@@ -1,0 +1,65 @@
+.estabelecimentos {
+    width: 30%;
+    max-height: 70vh;
+    overflow-y: scroll;
+    padding-right: 1rem;
+    border-right: 1px solid #ddd;
+}
+
+.estabelecimento-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    background-color: #333;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.estabelecimento-card:hover {
+    transform: scale(1.05);
+    background-color: #444;
+}
+
+.estabelecimento-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+#comentario::placeholder {
+    color: #ffffff; /* Altere para a cor desejada */
+    opacity: 0.5;
+    background-color: #191922 ; /* Altere para a opacidade desejada */
+  }
+
+.estabelecimento-card h5 {
+    margin: 0;
+    color: #fff;
+}
+
+.star-rating {
+    direction: rtl;
+    display: flex;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: gold;
+}
