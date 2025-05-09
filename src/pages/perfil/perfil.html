@@ -15,7 +15,6 @@
 <body class="OH-bg">
 
     <div id="header-container" class="navbar navbar-expand-lg"></div>
-
     <main>
         <section class="py-5">
             <div class="container">
@@ -72,7 +71,6 @@
                             </div>
                         </div>
 
-
                         <div class="row mb-3 align-items-center">
                             <div class="col">
                                 <div class="text-white small">Endereço</div>
@@ -116,9 +114,7 @@
                                     <button class="btn OH-btt2 fw-bold text-white btn-md px-3">Autenticação 2FA</button>
                                     <button class="btn OH-btt2 fw-bold text-white btn-md px-3">Configurações
                                         avançadas</button>
-                                    <button class="btn btn-danger fw-bold text-white btn-md px-3"
-                                        onclick="abrirModal('exclusao', 'Insira o seu nick para confirmar a exclusão.')">Excluir
-                                        conta</button>
+                                    <button class="btn btn-danger fw-bold text-white btn-md px-3" id="excluir">Excluir conta</button>
                                 </div>
                             </div>
                         </div>
@@ -172,107 +168,34 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+     <!--modal exclusão-->
+     <div class="modal fade" id="modalExclusao" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content OH-dark text-white">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Editar Informação</h5>
+                    <h5 class="modal-title" id="modalLabelConfirmacao">Exclusão de conta</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEditarNick">
+                    <form id="formExcluir">
                         <div class="mb-3">
-                            <label for="novoValor" class="form-label" id="labelCampo"></label>
-                            <input type="text" class="form-control OH-bg text-white" minlength="1" maxlength="35"
-                                placeholder="Digite aqui...." id="novoValorNick" required>
+                            <label for="novoValor" class="form-label" id="labelCampoExclusao">
+                                Digite o seu nick atual para a exclusão da conta:
+                            </label>
+                            
+                            <input type="text" class="form-control OH-bg text-white" placeholder="Digite aqui..."
+                                id="confirmacao" minlength="5" maxlength="50" required>
                             <input type="hidden" id="campoAtual">
                         </div>
-                        <button type="submit" class="btn OH-btt1 text-white  fw-bold">Salvar</button>
+                        <button type="submit" class="btn OH-btt1 text-white  fw-bold">Excluir</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalEmail" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content OH-dark text-white">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabelEmail">Editar Informação</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formEditarEmail">
-                        <div class="mb-3">
-                            <label for="novoValor" class="form-label" id="labelCampoEmail"></label>
-                            <input type="text" class="form-control OH-bg text-white" placeholder="exemplo@provedor.com"
-                                id="novoValorEmail" minlength="5" maxlength="50" required>
-                            <input type="hidden" id="campoAtual">
-                        </div>
-                        <button type="submit" class="btn OH-btt1 text-white  fw-bold">Salvar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalCep" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content OH-dark text-white">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Editar Informação</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formEditarCep">
-                        <div class="mb-3">
-                            <label for="novoValorCEP" class="form-label" id="labelCampoCEP"></label>
-                            <input type="text" placeholder="CEP" class="form-control OH-bg text-white" id="novoValorCEP"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8"
-                                style="margin-bottom: 1vh;" required>
-                            <input type="text" class="form-control OH-bg text-white" style="margin-bottom: 1vh;"
-                                id="numero" placeholder="Número"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="1" maxlencgth="20"
-                                required>
-                            <input type="text" class="form-control OH-bg text-white" id="complemento"
-                                placeholder="Complemento" minlength="4" maxlength="20" required>
-
-                            <input type="hidden" id="campoAtual">
-                        </div>
-                        <button type="submit" class="btn OH-btt1 text-white  fw-bold">Salvar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalTelefone" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content OH-dark text-white">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Editar Informação</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formEditarTel">
-                        <div class="mb-3">
-                            <label for="novoValorTel" class="form-label" id="labelCampoTel"></label>
-                            <input type="text" placeholder="Digite aqui..." class="form-control OH-bg text-white"
-                                id="novoValorTel" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                maxlength="11" required>
-                            <input type="hidden" id="campoAtual">
-                        </div>
-                        <button type="submit" class="btn OH-btt1 text-white  fw-bold">Salvar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- modal edição -->
     <div class="modal fade" id="modalEditarTudo" tabindex="-1" aria-labelledby="modalEditarTudoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content OH-dark text-white">
@@ -308,6 +231,24 @@
                         </div>
                         <button type="submit" class="btn OH-btt1 text-white fw-bold">Salvar Tudo</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de alerta -->
+    <div class="modal fade" id="alert-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content OH-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Atenção</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn OH-btt1 text-white fw-bold" data-bs-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>

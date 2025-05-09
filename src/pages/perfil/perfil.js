@@ -66,7 +66,7 @@ async function carregarDados() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", carregarDados());
+document.addEventListener("DOMContentLoaded", carregarDados);
 
 async function excluirConta() {
     const id = sessionDataGlobal.ID_usuario;
@@ -81,147 +81,17 @@ async function excluirConta() {
         });
 
         if (response.ok) {
-            showModal('Conta deletada com sucesso. Sentiremos a sua falta :(');
+            showModal(data.mensagem || 'Conta deletada com sucesso. Sentiremos a sua falta :(');
             sessionDataGlobal.estaAutenticado = false;
-            window.location.href = '/logout';
+            logout();
+
         } else {
             const errorData = await response.json();
             showModal(errorData.message || 'Erro ao excluir a conta.');
         }
     } catch (err) {
         console.error('Erro:', err);
-        showModal('Erro na exclusão de usuário. Tente novamente.');
-    }
-}
-
-async function atualizarDados() {
-    const nick = document.getElementById('novoValorNick')?.value;
-    const email = document.getElementById('novoValorEmail')?.value;
-    const cep = document.getElementById('novoValorCEP')?.value;
-    const numero = document.getElementById('numero')?.value;
-    const complemento = document.getElementById('complemento')?.value;
-    const telefone = document.getElementById('novoValorTel')?.value;
-    const senha = document.getElementById('password')?.value;
-
-    const response = await fetch("/api/usuarios/update", {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            nick,
-            email,
-            senha,
-            cep,
-            numero,
-            complemento,
-            telefone
-        })
-    });
-
-    if (response.ok) {
-        location.reload();
-        return response;
-
-    } else {
-        const errorData = await response.json();
-        showModal(errorData.message || 'Erro ao atualizar os dados.');
-        throw new Error(errorData.message || 'Erro ao atualizar os dados.');
-    }
-}
-
-async function abrirModal(campoId, label) {
-    document.getElementById('labelCampo').innerText = `Novo(a) ${label}`;
-    document.getElementById('campoAtual').value = campoId;
-
-    let novoValorCEP = document.getElementById('novoValorCEP');
-    let novoValorTel = document.getElementById('novoValorTel');
-    let novoValorEmail = document.getElementById('novoValorEmail');
-    let confirmacao = document.getElementById('confirmacao');
-
-    [novoValorCEP, novoValorTel, novoValorEmail, confirmacao].forEach(el => el?.classList.remove('is-invalid'));
-
-    if (campoId === 'endereco') {
-        document.getElementById('labelCampoCEP').innerText = `Novo(a) ${label}`;
-        const modalCEP = new bootstrap.Modal(document.getElementById('modalCep'));
-        modalCEP.show();
-
-        novoValorCEP.addEventListener('focusout', async () => {
-            const rawCep = novoValorCEP.value.replace(/\D/g, '');
-            novoValorCEP.value = rawCep.replace(/(\d{5})(\d{3})/, '$1-$2');
-
-            try {
-                const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
-                const data = await res.json();
-
-                if (data.erro) {
-                    novoValorCEP.classList.add('is-invalid');
-                } else {
-                    novoValorCEP.classList.remove('is-invalid');
-                }
-            } catch {
-                novoValorCEP.classList.add('is-invalid');
-            }
-        });
-
-    } else if (campoId === 'telefone') {
-        document.getElementById('labelCampoTel').innerText = `Novo(a) ${label}`;
-        const modal = new bootstrap.Modal(document.getElementById('modalTelefone'));
-        modal.show();
-
-        novoValorTel.addEventListener('focusout', () => {
-            const raw = novoValorTel.value.replace(/\D/g, '');
-            let formatted = '';
-
-            if (raw.length === 11) {
-                if (raw[2] === '9') {
-                    formatted = raw.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
-                    novoValorTel.classList.remove('is-invalid');
-                } else {
-                    novoValorTel.classList.add('is-invalid');
-                    return;
-                }
-            } else if (raw.length === 10) {
-                formatted = raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-                novoValorTel.classList.remove('is-invalid');
-            } else {
-                novoValorTel.classList.add('is-invalid');
-                return;
-            }
-
-            novoValorTel.value = formatted;
-        });
-
-    } else if (campoId === 'email') {
-        document.getElementById('labelCampoEmail').innerText = `Novo(a) ${label}`;
-        const modalEmail = new bootstrap.Modal(document.getElementById('modalEmail'));
-        modalEmail.show();
-
-        novoValorEmail.addEventListener('focusout', () => {
-            const emailVal = novoValorEmail.value.trim();
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!regex.test(emailVal)) {
-                novoValorEmail.classList.add('is-invalid');
-            } else {
-                novoValorEmail.classList.remove('is-invalid');
-            }
-        });
-    } else if (campoId == 'exclusao') {
-        document.getElementById('labelCampoExclusao').innerText = label;
-        const modal = new bootstrap.Modal(document.getElementById('modalExclusao'));
-        modal.show();
-
-        confirmacao.addEventListener('input', () => {
-            if (confirmacao.value.trim() !== sessionDataGlobal.nick) {
-                confirmacao.classList.add('is-invalid');
-            } else {
-                confirmacao.classList.remove('is-invalid');
-            }
-        });
-
-    } else {
-        const modal = new bootstrap.Modal(document.getElementById('editarModal'));
-        modal.show();
+        showModal(data.mensagem || 'Erro na exclusão de usuário. Tente novamente.');
     }
 }
 
@@ -230,155 +100,165 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalEditarTudoElement = document.getElementById('modalEditarTudo');
     const modalEditarTudo = new bootstrap.Modal(modalEditarTudoElement);
     const formEditarTudo = document.getElementById('formEditarTudo');
-    const camposExibicao = {
-        nick: document.getElementById('nick'),
-        email: document.getElementById('email'),
-        endereco: document.getElementById('endereco'),
-        telefone: document.getElementById('telefone')
-    };
 
-    // Assumindo que você tem uma variável global chamada userData com os dados completos do perfil
-    let userData = {}; // Inicialize com um objeto vazio
+    const modalExclusaoElement = document.getElementById('modalExclusao');
+    const modalExclusao = new bootstrap.Modal(modalExclusaoElement); 
+    const btnExcluir = document.getElementById('excluir');
+    const formExclusao = document.getElementById('formExcluir');
 
-    // Exemplo de como você pode buscar os dados do perfil ao carregar a página
-    async function buscarDadosPerfil() {
-        try {
-            const response = await fetch('/api/usuarios/perfil'); // Substitua pela sua URL de busca de perfil
-            if (response.ok) {
-                userData = await response.json();
-                // Atualize a exibição inicial com os dados (possivelmente censurados)
-                camposExibicao.nick.textContent = userData.nick || '';
-                camposExibicao.email.textContent = userData.email_completo_exibicao || ''; // Exemplo de campo censurado
-                camposExibicao.endereco.textContent = `${userData.cep || ''}, ${userData.numero || ''}, ${userData.complemento || ''}`.replace(/,\s*$/, ''); // Exemplo de campo censurado
-                camposExibicao.telefone.textContent = userData.telefone_formatado_exibicao || ''; // Exemplo de campo censurado
-            } else {
-                console.error('Erro ao buscar dados do perfil');
-            }
-        } catch (error) {
-            console.error('Erro de rede ao buscar dados do perfil:', error);
-        }
-    }
-
-    buscarDadosPerfil(); // Chama a função para buscar os dados ao carregar a página
-
-    // Preenche o modal com os valores completos ao abrir
+    //preenche o modal com os valores completos ao abrir
     modalEditarTudoElement.addEventListener('show.bs.modal', () => {
-        document.getElementById('novoNickTudo').value = userData.nick || '';
-        document.getElementById('novoEmailTudo').value = userData.email || ''; // Use o valor completo
-        document.getElementById('novoCepTudo').value = userData.cep || '';
-        document.getElementById('novoNumeroTudo').value = userData.numero || '';
-        document.getElementById('novoComplementoTudo').value = userData.complemento || '';
-        document.getElementById('novoTelefoneTudo').value = userData.telefone || ''; // Use o valor completo
+        document.getElementById('novoNickTudo').value = sessionDataGlobal.nick || '';
+        document.getElementById('novoEmailTudo').value = sessionDataGlobal.email || '';
+        document.getElementById('novoCepTudo').value = sessionDataGlobal.cep || '';
+        document.getElementById('novoNumeroTudo').value = sessionDataGlobal.numero || '';
+        document.getElementById('novoComplementoTudo').value = sessionDataGlobal.complemento || '';
+        document.getElementById('novoTelefoneTudo').value = sessionDataGlobal.telefone || '';
     });
 
     btnEditarTudo.addEventListener('click', () => {
         modalEditarTudo.show();
     });
 
-    formEditarTudo.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    btnExcluir.addEventListener('click', () => {
+        modalExclusao.show(); 
+    });
 
+    // Obtém referências aos inputs do modal uma vez
+    const novoCepInput = document.getElementById('novoCepTudo');
+    const novoTelInput = document.getElementById('novoTelefoneTudo');
+    const novoEmailInput = document.getElementById('novoEmailTudo');
+    const confirmacao = document.getElementById('confirmacao');
+    
+    // Adiciona a validação enquanto o usuário digita
+    confirmacao.addEventListener('input', () => {
+        if (confirmacao.value === sessionDataGlobal.nick) {
+            confirmacao.classList.remove('is-invalid');
+        } else {
+            confirmacao.classList.add('is-invalid');
+        }
+    });
+    
+    // Aplica máscaras e feedback assim que o input perde o foco
+    novoCepInput.addEventListener('focusout', async () => {
+        const rawCep = novoCepInput.value.replace(/\D/g, '');
+        novoCepInput.value = rawCep.replace(/(\d{5})(\d{3})/, '$1-$2');
+        try {
+            const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
+            const data = await res.json();
+            if (data.erro) {
+                novoCepInput.classList.add('is-invalid');
+            } else {
+                novoCepInput.classList.remove('is-invalid');
+            }
+        } catch {
+            novoCepInput.classList.add('is-invalid');
+        }
+    });
+
+    novoTelInput.addEventListener('focusout', () => {
+        const raw = novoTelInput.value.replace(/\D/g, '');
+        let formatted = '';
+        if (raw.length === 11) {
+            if (raw[2] === '9') {
+                formatted = raw.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, '($1) $2-$3-$4');
+                novoTelInput.classList.remove('is-invalid');
+            } else {
+                novoTelInput.classList.add('is-invalid');
+                return;
+            }
+        } else if (raw.length === 10) {
+            formatted = raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+            novoTelInput.classList.remove('is-invalid');
+        } else {
+            novoTelInput.classList.add('is-invalid');
+            return;
+        }
+        novoTelInput.value = formatted;
+    });
+
+    novoEmailInput.addEventListener('focusout', () => {
+        const emailVal = novoEmailInput.value.trim();
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(emailVal)) {
+            novoEmailInput.classList.add('is-invalid');
+        } else {
+            novoEmailInput.classList.remove('is-invalid');
+        }
+    });
+    
+    formExclusao.addEventListener('submit', (event) => {
+        event.preventDefault();
+        // Somente prossegue se o input não possuir a classe "is-invalid"
+        if (confirmacao.classList.contains('is-invalid')) {
+            showModal(data.mensagem || 'Corrija os erros antes de continuar');
+            return;
+        }
+        showModal(data.mensagem || 'Sentiremos saudades :(');
+        excluirConta();
+    });
+
+    formEditarTudo.addEventListener('submit', async (event) => {
+        const invalidFields = formEditarTudo.querySelectorAll(".is-invalid");
+
+        if (invalidFields.length > 0) {
+            event.preventDefault();
+            event.stopPropagation();
+            showModal(data.mensagem || "Por favor, corrija os campos inválidos antes de continuar.");
+            return;
+        }
+
+        event.preventDefault();
         const dadosParaEnviar = {};
 
-        const novoNick = document.getElementById('novoNickTudo').value;
-        const novoEmail = document.getElementById('novoEmailTudo').value;
-        const novoCep = document.getElementById('novoCepTudo').value;
-        const novoNumero = document.getElementById('novoNumeroTudo').value;
-        const novoComplemento = document.getElementById('novoComplementoTudo').value;
-        const novoTelefone = document.getElementById('novoTelefoneTudo').value;
+        const novoNickInput = document.getElementById('novoNickTudo');
+        const novoNumeroInput = document.getElementById('novoNumeroTudo');
+        const novoComplementoInput = document.getElementById('novoComplementoTudo');
 
-        if (novoNick !== userData.nick) {
-            dadosParaEnviar.nick = novoNick;
+        if (novoNickInput.value !== sessionDataGlobal.nick) {
+            dadosParaEnviar.nick = novoNickInput.value;
         }
-        if (novoEmail !== userData.email) {
-            dadosParaEnviar.email = novoEmail;
+        if (novoEmailInput.value !== sessionDataGlobal.email) {
+            dadosParaEnviar.email = novoEmailInput.value;
         }
-        if (novoCep !== userData.cep || novoNumero !== userData.numero || novoComplemento !== userData.complemento) {
-            dadosParaEnviar.endereco = `${novoCep}, ${novoNumero}, ${novoComplemento}`;
+        if (novoCepInput.value !== sessionDataGlobal.cep) {
+            dadosParaEnviar.cep = novoCepInput.value;
         }
-        if (novoTelefone !== userData.telefone) {
-            dadosParaEnviar.telefone = novoTelefone;
+        if (novoNumeroInput.value !== sessionDataGlobal.numero) {
+            dadosParaEnviar.numero = novoNumeroInput.value;
+        }
+        if (novoComplementoInput.value !== sessionDataGlobal.complemento) {
+            dadosParaEnviar.complemento = novoComplementoInput.value;
+        }
+        if (novoTelInput.value !== sessionDataGlobal.telefone) {
+            dadosParaEnviar.telefone = novoTelInput.value;
         }
 
         if (Object.keys(dadosParaEnviar).length > 0) {
             console.log('Enviando dados modificados:', dadosParaEnviar);
-
             try {
-                const response = await fetch('/api/usuarios/perfil', { // Substitua pela sua URL de atualização
+                const response = await fetch('/api/usuarios/update', {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosParaEnviar),
                 });
 
                 if (response.ok) {
-                    // Atualizar a variável userData e a exibição na página com os dados enviados
-                    if (dadosParaEnviar.nick) userData.nick = novoNick;
-                    if (dadosParaEnviar.email) userData.email = novoEmail;
-                    if (dadosParaEnviar.endereco) {
-                        userData.cep = novoCep;
-                        userData.numero = novoNumero;
-                        userData.complemento = novoComplemento;
-                    }
-                    if (dadosParaEnviar.telefone) userData.telefone = novoTelefone;
-
-                    camposExibicao.nick.textContent = userData.nick || '';
-                    camposExibicao.email.textContent = userData.email_completo_exibicao || ''; // Reexiba a versão censurada, se aplicável
-                    camposExibicao.endereco.textContent = `${userData.cep || ''}, ${userData.numero || ''}, ${userData.complemento || ''}`.replace(/,\s*$/, ''); // Reexiba a versão censurada, se aplicável
-                    camposExibicao.telefone.textContent = userData.telefone_formatado_exibicao || ''; // Reexiba a versão censurada, se aplicável
-
                     modalEditarTudo.hide();
-                    const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
-                    document.getElementById('modal-message').textContent = 'Perfil atualizado com sucesso!';
-                    alertModal.show();
+                    showModal(data.mensagem || 'Dados atualizados com sucesso!');
+                    location.reload();
                 } else {
                     const errorData = await response.json();
                     console.error('Erro ao atualizar o perfil:', errorData);
-                    const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
-                    document.getElementById('modal-message').textContent = 'Erro ao atualizar o perfil.';
-                    alertModal.show();
+                    showModal(data.mensagem || 'Erro ao atualizar o perfil.');
                 }
             } catch (error) {
                 console.error('Erro de rede:', error);
-                const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
-                document.getElementById('modal-message').textContent = 'Erro de rede ao atualizar o perfil.';
-                alertModal.show();
+                showModal(data.mensagem || 'Erro de conexão ao banco de dados.');
             }
         } else {
             modalEditarTudo.hide();
-            const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
-            document.getElementById('modal-message').textContent = 'Nenhuma informação foi alterada.';
-            alertModal.show();
-        }
-    });
-});
-
-
-document.querySelectorAll("form").forEach(form => {
-    form.addEventListener('submit', async function (e) {
-        const invalidFields = form.querySelectorAll(".is-invalid");
-        if (invalidFields.length > 0) {
-            e.preventDefault();
-            e.stopPropagation();
-            showModal("Por favor, corrija os campos inválidos antes de continuar.");
-            return;
-        }
-
-        e.preventDefault();
-
-        if (form.id === 'formEditarExcluir') {
-            excluirConta(); //só executa essa função
-        } else {
-            await atualizarDados();
-            showModal("Dados atualizados com sucesso!");
-        }
-
-        // Fecha o modal sempre, independente de qual form for
-        const modalId = form.closest(".modal")?.id;
-        if (modalId) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-            modal.hide();
+            showModal(data.mensagem || 'Nenhum dado alterado.');
         }
     });
 });
@@ -400,13 +280,15 @@ async function uploadFoto(input) {
 
         if (response.ok) {
             showModal(data.mensagem || 'Upload feito com sucesso!');
-            document.getElementById('fotoPerfil').src = `/api/usuarios/foto?${Date.now()}`;
+            // Atualiza a imagem do perfil no front-end
+            const fotoPerfil = document.getElementById('fotoPerfil');
+            fotoPerfil.src = `/api/usuarios/foto?${Date.now()}`; // Adiciona um timestamp para evitar cache
         } else {
             showModal(data.erro || 'Erro ao enviar a foto');
         }
     } catch (err) {
         console.error(err);
-        showModal('Erro inesperado ao enviar a foto.');
+        showModal(data.mensagem || 'Erro inesperado ao enviar a foto.');
     }
 }
 
@@ -472,8 +354,7 @@ function logout() {
 function showModal(message) {
     console.log(message);  // Verifique se a mensagem está sendo passada corretamente.
 
-    // Fechar qualquer modal já aberto
-    const modals = document.querySelectorAll('.modal');
+    const modals = document.querySelectorAll('.modal.show'); // Seleciona apenas modais visíveis
     modals.forEach(modal => {
         const bootstrapModal = bootstrap.Modal.getInstance(modal);
         if (bootstrapModal) {
@@ -481,13 +362,6 @@ function showModal(message) {
         }
     });
 
-    // Limpar os campos de input dentro do modal (caso existam)
-    const inputs = document.querySelectorAll('#alert-modal input');
-    inputs.forEach(input => {
-        input.value = ''; // Limpa o valor do input
-    });
-
-    // Exibir o novo modal
     const modalMessage = document.getElementById('modal-message');
     const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
     
