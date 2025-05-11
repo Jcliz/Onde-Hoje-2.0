@@ -133,7 +133,7 @@ app.post('/api/usuarios/uploadFoto', upload.single('foto'), async (req, res) => 
 
         const idUsuario = req.session.ID_usuario;
         const sql = 'UPDATE usuario SET foto = UNHEX(?) WHERE ID_usuario = ?';
-        con.query(sql, [fotoHex, idUsuario]); 
+        con.query(sql, [fotoHex, idUsuario]);
 
         res.status(200).json({ mensagem: 'Upload realizado com sucesso!' });
 
@@ -224,153 +224,83 @@ app.delete('/api/usuarios/excluir', (req, res) => {
     });
 });
 
-//update de usuário
+//função para verficação de campos
+function verficarCampos(user, body, novaFoto) {
+    const campos = [];
+    const valores = [];
+    if (body.nick && body.nick !== user.nick) {
+        campos.push("nick = ?");
+        valores.push(body.nick);
+    }
+    if (body.email && body.email !== user.email) {
+        campos.push("email = ?");
+        valores.push(body.email);
+    }
+    if (body.senha && body.senha !== user.senha) {
+        campos.push("senha = MD5(?)");
+        valores.push(body.senha);
+    }
+    if (body.cep && body.cep !== user.cep) {
+        campos.push("cep = ?");
+        valores.push(body.cep);
+    }
+    if (body.complemento && body.complemento !== user.complemento) {
+        campos.push("complemento = ?");
+        valores.push(body.complemento);
+    }
+    if (body.numero && body.numero !== user.numero) {
+        campos.push("numero = ?");
+        valores.push(body.numero);
+    }
+    if (body.telefone && body.telefone !== user.telefone) {
+        campos.push("telefone = ?");
+        valores.push(body.telefone);
+    }
+    if (novaFoto) {
+        campos.push("foto = UNHEX(?)");
+        valores.push(novaFoto);
+    }
+    return { campos, valores };
+}
+
 app.put('/api/usuarios/update', (req, res) => {
     const { nick, email, senha, cep, complemento, numero, telefone } = req.body;
     const idUsuario = req.session.ID_usuario;
     const novaFoto = req.file ? req.file.buffer.toString('hex') : null;
 
-    const getUserSql = 'SELECT * FROM usuario WHERE ID_usuario = ?';
-    con.query(getUserSql, [idUsuario], (err, results) => {
+    con.query('SELECT * FROM usuario WHERE ID_usuario = ?', [idUsuario], (err, results) => {
         if (err || results.length === 0) {
             console.error('Erro ao buscar dados atuais do usuário:', err);
             return res.status(500).json({ message: 'Erro no servidor' });
         }
 
-        const user = results[0]
+        const user = results[0];
 
-        //lista de promessas para verificar apenas o que mudou e dados cadastrados
-        const verificacoes = [];
-
-        if (telefone && telefone !== user.telefone) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT * FROM usuario WHERE telefone = ? AND ID_usuario != ?', [telefone, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar telefone');
-                    else if (result.length > 0) reject('Telefone já cadastrado');
-                    else resolve();
-                });
-            }));
+        const { campos, valores } = verficarCampos(user, req.body, novaFoto);
+        if (campos.length === 0) {
+            return res.status(200).json({ message: 'Nenhum dado alterado.' });
         }
 
-        if (email && email !== user.email) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT * FROM usuario WHERE email = ? AND ID_usuario != ?', [email, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar email');
-                    else if (result.length > 0) reject('Email já cadastrado.');
-                    else resolve();
-                });
-            }));
-        }
+        const sql = `UPDATE usuario SET ${campos.join(', ')} WHERE ID_usuario = ?`;
+        valores.push(idUsuario);
 
-        if (nick && nick !== user.nick) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT * FROM usuario WHERE nick = ? AND ID_usuario != ?', [nick, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar nick');
-                    else if (result.length > 0) reject('Nick já cadastrado');
-                    else resolve();
-                });
-            }));
-        }
+        con.query(sql, valores, (err) => {
+            if (err) {
+                console.error('Erro ao atualizar usuário:', err);
+                return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+            }
 
-        if (nick && nick === user.nick) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse nick.'));
-        }
+            // Atualiza a sessão com os novos dados
+            if (nick) req.session.nick = nick;
+            if (email) req.session.email = email;
+            if (senha) req.session.senha = senha;
+            if (cep) req.session.cep = cep;
+            if (complemento) req.session.complemento = complemento;
+            if (numero) req.session.numero = numero;
+            if (telefone) req.session.telefone = telefone;
 
-        if (email && email === user.email) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse e-mail.'));
-        }
-
-        if (numero && numero === user.numero) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse número.'));
-        }
-
-        if (complemento && complemento === user.complemento) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse complemento.'));
-        }
-
-        if (telefone && telefone === user.telefone) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse telefone.'));
-        }
-
-        if (senha) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT senha FROM usuario WHERE senha = MD5(?) AND ID_usuario = ?', [senha, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar a nova senha');
-                    else if (result.length > 0) reject('Senha já cadastrada anteriormente');
-                    else resolve();
-                });
-            }));
-        }
-
-        //executa todas as verificações
-        Promise.all(verificacoes)
-            .then(() => {
-                //monta dinamicamente os campos que devem ser atualizados
-                const campos = [];
-                const valores = [];
-
-                if (nick && nick !== user.nick) {
-                    campos.push("nick = ?");
-                    valores.push(nick);
-                }
-                if (email && email !== user.email) {
-                    campos.push("email = ?");
-                    valores.push(email);
-                }
-                if (senha && senha !== user.senha) {
-                    campos.push("senha = MD5(?)")
-                    valores.push(senha)
-                }
-                if (cep && cep !== user.cep) {
-                    campos.push("cep = ?");
-                    valores.push(cep);
-                }
-                if (complemento && complemento !== user.complemento) {
-                    campos.push("complemento = ?");
-                    valores.push(complemento);
-                }
-                if (numero && numero !== user.numero) {
-                    campos.push("numero = ?");
-                    valores.push(numero);
-                }
-                if (telefone && telefone !== user.telefone) {
-                    campos.push("telefone = ?");
-                    valores.push(telefone);
-                }
-
-                if (novaFoto) {
-                    campos.push("foto = UNHEX(?)");
-                    valores.push(novaFoto);
-                }
-
-                if (campos.length === 0) {
-                    return res.status(200).json({ message: 'Nenhum dado alterado.' });
-                }
-
-                const sql = `UPDATE usuario SET ${campos.join(', ')} WHERE ID_usuario = ?`;
-                valores.push(idUsuario);
-
-                con.query(sql, valores, (err) => {
-                    if (err) {
-                        console.error('Erro ao atualizar usuário:', err);
-                        return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
-                    }
-
-                    //atualiza a sessão com os novos dados
-                    if (nick) req.session.nick = nick;
-                    if (email) req.session.email = email;
-                    if (senha) req.session.senha = senha;
-                    if (cep) req.session.cep = cep;
-                    if (complemento) req.session.complemento = complemento;
-                    if (numero) req.session.numero = numero;
-                    if (telefone) req.session.telefone = telefone;
-
-                    return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
-                });
-            })
-            .catch((msg) => {
-                return res.status(400).json({ message: msg });
-            });
+            return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
+        });
     });
 });
 
