@@ -14,47 +14,18 @@
 <body class="OH-bg text-white">
     <div id="header-container" class="navbar navbar-expand-lg"></div>
     <main class="container py-5 d-flex justify-content-between">
-        <!-- Lado esquerdo: Estabelecimentos visitados -->
         <div class="OH-dark shadow w-25" style="border-radius: 15px;">
-    
-            <!-- Título separado -->
+
             <div class="p-3">
-                <h4 class="text-center fs-6 mb-0">Histórico</h4>
+                <h4 class="text-center fs-6 mb-0">Estabelecimentos</h4>
             </div>
-            
+
             <!-- Lista de estabelecimentos -->
-            <div class="d-flex flex-column overflow-auto" style="max-height: 450px">
-                <div class="estabelecimento-card shadow-sm OH-dark text-center" onclick="selecionarEstabelecimento('Bar do Mário')">
-                    <img src="https://placehold.co/50x50" alt="Bar do Mário" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Bar do Mário</h6>
-                </div>
-                <div class="estabelecimento-card shadow-sm OH-dark text-center" onclick="selecionarEstabelecimento('Cervejaria do Centro')">
-                    <img src="https://placehold.co/50x50" alt="Cervejaria do Centro" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Cervejaria do Centro</h6>
-                </div>
-                <div class="estabelecimento-card shadow-sm OH-dark text-center" onclick="selecionarEstabelecimento('Boteco do Zé')">
-                    <img src="https://placehold.co/50x50" alt="Boteco do Zé" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Boteco do Zé</h6>
-                </div>
-                <div class="estabelecimento-card shadow-sm OH-dark text-center" onclick="selecionarEstabelecimento('Happy Hour Lounge')">
-                    <img src="https://placehold.co/50x50" alt="Happy Hour Lounge" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Happy Hour Lounge</h6>
-                </div>
-                <div class="estabelecimento-card shadow-sm OH-dark text-center" onclick="selecionarEstabelecimento('Bar do Pedrão')">
-                    <img src="https://placehold.co/50x50" alt="Pedrao Fest" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Bar do Pedrão</h6>
-                </div>
-                <div class="estabelecimento-card shadow-sm OH-dark text-center" onclick="selecionarEstabelecimento('Yard')">
-                    <img src="https://placehold.co/50x50" alt="yard" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Yard</h6>
-                </div>
-                <div class="estabelecimento-card OH-dark text-center" onclick="selecionarEstabelecimento('Oidê')">
-                    <img src="https://placehold.co/50x50" alt="Oidê" class="img-fluid rounded mb-1" />
-                    <h6 class="mb-0">Oidê</h6>
-                </div>
+            <div id="lista-estabelecimentos" class="d-flex flex-column overflow-auto" style="max-height: 450px">
+                <!-- preenchido dinamicamente -->
             </div>
-        </div>              
-        
+        </div>
+
         <div class="ms-3 w-75">
             <div class="card OH-dark shadow p-4" style="border: 0; border-radius: 15px;">
                 <h2 class="text-center text-white mb-4">Avaliações</h2>
@@ -63,25 +34,32 @@
                     <!-- Nome do estabelecimento selecionado -->
                     <div class="mb-4">
                         <label for="estabelecimento" class="form-label  text-white">Estabelecimento selecionado</label>
-                        <input type="text" class="form-control OH-bg text-white" id="estabelecimento" name="estabelecimento" readonly required>
+                        <input type="text" class="form-control OH-bg text-white" id="estabelecimento"
+                            name="estabelecimento" readonly required>
                     </div>
 
                     <!-- Avaliação com estrelas -->
                     <div class="mb-4 text-center">
                         <label class="form-label text-white d-block mb-2">Nota</label>
                         <div class="star-rating">
-                            <input type="radio" id="star5" name="nota" value="5" required /><label for="star5" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star4" name="nota" value="4" /><label for="star4" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star3" name="nota" value="3" /><label for="star3" title="3 estrelas"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star2" name="nota" value="2" /><label for="star2" title="2 estrelas"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star1" name="nota" value="1" /><label for="star1" title="1 estrela"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star5" name="nota" value="5" required /><label for="star5"
+                                title="5 estrelas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star4" name="nota" value="4" /><label for="star4"
+                                title="4 estrelas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star3" name="nota" value="3" /><label for="star3"
+                                title="3 estrelas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star2" name="nota" value="2" /><label for="star2"
+                                title="2 estrelas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star1" name="nota" value="1" /><label for="star1"
+                                title="1 estrela"><i class="bi bi-star-fill"></i></label>
                         </div>
                     </div>
 
                     <!-- Comentário -->
                     <div class="mb-4">
                         <label for="comentario" class="form-label text-white">Comentário</label>
-                        <textarea class="form-control OH-bg text-white" id="comentario" name="comentario" rows="4" placeholder="Deixe sua opinião..." required></textarea>
+                        <textarea class="form-control OH-bg text-white" id="comentario" name="comentario" rows="4"
+                            placeholder="Deixe sua opinião..." required></textarea>
                     </div>
 
                     <!-- Botão de envio -->
@@ -92,6 +70,24 @@
             </div>
         </div>
     </main>
+
+    <div id="alert-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content OH-bg">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white">Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white">
+                    <p id="modal-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="OH-btt2 btn text-white" type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="footer-container"></div>
     <script src="../../../components/header.js" defer></script>

@@ -68,7 +68,7 @@ app.use(express.static(__dirname));
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
+    password: "123456",
     database: "ondehoje2"
 });
 
@@ -94,7 +94,7 @@ const upload = multer({
 //rota principal
 app.get('/', (req, res) => {
     if (req.session.user_logged_in) {
-        return res.redirect(303, '/src/pages/topRoles/topRoles.html');
+        return res.redirect(303, '/src/pages/perfil/perfil.html');
     }
     res.redirect('/src/pages/telaEntrada/telaentrada.html');
 });
@@ -133,7 +133,7 @@ app.post('/api/usuarios/uploadFoto', upload.single('foto'), async (req, res) => 
 
         const idUsuario = req.session.ID_usuario;
         const sql = 'UPDATE usuario SET foto = UNHEX(?) WHERE ID_usuario = ?';
-        con.query(sql, [fotoHex, idUsuario]); 
+        con.query(sql, [fotoHex, idUsuario]);
 
         res.status(200).json({ mensagem: 'Upload realizado com sucesso!' });
 
@@ -496,6 +496,18 @@ app.post('/api/esqueceuSenha', (req, res) => {
         } else {
             res.status(401).json({ message: 'E-mail não encontrado.' });
         }
+    });
+});
+
+//endpoint para buscar estabelecimentos do banco
+app.get('/api/estabelecimentos', (req, res) => {
+    const sql = 'SELECT * FROM estabelecimento';
+    con.query(sql, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Erro ao buscar estabelecimentos.' });
+        }
+        res.json(results);
     });
 });
 

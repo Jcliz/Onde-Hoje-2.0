@@ -1,3 +1,16 @@
+#lista-estabelecimentos {
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Firefox e IE */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* esconde a scrollbar em WebKit (Chrome, Safari) */
+#lista-estabelecimentos::-webkit-scrollbar {
+    display: none;
+}
+
 .estabelecimentos {
     width: 30%;
     max-height: 70vh;
