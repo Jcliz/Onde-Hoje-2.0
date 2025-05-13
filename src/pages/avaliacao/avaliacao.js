@@ -1,5 +1,36 @@
 sessionDataGlobal = null;
 
+async function avaliar() {
+    try {
+        const estabelecimento = document.getElementById('estabelecimento').value;
+        const nota = document.querySelector('input[name="nota"]:checked').value;
+        const comentario = document.getElementById('comentario').value;
+
+        if (!estabelecimento || !nota) {
+            alert("Atenção", "Por favor, preencha todos os campos obrigatórios.");
+            return;
+        }
+
+        const response = await fetch("/api/usuarios/avaliar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nota, comentario, estabelecimento })
+        });
+
+        if (response.ok) {
+            alert("Sucesso", "Avaliação enviada com sucesso!");
+            location.reload();
+        } else {
+            alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+        }
+    } catch (error) {
+        console.error("Erro ao enviar avaliação:", error);
+        alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+    }
+}
+
 async function carregarDados() {
     try {
         const response = await fetch("/api/session");
@@ -7,7 +38,7 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            showModal("Atenção", "Você não está autenticado. Redirecionando para a página de login.");
+            alert("Atenção, você não está autenticado. Redirecionando para a página de login.");
             window.location.href = "/src/pages/login/login.html";
             return;
         }
@@ -51,30 +82,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function selecionarEstabelecimento(nome) {
     document.getElementById('estabelecimento').value = nome;
-}
-
-function showModal(message) {
-    console.log(message);  // Verifique se a mensagem está sendo passada corretamente.
-
-    // Fechar qualquer modal já aberto
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        const bootstrapModal = bootstrap.Modal.getInstance(modal);
-        if (bootstrapModal) {
-            bootstrapModal.hide();
-        }
-    });
-
-    // Limpar os campos de input dentro do modal (caso existam)
-    const inputs = document.querySelectorAll('#alert-modal input');
-    inputs.forEach(input => {
-        input.value = ''; // Limpa o valor do input
-    });
-
-    // Exibir o novo modal
-    const modalMessage = document.getElementById('modal-message');
-    const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
-
-    modalMessage.textContent = message;  // Aqui o texto é atribuído
-    modal.show();
 }

@@ -405,6 +405,32 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+app.post('/api/usuarios/avaliar', (req, res) => {
+    // recepção do nome do estabelecimento em vez do id
+    const { nota, comentario, estabelecimento } = req.body;
+
+    // buscar o ID do estabelecimento pelo nome
+    const findEstabSql = 'SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?';
+    con.query(findEstabSql, [estabelecimento], (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar estabelecimento:', err);
+            return res.status(500).json({ message: 'Erro ao buscar estabelecimento.' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Estabelecimento não encontrado.' });
+        }
+        const fk_ID_estabelecimento = results[0].ID_estabelecimento;
+        // inserir avaliação com o ID obtido
+        const insertSql = 'INSERT INTO avaliacao (avaliacao, comentario, fk_ID_usuario, fk_ID_estabelecimento) VALUES (?, ?, ?, ?)';
+        con.query(insertSql, [nota, comentario, req.session.ID_usuario, fk_ID_estabelecimento], (err, result) => {
+            if (err) {
+                console.error('Erro ao inserir avaliação:', err);
+                return res.status(500).json({ message: 'Erro ao inserir avaliação.' });
+            }
+            res.status(200).json({ message: 'Avaliação inserida com sucesso!' });
+        });
+    });
+});
 // Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios/criar', (req, res) => {
     const { nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;

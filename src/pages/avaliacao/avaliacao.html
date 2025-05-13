@@ -30,7 +30,7 @@
             <div class="card OH-dark shadow p-4" style="border: 0; border-radius: 15px;">
                 <h2 class="text-center text-white mb-4">Avaliações</h2>
 
-                <form id="formAvaliacao" method="POST" action="/salvarAvaliacao">
+                <form id="formAvaliacao" onsubmit="event.preventDefault(); avaliar();">
                     <!-- Nome do estabelecimento selecionado -->
                     <div class="mb-4">
                         <label for="estabelecimento" class="form-label  text-white">Estabelecimento selecionado</label>
