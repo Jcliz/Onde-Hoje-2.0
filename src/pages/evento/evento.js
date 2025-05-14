@@ -2,21 +2,21 @@ sessionDataGlobal = null;
 
 async function avaliar() {
     try {
-        const estabelecimento = document.getElementById('estabelecimento').value;
+        const evento = document.getElementById('evento').value;
         const nota = document.querySelector('input[name="nota"]:checked').value;
         const comentario = document.getElementById('comentario').value;
 
-        if (!estabelecimento || !nota) {
+        if (!evento || !nota) {
             alert("Atenção", "Por favor, preencha todos os campos obrigatórios.");
             return;
         }
 
-        const response = await fetch("/api/usuarios/avaliar", {
+        const response = await fetch("/api/usuarios/avaliarEvento", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ nota, comentario, estabelecimento })
+            body: JSON.stringify({ nota, comentario, evento })
         });
 
         if (response.ok) {
@@ -48,12 +48,12 @@ async function carregarDados() {
 }
 
 //buscar e renderizar os estabelecimentos
-async function carregarEstabelecimentos() {
+async function carregarEventos() {
     try {
-        const response = await fetch("/api/estabelecimentos");
-        const estabelecimentos = await response.json();
-        const container = document.getElementById('lista-estabelecimentos');
-        const container2 = document.getElementById('listas-estabelecimentos');
+        const response = await fetch("/api/eventos");
+        const eventos = await response.json();
+        const container = document.getElementById('lista-eventos');
+        const container2 = document.getElementById('listas-eventos');
         container.innerHTML = '';
         container2.innerHTML = '';
 
@@ -73,27 +73,21 @@ async function carregarEstabelecimentos() {
 `;
 
 
-        estabelecimentos.forEach(estab => {
+        eventos.forEach(evento => {
             //usando foto do banco se disponível, senão placeholder
-            const fotoUrl = estab.foto
-                ? `/api/estabelecimentos/foto/${estab.ID_estabelecimento}?${Date.now()}`
-                : '../../../public/cafe.png';
-
             const card = document.createElement('div');
-            card.className = "estabelecimento-card shadow OH-dark text-center";
-            card.onclick = () => selecionarEstabelecimento(estab.nome);
+            card.className = "evento-card shadow OH-dark text-center";
+            card.onclick = () => selecionarEvento(evento.nome);
             card.innerHTML = `
-                <img src="${fotoUrl}" alt="${estab.nome}" class="img-fluid rounded mb-1" />
-                <h6 class="mb-0 w-50">${estab.nome}</h6>
+                <h6 class="mb-0 w-50">${evento.nome}</h6>
                 ${avaliacao}
             `;
 
              const card2 = document.createElement('div');
-            card2.className = "estabelecimento-card shadow OH-dark text-center";
-            card2.onclick = () => selecionarEstabelecimento(estab.nome);
+            card2.className = "evento-card shadow OH-dark text-center";
+            card2.onclick = () => selecionarEvento(evento.nome);
             card2.innerHTML = `
-                <img src="${fotoUrl}" alt="${estab.nome}" class="img-fluid rounded mb-1" />
-                <h6 class="mb-0">${estab.nome}</h6>
+                <h6 class="mb-0">${evento.nome}</h6>
             `;
 
             container.appendChild(card);
@@ -106,9 +100,9 @@ async function carregarEstabelecimentos() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
-    carregarEstabelecimentos();
+    carregarEventos();
 });
 
-function selecionarEstabelecimento(nome) {
-    document.getElementById('estabelecimento').value = nome;
+function selecionarEvento(nome) {
+    document.getElementById('evento').value = nome;
 }
