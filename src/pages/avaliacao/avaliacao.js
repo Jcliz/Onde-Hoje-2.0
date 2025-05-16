@@ -1,4 +1,5 @@
 sessionDataGlobal = null;
+let selectedCard = null;
 
 async function avaliar() {
     try {
@@ -50,6 +51,25 @@ async function carregarDados() {
         }
     } catch (error) {
         console.error("Erro ao verificar sessão:", error);
+    }
+}
+
+// Função para atualizar o botão de avaliação
+function updateAvaliarButton() {
+    const btn = document.getElementById('btnAvaliar');
+    const estabelecimento = document.getElementById('estabelecimento').value;
+    if (!estabelecimento) {
+        btn.disabled = true;
+        // Define o botão com background transparente e borda visível
+        btn.style.backgroundColor = "transparent";
+        btn.style.border = "1px solid white";
+        btn.style.color = "white";
+    } else {
+        btn.disabled = false;
+        // Remove os estilos customizados para restaurar as cores padrão
+        btn.style.backgroundColor = "";
+        btn.style.border = "";
+        btn.style.color = "";
     }
 }
 
@@ -116,13 +136,32 @@ async function carregarEstabelecimentos() {
 
             const card = document.createElement('div');
             card.className = "estabelecimento-card shadow OH-dark text-center";
-            card.onclick = () => selecionarEstabelecimento(estab.nome);
             card.innerHTML = `
                 <img src="${fotoUrl}" alt="${estab.nome}" class="img-fluid rounded mb-1" />
                 <h6 class="mb-0">${estab.nome}</h6>
             `;
+            card.onclick = function () {
+                if (this === selectedCard) {
+                    // Desmarcar seleção
+                    this.classList.remove("border", "border-2", "border-white");
+                    selectedCard = null;
+                    document.getElementById('estabelecimento').value = "";
+                } else {
+                    // Remover seleção anterior, se existir
+                    if (selectedCard) {
+                        selectedCard.classList.remove("border", "border-2", "border-white");
+                    }
+                    selectedCard = this;
+                    this.classList.add("border", "border-2", "border-white");
+                    document.getElementById('estabelecimento').value = estab.nome;
+                }
+                updateAvaliarButton();
+            };
+
             containerEstab.appendChild(card);
         });
+        // Inicializa o estado do botão ao carregar a lista
+        updateAvaliarButton();
     } catch (error) {
         console.error("Erro ao carregar estabelecimentos:", error);
     }
@@ -133,7 +172,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     carregarAvaliacoes();
     carregarEstabelecimentos();
 });
-
-function selecionarEstabelecimento(nome) {
-    document.getElementById('estabelecimento').value = nome;
-}

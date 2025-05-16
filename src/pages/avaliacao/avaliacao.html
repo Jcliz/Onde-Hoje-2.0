@@ -20,10 +20,11 @@
                 <h4 class="text-center fw-bold fs-6 mb-0">Avaliados</h4>
             </div>
 
-            <div id="lista-estabelecimentos" class="d-flex p-4 OH-bg flex-column overflow-auto" style="max-height: 450px">
+            <div id="lista-estabelecimentos" class="d-flex p-4 OH-bg flex-column overflow-auto"
+                style="max-height: 450px">
                 <!-- preenchido dinamicamente -->
             </div>
-            
+
         </div>
 
         <div class="OH-dark shadow w-50 ms-2" style="border-radius: 15px;">
@@ -32,71 +33,72 @@
                 <h4 class="text-center fw-bold fs-6 mb-0">Estabelecimentos</h4>
             </div>
 
-            <div id="listas-estabelecimentos" class="d-flex OH-bg p-4 flex-column overflow-auto" style="max-height: 450px">
+            <div id="listas-estabelecimentos" class="d-flex OH-bg p-4 flex-column overflow-auto"
+                style="max-height: 450px">
             </div>
 
             <div class="text-center">
-                <button type="button" class="btn OH-btt1 mb-3 mt-3 text-white fw-bold px-4" data-bs-toggle="modal"
-                    data-bs-target="#avaliacaoModal">
+                <button id="btnAvaliar" type="button" class="btn OH-btt1 mb-3 mt-3 text-white fw-bold px-4"
+                    data-bs-toggle="modal" data-bs-target="#avaliacaoModal">
                     Avaliar Estabelecimento
                 </button>
-        </div>
+            </div>
 
-        <!-- Modal de Avaliação -->
-        <div class="modal fade" id="avaliacaoModal" tabindex="-1" aria-labelledby="avaliacaoModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content OH-dark">
-                    <div class="modal-header">
-                        <h2 class="modal-title text-white" id="avaliacaoModalLabel">Avaliações</h2>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Fechar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formAvaliacao" onsubmit="event.preventDefault(); avaliar();">
-                            <!-- Nome do estabelecimento selecionado -->
-                            <div class="mb-4">
-                                <label for="estabelecimento" class="form-label text-white">Estabelecimento
-                                    selecionado</label>
-                                <input type="text" class="form-control OH-bg text-white" id="estabelecimento"
-                                    name="estabelecimento" readonly required>
-                            </div>
-
-                            <!-- Avaliação com estrelas -->
-                            <div class="mb-4 text-center">
-                                <label class="form-label text-white d-block mb-2">Nota</label>
-                                <div class="star-rating">
-                                    <input type="radio" id="star5" name="nota" value="5" required />
-                                    <label for="star5" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star4" name="nota" value="4" />
-                                    <label for="star4" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star3" name="nota" value="3" />
-                                    <label for="star3" title="3 estrelas"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star2" name="nota" value="2" />
-                                    <label for="star2" title="2 estrelas"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star1" name="nota" value="1" />
-                                    <label for="star1" title="1 estrela"><i class="bi bi-star-fill"></i></label>
+            <!-- Modal de Avaliação -->
+            <div class="modal fade" id="avaliacaoModal" tabindex="-1" aria-labelledby="avaliacaoModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content OH-dark">
+                        <div class="modal-header">
+                            <h2 class="modal-title text-white" id="avaliacaoModalLabel">Avaliações</h2>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formAvaliacao" onsubmit="event.preventDefault(); avaliar();">
+                                <!-- Nome do estabelecimento selecionado -->
+                                <div class="mb-4">
+                                    <label for="estabelecimento" class="form-label text-white">Estabelecimento
+                                        selecionado</label>
+                                    <input type="text" class="form-control OH-bg text-white" id="estabelecimento"
+                                        name="estabelecimento" readonly required>
                                 </div>
-                            </div>
 
-                            <!-- Comentário -->
-                            <div class="mb-4">
-                                <label for="comentario" class="form-label text-white">Comentário</label>
-                                <textarea class="form-control OH-bg text-white" id="comentario" name="comentario"
-                                    rows="4" placeholder="Deixe sua opinião..." required></textarea>
-                            </div>
+                                <!-- Avaliação com estrelas -->
+                                <div class="mb-4 text-center">
+                                    <label class="form-label text-white d-block mb-2">Nota</label>
+                                    <div class="star-rating">
+                                        <input type="radio" id="star5" name="nota" value="5" required />
+                                        <label for="star5" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
+                                        <input type="radio" id="star4" name="nota" value="4" />
+                                        <label for="star4" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
+                                        <input type="radio" id="star3" name="nota" value="3" />
+                                        <label for="star3" title="3 estrelas"><i class="bi bi-star-fill"></i></label>
+                                        <input type="radio" id="star2" name="nota" value="2" />
+                                        <label for="star2" title="2 estrelas"><i class="bi bi-star-fill"></i></label>
+                                        <input type="radio" id="star1" name="nota" value="1" />
+                                        <label for="star1" title="1 estrela"><i class="bi bi-star-fill"></i></label>
+                                    </div>
+                                </div>
 
-                            <!-- Botão de envio -->
-                            <div class="text-center">
-                                <button type="submit" class="btn OH-btt1 text-white fw-bold px-4">Enviar
-                                    Avaliação</button>
-                            </div>
+                                <!-- Comentário -->
+                                <div class="mb-4">
+                                    <label for="comentario" class="form-label text-white">Comentário</label>
+                                    <textarea class="form-control OH-bg text-white" id="comentario" name="comentario"
+                                        rows="4" placeholder="Deixe sua opinião... (opcional)"></textarea>
+                                </div>
 
-                        </form>
+                                <!-- Botão de envio -->
+                                <div class="text-center">
+                                    <button type="submit" class="btn OH-btt1 text-white fw-bold px-4">Enviar
+                                        Avaliação</button>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
     <div id="alert-modal" class="modal fade" tabindex="-1" aria-hidden="true">
