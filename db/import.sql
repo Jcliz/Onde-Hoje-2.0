@@ -89,42 +89,49 @@ VALUES
   );
 
 CREATE TABLE estabelecimento (
-  ID_estabelecimento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  ID_estabelecimento INT PRIMARY KEY NOT NULL AUTO_INCREMENT UNIQUE,
   nome VARCHAR(50) NOT NULL,
+  cnpj VARCHAR(18) NOT NULL UNIQUE,
   rua VARCHAR(60) NOT NULL,
   bairro VARCHAR(60) NOT NULL,
-  numero VARCHAR(10) NOT NULL
+  numero VARCHAR(10) NOT NULL,
+  foto MEDIUMBLOB
 );
 
 INSERT INTO
-  estabelecimento (nome, rua, bairro, numero)
+  estabelecimento (nome, cnpj, rua, bairro, numero)
 VALUES
   (
     'Bar do Mário',
+    '89.948.562/0001-75',
     'Rua das Flores',
     'Centro',
     '123'
   ),
   (
     'Cervejaria do Centro',
+    '47.776.980/0001-82',
     'Avenida Brasil',
     'Jardim América',
     '456'
   ),
   (
     'Boteco do Zé',
+    '39.370.395/0001-50',
     'Rua das Palmeiras',
     'Vila Nova',
     '789'
   ),
   (
     'Happy Hour Lounge',
+    '71.403.961/0001-95',
     'Rua 7 de Setembro',
     'Centro',
     '101'
   ),
   (
     'Muvuca Fest',
+    '56.366.838/0001-58',
     'Avenida Central',
     'Parque Industrial',
     '707'

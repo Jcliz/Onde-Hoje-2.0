@@ -1,94 +1,78 @@
 <!DOCTYPE html>
-<html lang="pt-BR" style="background-color: #1D1D27;">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estabelecimentos</title>
-    
-    <!-- Ícones do Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/src/static/estabelecimentos.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de Estabelecimentos</title>
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="/src/static/global.css">
+  <link rel="stylesheet" href="/src/static/avaliacao.css">
+
+  <!-- Bootstrap e ícones -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 
-<body class="text-white d-flex flex-column min-vh-100">
-    <div id="header-container"></div>
-    <div id="sidebar-container"></div>
+<body class="OH-bg text-white min-vh-100 d-flex flex-column">
+  <!-- Cabeçalho -->
+  <div id="header-container" class="navbar navbar-expand-lg"></div>
 
-    <main class="container d-flex flex-column alig align-items-center pt-10">
-        <section id="content" class="col-md-9 p-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <table class="table table-dark table-hover rounded">
-                            <thead>
-                                <tr>
-                                    <th>Status</th>
-                                    <th>Estabelecimento</th>
-                                    <th>Endereço</th>
-                                    <th>Avaliação</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productTableBody">
-                                <!-- Dados dinâmicos aqui -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-12 d-flex justify-content-center mt-3">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEstabelecimentoModal">
-                            Cadastrar Estabelecimento
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+  <!-- Conteúdo principal -->
+  <main class="container py-5 flex-grow-1">
+    <div class="mx-auto" style="max-width: 800px;">
+      <h2 class="fw-bold fs-3 mb-4 text-center">Cadastro de Estabelecimento</h2>
 
-    <!-- Modal de Cadastro -->
-    <div class="modal fade" id="addEstabelecimentoModal" tabindex="-1" aria-labelledby="addEstabelecimentoLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-white">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addEstabelecimentoLabel">Adicionar Estabelecimento</h5>
-                    <button type="button" class="btn-close btn-light" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addProductForm">
-                        <div class="mb-3">
-                            <label for="productName" class="form-label">Nome do Estabelecimento</label>
-                            <input type="text" class="form-control bg-dark text-white" id="productName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productCode" class="form-label">Endereço</label>
-                            <input type="text" class="form-control bg-dark text-white" id="productCode" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label">Avaliação</label>
-                            <input type="number" min="1" max="5" class="form-control bg-dark text-white" id="productPrice" step="0.1" required>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                            <button type="submit" class="btn btn-primary" onclick="salvar()">Adicionar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      <form class="OH-dark rounded p-3" id="formCadastro" onsubmit="event.preventDefault(); cadastrarEstabelecimento();">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="nome" name="nome" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="cnpj" class="form-label">CNPJ</label>
+            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="rua" class="form-label">Rua</label>
+            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="rua" name="rua" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="bairro" class="form-label">Bairro</label>
+            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="bairro" name="bairro" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="numero" class="form-label">Número</label>
+            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="numero" name="numero" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="foto" class="form-label">Foto</label>
+            <input type="file" class="form-control OH-bg text-white border-secondary rounded" id="foto" name="foto" accept="image/*">
+          </div>
         </div>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn OH-btt1 text-white fw-bold px-5 py-2 rounded">Cadastrar</button>
+        </div>
+      </form>
     </div>
+  </main>
 
-    <div id="footer-container"></div>
+  <!-- Rodapé -->
+  <div id="footer-container"></div>
 
-    <script src="/estabelecimentos/estabelecimentos.js"></script>
-    <script src="../../../components/header.js" defer></script>
-    <script src="../../../components/footer.js" defer></script>
-    <script src="../../../components/sidebar.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts -->
+  <script src="../../../components/header.js" defer></script>
+  <script src="../../../components/footer.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
-
-
 
 </html>

@@ -22,3 +22,39 @@
     background-color: #70452F;
 }
 
+.form-label input::placeholder{
+    color: #f0f0f0; /* Cor do texto do label */
+}
+
+#searchFormContainer input::placeholder {
+  color: #ffffff; /* Substitua pela cor desejada */
+  opacity: 1; /* Garante que a cor fique visível */
+  border: black;
+}
+
+#searchFormContainer input {
+  color: #f0f0f0; /* Cor do texto no input */
+}
+
+/* Quando o campo de busca é selecionado */
+#searchFormContainer input:focus {
+    border-color: #000000;  /* Cor da borda ao focar (azul, pode mudar para qualquer cor) */
+    outline: none;  /* Remove o contorno padrão */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Efeito de sombra azul ao focar */
+}
+
+
+/* Hover no dropdown */
+.dropdown-menu .dropdown-item:hover {
+    background-color: #191922; 
+    color: #ffffff !important; /* amarelo Bootstrap */
+}
+
+.list-group-item.OH-dark {
+    border: none !important;
+    background-color: #191922 !important; /* ou o tom escuro que preferir */
+}
+
+.list-group-item.OH-dark:not(:last-child) {
+    border-bottom: 1px solid #333; /* borda sutil entre eventos */
+}
