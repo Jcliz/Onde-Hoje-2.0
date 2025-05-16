@@ -20,7 +20,7 @@ async function loginUsuario() {
       
       setTimeout(() => {
         window.location.href = '/src/pages/telaEntrada/telaentrada.html';
-      }, 3000); 
+      }, 1500); 
     } else {
       const errorData = await response.json();
       showModal(errorData.message || 'Erro ao realizar login.');

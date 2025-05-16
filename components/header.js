@@ -25,21 +25,44 @@ document.addEventListener("DOMContentLoaded", function () {
                     const signupBtn = document.getElementById("signup-btn");
 
                     if (sessionData.estaAutenticado) {
-                        userInfo.textContent = `Olá, ${sessionData.nomeUsuario}`;
+                        userInfo.textContent = `Olá, ${sessionData.nomeUsuario} (${sessionData.isAdm ? "Admin" : "Usuário"})`;
                         userInfo.classList.remove("d-none");
                         loginBtn.classList.add("d-none");
                         signupBtn.classList.add("d-none");
                     }
+
+                    //se o usuário não for admin, modificar apenas o dropdown de "Criação"
+                    if (!sessionData.estaAutenticado || !sessionData.isAdm) {
+                        const navItems = document.querySelectorAll(".navbar-nav li.nav-item");
+                        navItems.forEach(item => {
+                            const anchor = item.querySelector("a.nav-link");
+                            if (anchor && anchor.textContent.trim() === "Criação") {
+                                // Remove a classe de dropdown e atributos
+                                anchor.classList.remove("dropdown-toggle");
+                                anchor.removeAttribute("data-bs-toggle");
+                                anchor.removeAttribute("aria-expanded");
+
+                                // Remove o dropdown-menu, se existir
+                                const dropdownMenu = item.querySelector(".dropdown-menu");
+                                if (dropdownMenu) {
+                                    dropdownMenu.remove();
+                                }
+
+                                // Define o link direto para cadastroEvento
+                                anchor.href = '/src/pages/cadastroEvento/cadastroEvento.html';
+                            }
+                        });
+                    }
                 })
                 .catch(error => console.error("Erro ao verificar sessão:", error));
 
-            // 🔍 Lógica de mostrar/ocultar a search bar
+            // lógica de mostrar/ocultar a search bar
             const toggle = document.getElementById("searchToggle");
             const formContainer = document.getElementById("searchFormContainer");
 
             toggle.addEventListener("click", function (e) {
                 e.preventDefault();
-                
+
                 // Alterna entre mostrar e esconder a search bar
                 formContainer.classList.toggle("d-none");
                 document.documentElement.classList.add("search-active"); // Aplica o efeito de desfoque
@@ -71,10 +94,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
-            // Remove 'active' de todos
-            document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(el => el.classList.remove('active'));
-            // Adiciona 'active' ao clicado
-            item.classList.add('active');
-        });
+    item.addEventListener('click', () => {
+        // Remove 'active' de todos
+        document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(el => el.classList.remove('active'));
+        // Adiciona 'active' ao clicado
+        item.classList.add('active');
     });
+});
