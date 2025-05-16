@@ -42,7 +42,8 @@ INSERT INTO
     complemento,
     genero,
     telefone,
-    foto
+    foto,
+    role
   )
 VALUES
   (
@@ -57,7 +58,8 @@ VALUES
     'Ap 52A',
     'Masculino',
     '41999998888',
-    ''
+    '',
+    'adm'
   ),
   (
     'Maria Oliveira',
@@ -71,7 +73,8 @@ VALUES
     'Casa',
     'Feminino',
     '41988887777',
-    ''
+    '',
+    'user'
   ),
   (
     'Carlos Pereira',
@@ -85,7 +88,8 @@ VALUES
     'Sobrado',
     'Masculino',
     '41977776666',
-    ''
+    '',
+    'user'
   );
 
 CREATE TABLE estabelecimento (

@@ -154,7 +154,8 @@ app.get('/api/session', (req, res) => {
             cep: req.session.cep,
             numero: req.session.numero,
             complemento: req.session.complemento,
-            nick: req.session.nick
+            nick: req.session.nick,
+            isAdm: req.session.isAdm
         });
     } else {
         res.json({ estaAutenticado: false });
@@ -325,6 +326,12 @@ app.post('/api/login', (req, res) => {
             req.session.complemento = result[0].complemento;
             req.session.nick = result[0].nick;
             req.session.senha = result[0].senha;
+
+            if (result[0].role && result[0].role.toLowerCase() === 'adm') {
+                req.session.isAdm = true;
+            } else {
+                req.session.isAdm = false;
+            }
 
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {

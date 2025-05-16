@@ -1,10 +1,35 @@
+let sessionDataGlobal = null;
+
+async function carregarDados() {
+    try {
+        const response = await fetch("/api/session");
+        const sessionData = await response.json();
+        sessionDataGlobal = sessionData;
+
+        if (!sessionData.estaAutenticado || !sessionData.isAdm) {
+            if (!sessionData.estaAutenticado) {
+                window.location.href = "/src/pages/login/login.html";
+                return;
+            } else {
+                window.location.href = "/src/pages/telaEntrada/telaentrada.html";
+                return;
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao verificar sessão:", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await carregarDados();
+});
+
 //verificação de CEP e auto completamento
 async function validarCEP(input) {
     const rua = document.querySelector('#rua');
     const bairro = document.querySelector('#bairro');
 
     const onlyNumbers = /^[0-9]+$/;
-    const cepValid = /^[0-9]{8}$/;
 
     try {
         if (!onlyNumbers.test(input.value)) {

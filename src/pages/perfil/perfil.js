@@ -7,7 +7,7 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            showModal("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
+            // showModal("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
             window.location.href = "/src/pages/login/login.html";
             return;
         }
@@ -81,17 +81,17 @@ async function excluirConta() {
         });
 
         if (response.ok) {
-            showModal(data.mensagem || 'Conta deletada com sucesso. Sentiremos a sua falta :(');
+            // showModal(data.mensagem || 'Conta deletada com sucesso. Sentiremos a sua falta :(');
             sessionDataGlobal.estaAutenticado = false;
             logout();
 
         } else {
             const errorData = await response.json();
-            showModal(errorData.message || 'Erro ao excluir a conta.');
+            // showModal(errorData.message || 'Erro ao excluir a conta.');
         }
     } catch (err) {
         console.error('Erro:', err);
-        showModal(data.mensagem || 'Erro na exclusão de usuário. Tente novamente.');
+        // showModal(data.mensagem || 'Erro na exclusão de usuário. Tente novamente.');
     }
 }
 
@@ -191,10 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         // Somente prossegue se o input não possuir a classe "is-invalid"
         if (confirmacao.classList.contains('is-invalid')) {
-            showModal(data.mensagem || 'Corrija os erros antes de continuar');
+            // showModal(data.mensagem || 'Corrija os erros antes de continuar');
             return;
         }
-        showModal(data.mensagem || 'Sentiremos saudades :(');
+        // showModal(data.mensagem || 'Sentiremos saudades :(');
         excluirConta();
     });
 
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (invalidFields.length > 0) {
             event.preventDefault();
             event.stopPropagation();
-            showModal(data.mensagem || "Por favor, corrija os campos inválidos antes de continuar.");
+            // showModal(data.mensagem || "Por favor, corrija os campos inválidos antes de continuar.");
             return;
         }
 
@@ -245,20 +245,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     modalEditarTudo.hide();
-                    showModal(data.mensagem || 'Dados atualizados com sucesso!');
+                    // showModal(data.mensagem || 'Dados atualizados com sucesso!');
                     location.reload();
                 } else {
                     const errorData = await response.json();
                     console.error('Erro ao atualizar o perfil:', errorData);
-                    showModal(data.mensagem || 'Erro ao atualizar o perfil.');
+                    // showModal(data.mensagem || 'Erro ao atualizar o perfil.');
                 }
             } catch (error) {
                 console.error('Erro de rede:', error);
-                showModal(data.mensagem || 'Erro de conexão ao banco de dados.');
+                // showModal(data.mensagem || 'Erro de conexão ao banco de dados.');
             }
         } else {
             modalEditarTudo.hide();
-            showModal(data.mensagem || 'Nenhum dado alterado.');
+            // showModal(data.mensagem || 'Nenhum dado alterado.');
         }
     });
 });
