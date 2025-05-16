@@ -22,7 +22,7 @@
     background-color: #70452F;
 }
 
-.form-label input::placeholder{
+.form-label input::placeholder, #crud-estabelecimentos input::placeholder {
     color: #f0f0f0; /* Cor do texto do label */
 }
 
