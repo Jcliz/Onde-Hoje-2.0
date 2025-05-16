@@ -1,7 +1,6 @@
-#lista-estabelecimentos {
+#lista-estabelecimentos, #listas-estabelecimentos {
     overflow-x: hidden;
     overflow-y: auto;
-    /* Firefox e IE */
     scrollbar-width: none;
     -ms-overflow-style: none;
 }

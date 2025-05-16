@@ -3,11 +3,17 @@ sessionDataGlobal = null;
 async function avaliar() {
     try {
         const estabelecimento = document.getElementById('estabelecimento').value;
-        const nota = document.querySelector('input[name="nota"]:checked').value;
+        const notaInput = document.querySelector('input[name="nota"]:checked');
+
+        if (!notaInput) {
+            window.alert("Por favor, selecione uma nota.");
+            return;
+        }
+        const nota = notaInput.value;
         const comentario = document.getElementById('comentario').value;
 
         if (!estabelecimento || !nota) {
-            alert("Atenção", "Por favor, preencha todos os campos obrigatórios.");
+            window.alert("Atenção: Por favor, preencha todos os campos obrigatórios.");
             return;
         }
 
@@ -20,14 +26,14 @@ async function avaliar() {
         });
 
         if (response.ok) {
-            alert("Sucesso", "Avaliação enviada com sucesso!");
-            location.reload();
+            window.alert("Avaliação enviada com sucesso!");
+            window.location.reload();
         } else {
-            alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+            window.alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
         }
     } catch (error) {
         console.error("Erro ao enviar avaliação:", error);
-        alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+        window.alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
     }
 }
 
@@ -47,34 +53,63 @@ async function carregarDados() {
     }
 }
 
-//buscar e renderizar os estabelecimentos
+// Carregar somente os estabelecimentos que já possuem avaliações
+async function carregarAvaliacoes() {
+    try {
+        const responseAval = await fetch("/api/usuarios/avaliacoes");
+        const avaliacoes = await responseAval.json();
+
+        const containerAval = document.getElementById('lista-estabelecimentos');
+        containerAval.innerHTML = '';
+
+        avaliacoes.forEach(item => {
+            let stars = '';
+            const rating = Number(item.avaliacao);
+            for (let i = 0; i < rating; i++) {
+                stars += '<i class="bi bi-star-fill"></i>';
+            }
+            for (let i = rating; i < 5; i++) {
+                stars += '<i class="bi bi-star"></i>';
+            }
+            const avaliacaoContent = `
+                <div class="text-warning ms-2">
+                    <div class="star-rating" style="direction: ltr; unicode-bidi: embed;">
+                        ${stars}
+                    </div>
+                    <div class="text-white small fst-italic mt-1">
+                        "${item.comentario}"
+                    </div>
+                </div>
+            `;
+
+            const fotoUrl = item.foto
+                ? `/api/estabelecimentos/foto/${item.ID_estabelecimento}?${Date.now()}`
+                : '../../../public/cafe.png';
+
+            const card = document.createElement('div');
+            card.className = "estabelecimento-card shadow OH-dark text-center";
+            card.innerHTML = `
+                <img src="${fotoUrl}" alt="${item.nome}" class="img-fluid rounded mb-1" />
+                <h6 class="mb-0 w-50">${item.nome}</h6>
+                ${avaliacaoContent}
+            `;
+            containerAval.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Erro ao carregar avaliações:", error);
+    }
+}
+
+// Carregar a lista completa de estabelecimentos
 async function carregarEstabelecimentos() {
     try {
-        const response = await fetch("/api/estabelecimentos");
-        const estabelecimentos = await response.json();
-        const container = document.getElementById('lista-estabelecimentos');
-        const container2 = document.getElementById('listas-estabelecimentos');
-        container.innerHTML = '';
-        container2.innerHTML = '';
+        const responseEstab = await fetch("/api/estabelecimentos");
+        const estabelecimentos = await responseEstab.json();
 
-        const avaliacao = `
-    <div class="text-warning ms-2">
-        <div class="star-placeholder">
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star"></i>
-        </div>
-        <div class="text-white small fst-italic mt-1">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante."
-        </div>
-    </div>
-`;
-
+        const containerEstab = document.getElementById('listas-estabelecimentos');
+        containerEstab.innerHTML = '';
 
         estabelecimentos.forEach(estab => {
-            //usando foto do banco se disponível, senão placeholder
             const fotoUrl = estab.foto
                 ? `/api/estabelecimentos/foto/${estab.ID_estabelecimento}?${Date.now()}`
                 : '../../../public/cafe.png';
@@ -84,20 +119,9 @@ async function carregarEstabelecimentos() {
             card.onclick = () => selecionarEstabelecimento(estab.nome);
             card.innerHTML = `
                 <img src="${fotoUrl}" alt="${estab.nome}" class="img-fluid rounded mb-1" />
-                <h6 class="mb-0 w-50">${estab.nome}</h6>
-                ${avaliacao}
-            `;
-
-             const card2 = document.createElement('div');
-            card2.className = "estabelecimento-card shadow OH-dark text-center";
-            card2.onclick = () => selecionarEstabelecimento(estab.nome);
-            card2.innerHTML = `
-                <img src="${fotoUrl}" alt="${estab.nome}" class="img-fluid rounded mb-1" />
                 <h6 class="mb-0">${estab.nome}</h6>
             `;
-
-            container.appendChild(card);
-            container2.appendChild(card2);
+            containerEstab.appendChild(card);
         });
     } catch (error) {
         console.error("Erro ao carregar estabelecimentos:", error);
@@ -106,6 +130,7 @@ async function carregarEstabelecimentos() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
+    carregarAvaliacoes();
     carregarEstabelecimentos();
 });
 

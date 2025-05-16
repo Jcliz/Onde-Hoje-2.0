@@ -6,8 +6,6 @@ var app = express();
 const session = require('express-session');
 var mysql = require('mysql2');
 const nunjucks = require('nunjucks');
-const fs = require('fs');
-const path = require('path');
 const sessionMaxAge = 10 * 60 * 1000; // Expira após 10 minutos
 
 
@@ -336,28 +334,28 @@ app.post('/api/login', (req, res) => {
 });
 
 app.post('/api/usuarios/avaliar', (req, res) => {
-    // recepção do nome do estabelecimento em vez do id
     const { nota, comentario, estabelecimento } = req.body;
 
-    // buscar o ID do estabelecimento pelo nome
-    const findEstabSql = 'SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?';
-    con.query(findEstabSql, [estabelecimento], (err, results) => {
+    // Buscar o ID do estabelecimento a partir do nome
+    const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+    con.query(sqlFind, [estabelecimento], (err, results) => {
         if (err) {
-            console.error('Erro ao buscar estabelecimento:', err);
-            return res.status(500).json({ message: 'Erro ao buscar estabelecimento.' });
+            console.error(err);
+            return res.status(500).json({ error: 'Erro no banco de dados ao buscar estabelecimento' });
         }
         if (results.length === 0) {
-            return res.status(404).json({ message: 'Estabelecimento não encontrado.' });
+            return res.status(404).json({ error: 'Estabelecimento não encontrado' });
         }
         const fk_ID_estabelecimento = results[0].ID_estabelecimento;
-        // inserir avaliação com o ID obtido
-        const insertSql = 'INSERT INTO avaliacao (avaliacao, comentario, fk_ID_usuario, fk_ID_estabelecimento) VALUES (?, ?, ?, ?)';
-        con.query(insertSql, [nota, comentario, req.session.ID_usuario, fk_ID_estabelecimento], (err, result) => {
+
+        // Inserir nova avaliação com nota, comentário e FK do estabelecimento
+        const sqlInsert = "INSERT INTO avaliacao (avaliacao, comentario, fk_ID_usuario, fk_ID_estabelecimento) VALUES (?, ?, ?, ?)";
+        con.query(sqlInsert, [nota, comentario, req.session.ID_usuario, fk_ID_estabelecimento], (err, results) => {
             if (err) {
-                console.error('Erro ao inserir avaliação:', err);
-                return res.status(500).json({ message: 'Erro ao inserir avaliação.' });
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao inserir avaliação' });
             }
-            res.status(200).json({ message: 'Avaliação inserida com sucesso!' });
+            return res.status(200).json({ message: 'Avaliação adicionada com sucesso' });
         });
     });
 });
@@ -462,6 +460,23 @@ app.get('/api/estabelecimentos', (req, res) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ message: 'Erro ao buscar estabelecimentos.' });
+        }
+        res.json(results);
+    });
+});
+
+//endpoint para buscar avaliações do banco
+app.get('/api/usuarios/avaliacoes', (req, res) => {
+    const sql = `
+        SELECT e.ID_estabelecimento, e.nome, e.foto, a.avaliacao, a.comentario
+        FROM estabelecimento e
+        JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento
+        ORDER BY a.ID_rating ASC
+    `;
+    con.query(sql, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro interno no servidor' });
         }
         res.json(results);
     });
