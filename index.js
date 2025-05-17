@@ -587,6 +587,45 @@ app.get('/api/usuarios/avaliacoes', (req, res) => {
     });
 });
 
+// Endpoint para buscar a foto de um evento
+app.get('/api/eventos/foto/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT foto FROM evento WHERE ID_evento = ?";
+    con.query(sql, [id], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar foto do evento:", err);
+            return res.status(500).send("Erro ao buscar a foto");
+        }
+        if (results.length === 0 || !results[0].foto) {
+            return res.status(404).send("Foto não encontrada");
+        }
+        const fotoBlob = results[0].foto;
+        res.writeHead(200, {
+            "Content-Type": "image/jpeg",
+            "Content-Length": fotoBlob.length,
+        });
+        res.end(fotoBlob);
+    });
+});
+
+// Endpoint para buscar os eventos ativos (a partir de hoje)
+app.get('/api/eventos/ativos', (req, res) => {
+    const sql = `
+      SELECT e.*, est.nome AS estabelecimento_nome
+      FROM evento e
+      LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+      WHERE DATE(e.data) >= CURDATE()
+      ORDER BY e.data, e.hora ASC
+    `;
+    con.query(sql, (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar eventos ativos:", err);
+            return res.status(500).json({ message: 'Erro ao buscar eventos ativos.' });
+        }
+        res.json(results);
+    });
+});
+
 //iniciando o servidor
 const port = 3001;
 app.listen(port, () => {

@@ -65,7 +65,8 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="numero" class="form-label text-white">Número</label>
-                            <input type="text" class="form-control OH-bg text-white" id="numero" name="numero" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                            <input type="text" class="form-control OH-bg text-white" id="numero" name="numero"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                         </div>
                     </div>
                 </div>
@@ -102,37 +103,8 @@
         <!-- Container dos Eventos Ativos -->
         <div class="col-md-5 OH-dark shadow mx-md-3" style="border-radius: 15px;">
             <h3 class="text-center text-white mt-4 mb-3">Eventos Ativos</h3>
-            <div class="list-group px-2 pb-4">
-                <div class="list-group-item OH-dark text-white d-flex justify-content-between align-items-center rounded mb-2 shadow-sm"
-                    role="button" data-bs-toggle="modal" data-bs-target="#modalEvento"
-                    onclick="abrirModalEvento('Evento 1', '15/05/2025', '19:00')">
-                    <div>
-                        <i class="bi bi-calendar-event me-2 text-white"></i>
-                        Evento 1
-                        <div class="small text-white">15/05/2025 - 19:00</div>
-                    </div>
-                    <i class="bi bi-chevron-right text-secondary"></i>
-                </div>
-                <div class="list-group-item OH-dark text-white d-flex justify-content-between align-items-center rounded mb-2 shadow-sm"
-                    role="button" data-bs-toggle="modal" data-bs-target="#modalEvento"
-                    onclick="abrirModalEvento('Evento 2', '15/05/2025', '19:00')">
-                    <div>
-                        <i class="bi bi-calendar-event me-2 text-white"></i>
-                        Evento 2
-                        <div class="small text-white">15/05/2025 - 19:00</div>
-                    </div>
-                    <i class="bi bi-chevron-right text-secondary"></i>
-                </div>
-                <div class="list-group-item OH-dark text-white d-flex justify-content-between align-items-center rounded mb-2 shadow-sm"
-                    role="button" data-bs-toggle="modal" data-bs-target="#modalEvento"
-                    onclick="abrirModalEvento('Evento 3', '15/05/2025', '19:00')">
-                    <div>
-                        <i class="bi bi-calendar-event me-2 text-white"></i>
-                        Evento 3
-                        <div class="small text-white">15/05/2025 - 19:00</div>
-                    </div>
-                    <i class="bi bi-chevron-right text-secondary"></i>
-                </div>
+            <div class="list-group px-2 pb-4" id="eventos-container">
+                <!-- Eventos ativos serão carregados aqui dinamicamente -->
             </div>
         </div>
     </div>
@@ -147,10 +119,13 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Foto do Evento com tamanho reduzido -->
+                    <img id="eventoFoto" src="" alt="Foto do Evento" class="img-fluid rounded mb-3"
+                        style="max-height: 150px; object-fit: cover;">
                     <p><strong>Nome:</strong> <span id="eventoNome"></span></p>
                     <p><strong>Data:</strong> <span id="eventoData"></span></p>
                     <p><strong>Horário:</strong> <span id="eventoHorario"></span></p>
-                    <!-- Você pode adicionar mais campos aqui -->
+                    <p><strong>Local:</strong> <span id="eventoLocal"></span></p>
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>

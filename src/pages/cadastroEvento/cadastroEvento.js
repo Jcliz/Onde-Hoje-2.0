@@ -245,4 +245,67 @@ async function criarEvento() {
   }
 }
 
+async function carregarEventosAtivos() {
+  try {
+    const response = await fetch('/api/eventos/ativos');
+    const eventos = await response.json();
+    const container = document.getElementById('eventos-container');
+    container.innerHTML = '';
+
+    eventos.forEach(evento => {
+      // Define o local: se houver CEP, monta o endereço; senão, usa o nome do estabelecimento
+      let localText = '';
+      if (evento.cep) {
+        localText = `${evento.cep} - ${evento.rua}, ${evento.bairro}, Nº ${evento.numero}`;
+      } else {
+        localText = evento.estabelecimento_nome || 'Local não definido';
+      }
+
+      // Formata a data para o padrão pt-BR
+      const dataFormat = new Date(evento.data).toLocaleDateString('pt-BR');
+
+      // Cria o card do evento
+      const card = document.createElement('div');
+      card.className = "list-group-item OH-dark text-white d-flex justify-content-between align-items-center rounded mb-2 shadow-sm";
+      card.style.cursor = "pointer";
+      card.innerHTML = `
+        <div>
+          <i class="bi bi-calendar-event me-2 text-white"></i>
+          <strong>${evento.nome}</strong>
+          <div class="small text-white">${dataFormat} - ${evento.hora}</div>
+          <div class="small text-white">${localText}</div>
+        </div>
+        <i class="bi bi-chevron-right text-secondary"></i>
+      `;
+
+      // Ao clicar, preenche o modal com os detalhes do evento e exibe a foto
+      card.addEventListener('click', () => {
+        document.getElementById('eventoNome').textContent = evento.nome;
+        document.getElementById('eventoData').textContent = dataFormat;
+        document.getElementById('eventoHorario').textContent = evento.hora;
+        document.getElementById('eventoLocal').textContent = localText;
+        const eventoFotoEl = document.getElementById('eventoFoto');
+        eventoFotoEl.src = `/api/eventos/foto/${evento.ID_evento}?${Date.now()}`;
+
+        eventoFotoEl.onerror = () => {
+          eventoFotoEl.src = '../../../bar.png';
+        };
+
+        // Abre o modal utilizando a API do Bootstrap
+        const modal = new bootstrap.Modal(document.getElementById('modalEvento'));
+        modal.show();
+      });
+
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Erro ao carregar eventos ativos:", error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await carregarDados();
+  carregarEventosAtivos();
+});
+
 window.criarEvento = criarEvento;
