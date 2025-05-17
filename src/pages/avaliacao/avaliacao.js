@@ -30,7 +30,9 @@ async function avaliar() {
 
         if (response.ok) {
             showToast("Avaliação enviada com sucesso!", 'success');
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
         } else {
             showToast("Erro ao enviar avaliação. Tente novamente mais tarde.", 'error');
         }
@@ -95,7 +97,7 @@ async function carregarAvaliacoes() {
             }
             const avaliacaoContent = `
                 <div class="text-warning ms-2">
-                    <div class="star-rating" style="direction: ltr; unicode-bidi: embed;">
+                    <div class="star-rating list-stars" style="direction: ltr; unicode-bidi: embed;">
                         ${stars}
                     </div>
                     <div class="text-white small fst-italic mt-1">

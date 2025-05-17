@@ -101,20 +101,15 @@
             </div>
     </main>
 
-    <div id="alert-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content OH-bg">
-                <div class="modal-header">
-                    <h5 class="modal-title text-white">Aviso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast-alert" class="toast align-items-center text-white bg-danger border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">
+                    <!-- Mensagem será inserida aqui -->
                 </div>
-                <div class="modal-body text-white">
-                    <p id="modal-message"></p>
-                </div>
-                <div class="modal-footer">
-                    <button class="OH-btt2 btn text-white" type="button" class="btn btn-secondary"
-                        data-bs-dismiss="modal">Fechar</button>
-                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Fechar"></button>
             </div>
         </div>
     </div>
