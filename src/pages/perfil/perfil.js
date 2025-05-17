@@ -38,6 +38,7 @@ async function carregarDados() {
         telefone.textContent = sessionData.telefone;
         nick.textContent = sessionData.nick;
 
+
     } catch (error) {
         console.error("Erro ao verificar sessão:", error);
     }
@@ -214,8 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const dadosParaEnviar = {};
 
         const novoNickInput = document.getElementById('novoNickTudo');
+        const novoEmailInput = document.getElementById('novoEmailTudo');
+        const novoCepInput = document.getElementById('novoCepTudo');
         const novoNumeroInput = document.getElementById('novoNumeroTudo');
         const novoComplementoInput = document.getElementById('novoComplementoTudo');
+        const novoTelInput = document.getElementById('novoTelefoneTudo');
 
         if (novoNickInput.value !== sessionDataGlobal.nick) {
             dadosParaEnviar.nick = novoNickInput.value;
@@ -237,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (Object.keys(dadosParaEnviar).length > 0) {
-            console.log('Enviando dados modificados:', dadosParaEnviar);
             try {
                 const response = await fetch('/api/usuarios/update', {
                     method: 'PUT',
@@ -247,16 +250,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     modalEditarTudo.hide();
-                    showToast(
-                        'Dados atualizados com sucesso!', 'success');
+                    showToast('Dados atualizados com sucesso!', 'success');
                     setTimeout(() => {
                         location.reload();
                     }, 1500);
                 } else {
                     const errorData = await response.json();
                     console.error('Erro ao atualizar o perfil:', errorData);
-                    showToast(
-                        'Erro ao atualizar o perfil.', 'error');
+                    showToast('Erro ao atualizar o perfil.', 'error');
                 }
             } catch (error) {
                 console.error('Erro de rede:', error);
@@ -265,6 +266,52 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             modalEditarTudo.hide();
             showToast('Nenhum dado alterado.', 'error');
+        }
+    });
+
+    document.getElementById('formSenha').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const senhaInput = document.getElementById('password');
+        const confirmSenhaInput = document.getElementById('confirmPassword');
+
+        // Se os campos estiverem com a classe "is-invalid", impede o submit
+        if (senhaInput.classList.contains('is-invalid') || confirmSenhaInput.classList.contains('is-invalid')) {
+            showToast('Corrija os erros antes de continuar', 'error');
+            return;
+        }
+
+        // Caso o usuário não preencha nova senha, não envia
+        if (!senhaInput.value.trim()) {
+            showToast('Preencha a nova senha', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/usuarios/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ senha: senhaInput.value })
+            });
+
+            if (response.ok) {
+                showToast('Senha atualizada com sucesso!', 'success');
+                // Fecha o modal de senha
+                const modalSenhaEl = document.getElementById('modalSenha');
+                const modalSenha = bootstrap.Modal.getInstance(modalSenhaEl);
+                modalSenha.hide();
+
+                // Opcional: limpar os inputs
+                senhaInput.value = "";
+                confirmSenhaInput.value = "";
+            } else {
+                const errorData = await response.json();
+                console.error('Erro ao atualizar a senha:', errorData);
+                showToast('Erro ao atualizar a senha.', 'error');
+            }
+        } catch (err) {
+            console.error('Erro de rede:', err);
+            showToast('Erro de conexão.', 'error');
         }
     });
 });
