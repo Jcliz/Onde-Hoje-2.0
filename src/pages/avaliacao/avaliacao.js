@@ -1,3 +1,6 @@
+import { showToast } from "../../../components/toast.js";
+
+
 sessionDataGlobal = null;
 let selectedCard = null;
 
@@ -7,14 +10,14 @@ async function avaliar() {
         const notaInput = document.querySelector('input[name="nota"]:checked');
 
         if (!notaInput) {
-            window.alert("Por favor, selecione uma nota.");
+            showToast("Por favor, selecione uma nota.", "error");
             return;
         }
         const nota = notaInput.value;
         const comentario = document.getElementById('comentario').value;
 
         if (!estabelecimento || !nota) {
-            window.alert("Atenção: Por favor, preencha todos os campos obrigatórios.");
+            showToast("Atenção: Por favor, preencha todos os campos obrigatórios.", "error");
             return;
         }
 
@@ -27,14 +30,16 @@ async function avaliar() {
         });
 
         if (response.ok) {
-            window.alert("Avaliação enviada com sucesso!");
-            window.location.reload();
+            showToast("Avaliação enviada com sucesso!");
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
         } else {
-            window.alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+            window.showToast("Erro ao enviar avaliação. Tente novamente mais tarde.");
         }
     } catch (error) {
         console.error("Erro ao enviar avaliação:", error);
-        window.alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+        showToast("Erro ao enviar avaliação. Tente novamente mais tarde.");
     }
 }
 
@@ -45,7 +50,7 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            alert("Atenção, você não está autenticado. Redirecionando para a página de login.");
+            showToast("Atenção, você não está autenticado. Redirecionando para a página de login.", "error");
             window.location.href = "/src/pages/login/login.html";
             return;
         }

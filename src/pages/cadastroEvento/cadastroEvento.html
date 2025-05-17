@@ -151,9 +151,21 @@
         </div>
     </div>
 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast-alert" class="toast align-items-center text-white bg-danger border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">
+                    <!-- Mensagem será inserida aqui -->
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
 
     <div id="footer-container"></div>
-    <script src="../../pages/cadastroEvento/cadastroEvento.js" defer></script>
+    <script type="module" src="../../pages/cadastroEvento/cadastroEvento.js" defer></script>
     <script src="../../../components/header.js" defer></script>
     <script src="../../../components/footer.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

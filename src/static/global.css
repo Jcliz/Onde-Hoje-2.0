@@ -58,3 +58,14 @@
 .list-group-item.OH-dark:not(:last-child) {
     border-bottom: 1px solid #333; /* borda sutil entre eventos */
 }
+
+#sugestoes {
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1055; /* acima da navbar */
+}
+.hover-bg:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}

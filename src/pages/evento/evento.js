@@ -1,3 +1,5 @@
+import { showToast } from "../../../components/toast.js";
+
 sessionDataGlobal = null;
 
 async function avaliar() {
@@ -7,7 +9,7 @@ async function avaliar() {
         const comentario = document.getElementById('comentario').value;
 
         if (!evento || !nota) {
-            alert("Atenção", "Por favor, preencha todos os campos obrigatórios.");
+            showToast("Atenção", "Por favor, preencha todos os campos obrigatórios.", "error");
             return;
         }
 
@@ -20,14 +22,14 @@ async function avaliar() {
         });
 
         if (response.ok) {
-            alert("Sucesso", "Avaliação enviada com sucesso!");
+            showToast("Sucesso", "Avaliação enviada com sucesso!", "success");
             location.reload();
         } else {
-            alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+            showToast("Erro ao enviar avaliação. Tente novamente mais tarde.", "error");
         }
     } catch (error) {
         console.error("Erro ao enviar avaliação:", error);
-        alert("Erro ao enviar avaliação. Tente novamente mais tarde.");
+        showToast("Erro ao enviar avaliação. Tente novamente mais tarde.", "error");
     }
 }
 
@@ -38,7 +40,7 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            alert("Atenção, você não está autenticado. Redirecionando para a página de login.");
+            showToast("Atenção, você não está autenticado. Redirecionando para a página de login.", "error");
             window.location.href = "/src/pages/login/login.html";
             return;
         }

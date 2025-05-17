@@ -1,4 +1,5 @@
-//gerador de nick's aleatórios
+import { showToast } from "../../../components/toast.js";
+
 function gerarNickAleatorio() {
   const adjetivos = ['Furioso', 'Preguiçoso', 'Malandro', 'Feliz', 'Silencioso'];
   const nomes = ['Tigre', 'Ninja', 'Panda', 'Falcão', 'Mago'];
@@ -39,7 +40,7 @@ function processarCadastro(event) {
   if (nomeValido && emailValido && senhaValida && cpfValido && idadeValida && cepValido && telefoneValido) {
     enviarDados(nome, nick, dataNasc, email, senha, cpf, cep.value.trim(), numero, complemento, genero, telefone);
   } else {
-    showModal('Por favor, corrija os erros antes de continuar.');
+    showToast('Por favor, corrija os erros antes de continuar.', 'error');
     submitButton.disabled = false;
   }
 }
@@ -72,18 +73,18 @@ async function cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, nu
 
     if (response.ok) {
       const data = await response.json();
-      showModal('Usuário cadastrado com sucesso!');
+      showToast('Usuário cadastrado com sucesso!', 'success');
       
       setTimeout(() => {
         window.location.href = '/src/pages/login/login.html';
       }, 3000); 
     } else {
       const errorData = await response.json();
-      showModal(errorData.message || 'Erro ao cadastrar o usuário.');
+      showToast('Erro ao cadastrar o usuário.', 'error');
     }    
   } catch (error) {
     console.error('Erro:', error);
-    showModal('Erro ao enviar os dados. Tente novamente.');
+    showToast('Erro ao enviar os dados. Tente novamente.', 'error');
   } finally {
     document.querySelector('#continue').disabled = false;
   }
@@ -394,11 +395,4 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
   });
 });
 
-function showModal(message) {
-  const modalMessage = document.getElementById('modal-message');
-  const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
-  
-  modalMessage.textContent = message;
-  modal.show();
-}
 

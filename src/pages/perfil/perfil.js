@@ -1,3 +1,5 @@
+import { showToast } from "../../../components/toast.js";
+
 let sessionDataGlobal = null; //salvamento dos dados da sessão globalmente
 
 async function carregarDados() {
@@ -7,7 +9,7 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            // showModal("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.");
+            showToast("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.", 'error');
             window.location.href = "/src/pages/login/login.html";
             return;
         }
@@ -81,17 +83,17 @@ async function excluirConta() {
         });
 
         if (response.ok) {
-            // showModal(data.mensagem || 'Conta deletada com sucesso. Sentiremos a sua falta :(');
+            showToast('Conta deletada com sucesso. Sentiremos a sua falta :(', 'success');
             sessionDataGlobal.estaAutenticado = false;
             logout();
 
         } else {
             const errorData = await response.json();
-            // showModal(errorData.message || 'Erro ao excluir a conta.');
+            showToast('Erro ao excluir a conta.', 'error');
         }
     } catch (err) {
         console.error('Erro:', err);
-        // showModal(data.mensagem || 'Erro na exclusão de usuário. Tente novamente.');
+        showToast('Erro na exclusão de usuário. Tente novamente.', 'error');
     }
 }
 
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formEditarTudo = document.getElementById('formEditarTudo');
 
     const modalExclusaoElement = document.getElementById('modalExclusao');
-    const modalExclusao = new bootstrap.Modal(modalExclusaoElement); 
+    const modalExclusao = new bootstrap.Modal(modalExclusaoElement);
     const btnExcluir = document.getElementById('excluir');
     const formExclusao = document.getElementById('formExcluir');
 
@@ -121,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnExcluir.addEventListener('click', () => {
-        modalExclusao.show(); 
+        modalExclusao.show();
     });
 
     // Obtém referências aos inputs do modal uma vez
@@ -129,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const novoTelInput = document.getElementById('novoTelefoneTudo');
     const novoEmailInput = document.getElementById('novoEmailTudo');
     const confirmacao = document.getElementById('confirmacao');
-    
+
     // Adiciona a validação enquanto o usuário digita
     confirmacao.addEventListener('input', () => {
         if (confirmacao.value === sessionDataGlobal.nick) {
@@ -138,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmacao.classList.add('is-invalid');
         }
     });
-    
+
     // Aplica máscaras e feedback assim que o input perde o foco
     novoCepInput.addEventListener('focusout', async () => {
         const rawCep = novoCepInput.value.replace(/\D/g, '');
@@ -186,15 +188,15 @@ document.addEventListener('DOMContentLoaded', () => {
             novoEmailInput.classList.remove('is-invalid');
         }
     });
-    
+
     formExclusao.addEventListener('submit', (event) => {
         event.preventDefault();
         // Somente prossegue se o input não possuir a classe "is-invalid"
         if (confirmacao.classList.contains('is-invalid')) {
-            // showModal(data.mensagem || 'Corrija os erros antes de continuar');
+            showToast('Corrija os erros antes de continuar', 'error');
             return;
         }
-        // showModal(data.mensagem || 'Sentiremos saudades :(');
+        showToast('Sentiremos saudades :(', 'success');
         excluirConta();
     });
 
@@ -204,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (invalidFields.length > 0) {
             event.preventDefault();
             event.stopPropagation();
-            // showModal(data.mensagem || "Por favor, corrija os campos inválidos antes de continuar.");
+            showToast("Por favor, corrija os campos inválidos antes de continuar.", 'error');
             return;
         }
 
@@ -245,20 +247,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     modalEditarTudo.hide();
-                    // showModal(data.mensagem || 'Dados atualizados com sucesso!');
-                    location.reload();
+                    showToast(
+                        'Dados atualizados com sucesso!', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
                 } else {
                     const errorData = await response.json();
                     console.error('Erro ao atualizar o perfil:', errorData);
-                    // showModal(data.mensagem || 'Erro ao atualizar o perfil.');
+                    showToast(
+                        'Erro ao atualizar o perfil.',  'error');
                 }
             } catch (error) {
                 console.error('Erro de rede:', error);
-                // showModal(data.mensagem || 'Erro de conexão ao banco de dados.');
+                showToast('Erro de conexão ao banco de dados.', 'error');
             }
         } else {
             modalEditarTudo.hide();
-            // showModal(data.mensagem || 'Nenhum dado alterado.');
+            showToast('Nenhum dado alterado.', 'error');
         }
     });
 });
@@ -279,16 +285,16 @@ async function uploadFoto(input) {
         const data = await response.json();
 
         if (response.ok) {
-            showModal(data.mensagem || 'Upload feito com sucesso!');
+            showToast('Upload feito com sucesso!', 'success');
             // Atualiza a imagem do perfil no front-end
             const fotoPerfil = document.getElementById('fotoPerfil');
             fotoPerfil.src = `/api/usuarios/foto?${Date.now()}`; // Adiciona um timestamp para evitar cache
         } else {
-            showModal(data.erro || 'Erro ao enviar a foto');
+            showToast('Erro ao enviar a foto', 'error');
         }
     } catch (err) {
         console.error(err);
-        showModal(data.mensagem || 'Erro inesperado ao enviar a foto.');
+        showToast('Erro inesperado ao enviar a foto.', 'error');
     }
 }
 
@@ -349,22 +355,4 @@ document.querySelectorAll('.toggle-password-modal').forEach(icon => {
 
 function logout() {
     window.location.href = "/logout"
-}
-
-function showModal(message) {
-    console.log(message);  // Verifique se a mensagem está sendo passada corretamente.
-
-    const modals = document.querySelectorAll('.modal.show'); // Seleciona apenas modais visíveis
-    modals.forEach(modal => {
-        const bootstrapModal = bootstrap.Modal.getInstance(modal);
-        if (bootstrapModal) {
-            bootstrapModal.hide();
-        }
-    });
-
-    const modalMessage = document.getElementById('modal-message');
-    const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
-    
-    modalMessage.textContent = message;  // Aqui o texto é atribuído
-    modal.show();
 }

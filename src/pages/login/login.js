@@ -1,3 +1,6 @@
+import { showToast } from "../../../components/toast.js";
+
+
 const email = document.getElementById('email').value.trim();
 const senha = document.getElementById('password').value.trim();
 
@@ -16,18 +19,18 @@ async function loginUsuario() {
 
     if (response.ok) {
       const data = await response.json();
-      showModal('Login bem-sucedido!');
+      showToast('Login bem-sucedido!', 'success');
       
       setTimeout(() => {
         window.location.href = '/src/pages/telaEntrada/telaentrada.html';
       }, 1500); 
     } else {
       const errorData = await response.json();
-      showModal(errorData.message || 'Erro ao realizar login.');
+      showToast('Erro ao realizar login.', 'error');
     }
   } catch (error) {
     console.error('Erro:', error);
-    showModal('Erro ao tentar logar. Tente novamente.');
+    showToast('Erro ao tentar logar. Tente novamente.', 'error');
   }
 }
 
@@ -74,10 +77,3 @@ document.getElementById('email').addEventListener('focusout', function () {
   validarEmail(this);
 });
 
-function showModal(message) {
-  const modalMessage = document.getElementById('modal-message');
-  const modal = new bootstrap.Modal(document.getElementById('alert-modal'));
-  
-  modalMessage.textContent = message;
-  modal.show();
-}
