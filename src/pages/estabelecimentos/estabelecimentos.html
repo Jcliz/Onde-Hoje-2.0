@@ -35,7 +35,7 @@
           <div class="col-md-6">
             <label for="nome" class="form-label">Nome</label>
             <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="nome" name="nome"
-              required>
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
             <div class="invalid-feedback">Nome inválido.</div>
           </div>
 
@@ -58,7 +58,7 @@
           <div class="col-md-6">
             <label for="rua" class="form-label">Rua</label>
             <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="rua" name="rua"
-              required>
+             oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
           </div>
 
           <div class="col-md-6">

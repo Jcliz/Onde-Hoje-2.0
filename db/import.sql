@@ -199,17 +199,24 @@ VALUES
 CREATE TABLE evento (
   ID_evento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   nome VARCHAR(50) NOT NULL,
-  fk_ID_estabelecimento INT NOT NULL,
+  data DATE NOT NULL,
+  hora TIME NOT NULL,
+  cep VARCHAR(9), 
+  rua VARCHAR(60),
+  bairro VARCHAR(60),
+  numero VARCHAR(10),
+  foto MEDIUMBLOB,
+  fk_ID_estabelecimento INT,
   FOREIGN KEY (fk_ID_estabelecimento) REFERENCES estabelecimento(ID_estabelecimento)
 );
 
 INSERT INTO
-  evento (nome, fk_ID_estabelecimento)
+  evento (nome, data, hora, fk_ID_estabelecimento)
 VALUES
-  ('Bar do Mário', 1),
-  ('Cervejaria do Centro', 2),
-  ('Boteco do Zé', 3),
-  ('Happy Hour Lounge', 4),
-  ('Muvuca Fest', 5);
+  ('Bar do Mário', '2025-05-30', '20:00', 1),
+  ('Cervejaria do Centro', '2025-05-30', '20:00', 2),
+  ('Boteco do Zé', '2025-05-30', '20:00', 3),
+  ('Happy Hour Lounge', '2025-05-30', '20:00', 4),
+  ('Muvuca Fest', '2025-05-30', '20:00', 5);
 
 COMMIT;

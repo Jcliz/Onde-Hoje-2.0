@@ -523,6 +523,53 @@ app.get("/api/estabelecimentos/foto/:id", (req, res) => {
     });
 });
 
+app.post('/api/eventos/criar', upload.single('foto'), (req, res) => {
+    const { nome, data, hora, cep, rua, bairro, numero, fk_ID_estabelecimento } = req.body;
+    let fotoHex = null;
+
+    if (req.file) {
+        try {
+            fotoHex = req.file.buffer.toString('hex');
+        } catch (error) {
+            console.error("Erro ao converter a foto:", error);
+            return res.status(400).json({ message: 'Foto inválida.' });
+        }
+    }
+
+    if (fk_ID_estabelecimento) {
+        const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+        con.query(sqlFind, [fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Erro no banco de dados ao buscar estabelecimento.' });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Estabelecimento não encontrado.' });
+            }
+            const estabelecimentoId = results[0].ID_estabelecimento;
+            // Use UNHEX(?) para converter o valor hexadecimal para o formato binário
+            const sql = 'INSERT INTO evento (nome, data, hora, cep, rua, bairro, numero, foto, fk_ID_estabelecimento) VALUES (?, ?, ?, ?, ?, ?, ?, UNHEX(?), ?)';
+            con.query(sql, [nome, data, hora, cep, rua, bairro, numero, fotoHex, estabelecimentoId], (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ message: 'Erro ao criar evento.' });
+                }
+                return res.status(200).json({ message: 'Evento criado com sucesso!' });
+            });
+        });
+    } else {
+        // Caso não haja estabelecimento, insere nulo para fk_ID_estabelecimento
+        const sql = 'INSERT INTO evento (nome, data, hora, cep, rua, bairro, numero, foto, fk_ID_estabelecimento) VALUES (?, ?, ?, ?, ?, ?, ?, UNHEX(?), ?)';
+        con.query(sql, [nome, data, hora, cep, rua, bairro, numero, fotoHex, null], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Erro ao criar evento.' });
+            }
+            return res.status(200).json({ message: 'Evento criado com sucesso!' });
+        });
+    }
+});
+
 //endpoint para buscar avaliações do banco
 app.get('/api/usuarios/avaliacoes', (req, res) => {
     const sql = `
