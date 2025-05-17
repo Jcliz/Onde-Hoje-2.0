@@ -62,3 +62,20 @@
     background-color: #f1f1f1;
     cursor: pointer;
 }
+
+.unauthenticated::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    /* Pode ajustar a opacidade se preferir */
+    z-index: 1;
+}
+
+.toast-container,
+.toast {
+    z-index: 2 !important;
+}

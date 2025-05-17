@@ -199,19 +199,17 @@ VALUES
 CREATE TABLE evento (
   ID_evento INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   nome VARCHAR(50) NOT NULL,
-  fk_ID_rating INT NOT NULL,
   fk_ID_estabelecimento INT NOT NULL,
-  FOREIGN KEY (fk_ID_rating) REFERENCES avaliacao(ID_rating),
   FOREIGN KEY (fk_ID_estabelecimento) REFERENCES estabelecimento(ID_estabelecimento)
 );
 
 INSERT INTO
-  evento (nome, fk_ID_rating, fk_ID_estabelecimento)
+  evento (nome, fk_ID_estabelecimento)
 VALUES
-  ('Bar do Mário', 1, 1),
-  ('Cervejaria do Centro', 2, 2),
-  ('Boteco do Zé', 3, 3),
-  ('Happy Hour Lounge', 4, 4),
-  ('Muvuca Fest', 5, 5);
+  ('Bar do Mário', 1),
+  ('Cervejaria do Centro', 2),
+  ('Boteco do Zé', 3),
+  ('Happy Hour Lounge', 4),
+  ('Muvuca Fest', 5);
 
 COMMIT;

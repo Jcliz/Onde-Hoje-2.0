@@ -9,8 +9,11 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
-            showToast("Você precisa estar autenticado para acessar esta página. Redirecionando para o login.", 'error');
-            window.location.href = "/src/pages/login/login.html";
+            document.body.classList.add('unauthenticated');
+            showToast("Atenção, você não está autenticado. Redirecionando para a página de login.", 'error');
+            setTimeout(() => {
+                window.location.href = "/src/pages/login/login.html";
+            }, 2000);
             return;
         }
 

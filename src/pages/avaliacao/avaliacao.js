@@ -49,8 +49,11 @@ async function carregarDados() {
         sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
+            document.body.classList.add('unauthenticated');
             showToast("Atenção, você não está autenticado. Redirecionando para a página de login.", 'error');
-            window.location.href = "/src/pages/login/login.html";
+            setTimeout(() => {
+                window.location.href = "/src/pages/login/login.html";
+            }, 2000);
             return;
         }
     } catch (error) {
