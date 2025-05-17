@@ -503,6 +503,26 @@ app.post('/api/estabelecimentos/criar', upload.single('foto'), (req, res) => {
     });
 });
 
+app.get("/api/estabelecimentos/foto/:id", (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT foto FROM estabelecimento WHERE ID_estabelecimento = ?";
+    con.query(sql, [id], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar foto do estabelecimento:", err);
+            return res.status(500).send("Erro ao buscar a foto");
+        }
+        if (results.length === 0 || !results[0].foto) {
+            return res.status(404).send("Foto não encontrada");
+        }
+        const fotoBlob = results[0].foto;
+        res.writeHead(200, {
+            "Content-Type": "image/jpeg",
+            "Content-Length": fotoBlob.length,
+        });
+        res.end(fotoBlob);
+    });
+});
+
 //endpoint para buscar avaliações do banco
 app.get('/api/usuarios/avaliacoes', (req, res) => {
     const sql = `

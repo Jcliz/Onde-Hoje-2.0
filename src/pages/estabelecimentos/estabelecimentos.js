@@ -63,9 +63,6 @@ async function criar() {
 
         if (response.ok) {
             showToast("Estabelecimento cadastrado com sucesso!", 'success');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
         } else if (response.status === 400) {
             const data = await response.json();
             showToast("Foto inválida.", 'error');
