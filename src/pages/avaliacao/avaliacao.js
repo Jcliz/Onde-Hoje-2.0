@@ -1,6 +1,6 @@
 import { showToast } from "../../../components/toast.js";
 
-window.sessionDataGlobal = null;
+let sessionDataGlobal = null;
 let selectedCard = null;
 
 async function avaliar() {

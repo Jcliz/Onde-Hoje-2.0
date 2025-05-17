@@ -472,6 +472,37 @@ app.get('/api/estabelecimentos', (req, res) => {
     });
 });
 
+app.post('/api/estabelecimentos/criar', upload.single('foto'), (req, res) => {
+    const { nome, cnpj, cep, rua, bairro, numero, foto } = req.body;
+    let fotoHex = null;
+
+    if (req.file) {
+        try {
+            fotoHex = req.file.buffer.toString('hex');
+        } catch (error) {
+            console.error("Erro ao converter a foto:", error);
+            return res.status(400).json({ message: 'Foto inválida.' });
+        }
+    } else if (foto) {
+        try {
+            const buffer = Buffer.from(foto, 'base64');
+            fotoHex = buffer.toString('hex');
+        } catch (error) {
+            console.error("Erro ao converter foto base64:", error);
+            return res.status(400).json({ message: 'Foto inválida.' });
+        }
+    }
+
+    const sql = 'INSERT INTO estabelecimento (nome, cnpj, cep, rua, bairro, numero, foto) VALUES (?, ?, ?, ?, ?, ?, UNHEX(?))';
+    con.query(sql, [nome, cnpj, cep, rua, bairro, numero, fotoHex], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Erro ao criar estabelecimento.' });
+        }
+        res.status(200).json({ message: 'Estabelecimento criado com sucesso!' });
+    });
+});
+
 //endpoint para buscar avaliações do banco
 app.get('/api/usuarios/avaliacoes', (req, res) => {
     const sql = `

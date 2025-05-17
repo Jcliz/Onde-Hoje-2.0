@@ -1,10 +1,9 @@
-let sessionDataGlobal = null;
+import { showToast } from "../../../components/toast.js";
 
 async function carregarDados() {
     try {
         const response = await fetch("/api/session");
         const sessionData = await response.json();
-        sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado || !sessionData.isAdm) {
             if (!sessionData.estaAutenticado) {
@@ -23,6 +22,62 @@ async function carregarDados() {
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
 });
+
+async function criar() {
+    const nome = document.getElementById('nome').value;
+    const cnpj = document.getElementById('cnpj').value;
+    const cep = document.getElementById('cep').value;
+    const rua = document.getElementById('rua').value;
+    const bairro = document.getElementById('bairro').value;
+    const numero = document.getElementById('numero').value;
+    const fotoInput = document.getElementById('foto');
+
+    const invalidFields = document.querySelectorAll('.is-invalid');
+    if (invalidFields.length > 0) {
+        showToast("Atenção: Corrija os erros no formulário.", 'error');
+        return;
+    }
+
+    if (!nome || !cnpj || !cep || !rua || !numero || !bairro) {
+        showToast("Atenção: Por favor, preencha todos os campos obrigatórios.", 'error');
+        return;
+    }
+
+    // Cria um FormData para enviar os dados, semelhante à função uploadFoto
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("cnpj", cnpj);
+    formData.append("cep", cep);
+    formData.append("rua", rua);
+    formData.append("bairro", bairro);
+    formData.append("numero", numero);
+    if (fotoInput.files.length > 0) {
+        formData.append("foto", fotoInput.files[0]);
+    }
+
+    try {
+        const response = await fetch("/api/estabelecimentos/criar", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            showToast("Estabelecimento cadastrado com sucesso!", 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else if (response.status === 400) {
+            const data = await response.json();
+            showToast("Foto inválida.", 'error');
+            return;
+        } else {
+            showToast("Erro ao cadastrar estabelecimento", 'error');
+        }
+    } catch (error) {
+        console.error("Erro ao enviar o cadastro:", error);
+        showToast("Erro ao cadastrar. Tente novamente mais tarde.", 'error');
+    }
+}
 
 //verificação de CEP e auto completamento
 async function validarCEP(input) {
@@ -114,3 +169,5 @@ document.getElementById('cnpj').addEventListener('focusout', function () {
         return formatted;
     });
 });
+
+window.criar = criar;
