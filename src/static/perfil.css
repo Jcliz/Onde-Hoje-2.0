@@ -30,6 +30,6 @@ body {
   color: white;
 }
 
-#modalEditarTudo input::placeholder, #modalExclusao input::placeholder {
+#modalEditarTudo input::placeholder, #modalExclusao input::placeholder, #formSenha input::placeholder {
   color: rgb(255, 255, 255, 0.7) !important;
 }

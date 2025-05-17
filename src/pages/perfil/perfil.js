@@ -251,12 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Dados atualizados com sucesso!', 'success');
                     setTimeout(() => {
                         location.reload();
-                    }, 2000);
+                    }, 1500);
                 } else {
                     const errorData = await response.json();
                     console.error('Erro ao atualizar o perfil:', errorData);
                     showToast(
-                        'Erro ao atualizar o perfil.',  'error');
+                        'Erro ao atualizar o perfil.', 'error');
                 }
             } catch (error) {
                 console.error('Erro de rede:', error);
@@ -268,6 +268,94 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function validarSenha() {
+    const senha = document.getElementById('password');
+    const confirmSenha = document.getElementById('confirmPassword');
+
+    const popup = document.getElementById('password-popup');
+    const popupList = document.getElementById('password-popup-list');
+
+    const confirmSenhaError = document.getElementById('feedbackSenhaDif');
+
+    let isValid = true;
+    let mensagensErro = [];
+
+    const valorSenha = senha.value;
+
+    // Validações dos requisitos
+    if (valorSenha.length < 8) {
+        mensagensErro.push('Pelo menos 8 caracteres');
+    }
+    if (!/[A-Z]/.test(valorSenha)) {
+        mensagensErro.push('Pelo menos uma letra maiúscula');
+    }
+    if (!/[a-z]/.test(valorSenha)) {
+        mensagensErro.push('Pelo menos uma letra minúscula');
+    }
+    if (!/\d/.test(valorSenha)) {
+        mensagensErro.push('Pelo menos um número');
+    }
+    if (!/[!@#$%^&*]/.test(valorSenha)) {
+        mensagensErro.push('Pelo menos um caractere especial (!@#$%^&*)');
+    }
+
+    // Atualiza o popup
+    if (mensagensErro.length > 0) {
+        popup.style.display = 'block';
+        popupList.innerHTML = mensagensErro.map(msg => `<li>${msg}</li>`).join('');
+        senha.classList.add('is-invalid');
+        isValid = false;
+
+    } else {
+        popup.style.display = 'none';
+        senha.classList.remove('is-invalid');
+    }
+
+    // Verifica se as senhas coincidem
+    if (confirmSenha.value !== valorSenha || confirmSenha.value.length < 8) {
+        confirmSenha.classList.add('is-invalid');
+        confirmSenhaError.textContent = 'As senhas não coincidem ou não atendem aos requisitos.';
+
+        isValid = false;
+    } else {
+        confirmSenha.classList.remove('is-invalid');
+        confirmSenhaError.textContent = '';
+    }
+
+    return isValid;
+}
+
+//valida ao sair do campo
+document.getElementById('password').addEventListener('input', validarSenha);
+document.getElementById('confirmPassword').addEventListener('input', validarSenha);
+
+//olho para mostrar a senha
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', function () {
+
+        const targetId = this.getAttribute('data-target');
+        const targetInput = document.getElementById(targetId);
+
+        if (targetInput.type === 'password') {
+            targetInput.type = 'text';
+            this.querySelector('i').classList.remove('bi-eye-slash');
+            this.querySelector('i').classList.add('bi-eye');
+
+        } else {
+            targetInput.type = 'password';
+            this.querySelector('i').classList.remove('bi-eye');
+            this.querySelector('i').classList.add('bi-eye-slash');
+        }
+    });
+});
+
+function logout() {
+    showToast('Desconectando...', 'success');
+    setTimeout(() => {
+        window.location.href = "/logout"
+    }, 1500);
+}
 
 async function uploadFoto(input) {
     const file = input.files[0];
@@ -298,61 +386,6 @@ async function uploadFoto(input) {
     }
 }
 
-function validarSenha() {
-    const senha = document.getElementById('password');
-    const confirmSenha = document.getElementById('confirmPassword');
-
-    const senhaError = document.getElementById('feedbackSenha');
-    const confirmSenhaError = document.getElementById('feedbackSenhaDif');
-
-    let isValid = true;
-
-    if (senha.value.length < 6) {
-        senha.classList.add('is-invalid');
-        senhaError.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
-        isValid = false;
-    } else {
-        senha.classList.remove('is-invalid');
-        senhaError.textContent = '';
-    }
-
-    //verifica se as senhas coincidem
-    if (confirmSenha.value !== senha.value || confirmSenha.value.length < 6) {
-        confirmSenha.classList.add('is-invalid');
-        confirmSenhaError.textContent = 'As senhas não coincidem ou são muito curtas.';
-        isValid = false;
-
-    } else {
-        confirmSenha.classList.remove('is-invalid');
-        confirmSenhaError.textContent = '';
-    }
-
-    return isValid;
-}
-
-document.getElementById('password').addEventListener('input', validarSenha);
-document.getElementById('confirmPassword').addEventListener('input', validarSenha);
-
-//olho para mostrar a senha
-document.querySelectorAll('.toggle-password-modal').forEach(icon => {
-    icon.addEventListener('click', function () {
-
-        const targetId = this.getAttribute('data-target');
-        const targetInput = document.getElementById(targetId);
-
-        if (targetInput.type === 'password') {
-            targetInput.type = 'text';
-            this.querySelector('i').classList.remove('bi-eye-slash');
-            this.querySelector('i').classList.add('bi-eye');
-
-        } else {
-            targetInput.type = 'password';
-            this.querySelector('i').classList.remove('bi-eye');
-            this.querySelector('i').classList.add('bi-eye-slash');
-        }
-    });
-});
-
-function logout() {
-    window.location.href = "/logout"
-}
+// Expor funções para o escopo global
+window.logout = logout;
+window.uploadFoto = uploadFoto;

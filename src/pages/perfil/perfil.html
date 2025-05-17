@@ -139,35 +139,47 @@
                 </div>
                 <div class="modal-body">
                     <form id="formSenha">
-                        <div class="mb-3">
-                            <label for="novaSenha" class="form-label">Nova Senha</label>
+                        <div class="mb-3 position-relative">
+                            <label for="password" class="form-label d-flex align-items-center">
+                                Senha
+                            </label>
                             <div class="input-group">
-                                <input type="password" class="form-control OH-bg text-light" id="password" minlength="6"
-                                    required>
-                                <span class="input-group-text toggle-password-modal OH-bg text-white"
-                                    style="cursor: pointer;" data-target="password">
+                                <input type="password" placeholder="Digite sua senha"
+                                    class="form-control OH-bg text-light" id="password" minlength="8" required>
+                                <span class="input-group-text toggle-password OH-bg text-white" style="cursor: pointer;"
+                                    data-target="password">
                                     <i class="bi bi-eye-slash"></i>
                                 </span>
                             </div>
-                            <div class="invalid-feedback" id="feedbackSenha"></div>
+                            <div id="password-popup" class="card text-white OH-bg p-2"
+                                style="display: none; position: absolute; top: 100%; left: 0; z-index: 10; width: 100%; font-size: 0.9rem;">
+                                <ul id="password-popup-list"
+                                    style="list-style-type: disc; padding-left: 20px; margin-bottom: 0;">
+                                    <!-- Bullets vão ser preenchidos via JS -->
+                                </ul>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="confirmarSenha" class="form-label">Confirmar Nova Senha</label>
+
+                        <div class="mb-3 position-relative">
+                            <label for="confirmPassword" class="form-label d-flex align-items-center">
+                                Confirme sua senha
+                            </label>
                             <div class="input-group">
-                                <input type="password" class="form-control OH-bg text-light" id="confirmPassword"
-                                    minlength="6" required>
-                                <span class="input-group-text toggle-password-modal OH-bg text-white"
-                                    style="cursor: pointer;" data-target="confirmPassword">
+                                <input type="confirmPassword" placeholder="Confirme sua senha"
+                                    class="form-control OH-bg text-light" id="confirmPassword" minlength="6" required>
+                                <span class="input-group-text toggle-password OH-bg text-white" style="cursor: pointer;"
+                                    data-target="confirmPassword">
                                     <i class="bi bi-eye-slash"></i>
                                 </span>
                             </div>
                             <div class="invalid-feedback" id="feedbackSenhaDif"></div>
                         </div>
-                        <button type="submit" id="salvar" class="btn OH-btt1 text-white fw-bold">Salvar</button>
-                    </form>
                 </div>
+                <button type="submit" id="salvar" class="btn OH-btt1 text-white fw-bold">Salvar</button>
+                </form>
             </div>
         </div>
+    </div>
     </div>
 
     <!--modal exclusão-->
