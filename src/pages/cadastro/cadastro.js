@@ -74,14 +74,14 @@ async function cadastrarUsuario(nome, nick, dataNasc, email, senha, cpf, cep, nu
     if (response.ok) {
       const data = await response.json();
       showToast('Usuário cadastrado com sucesso!', 'success');
-      
+
       setTimeout(() => {
         window.location.href = '/src/pages/login/login.html';
-      }, 3000); 
+      }, 3000);
     } else {
       const errorData = await response.json();
       showToast('Erro ao cadastrar o usuário.', 'error');
-    }    
+    }
   } catch (error) {
     console.error('Erro:', error);
     showToast('Erro ao enviar os dados. Tente novamente.', 'error');
@@ -151,7 +151,7 @@ document.getElementById('password').addEventListener('focusout', validarSenha);
 document.getElementById('confirmPassword').addEventListener('focusout', validarSenha);
 
 // Para esconder o popup quando o campo perde o foco
-document.getElementById('password').addEventListener('blur', function() {
+document.getElementById('password').addEventListener('blur', function () {
   setTimeout(() => { // pequeno delay para não sumir antes de validar
     document.getElementById('password-popup').style.display = 'none';
   }, 200);
@@ -192,17 +192,15 @@ async function validarCEP(input) {
 
     input.classList.remove('is-invalid');
     input.value = input.value.replace(/(\d{5})(\d{3})/, '$1-$2');
-    input.readOnly = true;
 
   } catch (error) {
     if (error?.cep_error) {
       input.classList.add('is-invalid');
     }
   }
-  
+
   //reativa o campo de CEP ao resetar o formulário
   document.querySelector('form').addEventListener('reset', function () {
-    input.readOnly = false;
     input.value = '';
     input.classList.remove('is-invalid');
     if (error?.cep_error) {
@@ -395,4 +393,38 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
   });
 });
 
+document.getElementById('btnLimparPessoais').addEventListener('click', function () {
+  //IDs dos campos que pertencem à seção "Dados Pessoais"
+  const camposDadosPessoais = [
+    'telefone',
+    'cpf',
+    'cep',
+    'street',
+    'number',
+    'complemento',
+    'bairro',
+    'cidade'
+  ];
 
+  //verifica se ao menos um campo está preenchido
+  let algumPreenchido = camposDadosPessoais.some(id => {
+    const campo = document.getElementById(id);
+    return campo && campo.value.trim() !== "";
+  });
+
+  if (!algumPreenchido) {
+    showToast('Nenhum campo preenchido', 'error');
+    return;
+  }
+
+  //limpa os campos caso algum esteja preenchido
+  camposDadosPessoais.forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) {
+      campo.value = "";
+      campo.classList.remove('is-invalid');
+    }
+  });
+
+  showToast('Dados pessoais limpos', 'success');
+});

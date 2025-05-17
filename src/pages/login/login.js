@@ -26,7 +26,7 @@ async function loginUsuario() {
       }, 1500); 
     } else {
       const errorData = await response.json();
-      showToast('Erro ao realizar login.', 'error');
+      showToast('Senha ou e-mail incorretos', 'error');
     }
   } catch (error) {
     console.error('Erro:', error);
