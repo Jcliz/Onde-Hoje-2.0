@@ -13,11 +13,11 @@
 
 <body class="OH-bg text-white">
     <div id="header-container" class="navbar navbar-expand-lg"></div>
-    <main class="container py-5 d-flex justify-content-between">
-        <div class="OH-dark shadow w-50 me-2" style="border-radius: 15px;">
+    <main class="container py-5 avaliacao-container">
+        <div class="OH-dark shadow col-md-6 col-12 me-md-2 mb-3" style="border-radius: 15px;">
 
             <div class="p-3">
-                <h4 class="text-center fw-bold fs-6 mb-0">Estabelecimentos avaliados</h4>
+                <h4 class="text-center fw-bold fs-6 mb-0">Avaliados</h4>
             </div>
 
             <div id="lista-estabelecimentos" class="d-flex p-4 OH-bg flex-column overflow-auto"
@@ -25,19 +25,12 @@
                 <!-- preenchido dinamicamente -->
             </div>
 
-            <div class="text-center">
-                <button type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4" data-bs-toggle="modal"
-                    data-bs-target="#avaliacaoModal">
-                    Editar avaliação
-                </button>
-            </div>
-
         </div>
 
-        <div class="OH-dark shadow w-50 ms-2" style="border-radius: 15px;">
+        <div class="OH-dark shadow col-md-6 col-12 ms-md-2" style="border-radius: 15px;">
 
             <div class="p-3">
-                <h4 class="text-center fw-bold fs-6 mb-0">Estabelecimentos visitados</h4>
+                <h4 class="text-center fw-bold fs-6 mb-0">Estabelecimentos</h4>
             </div>
 
             <div id="listas-estabelecimentos" class="d-flex OH-bg p-4 flex-column overflow-auto"
@@ -126,19 +119,6 @@
         </div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="toast-alert" class="toast align-items-center text-white bg-danger border-0" role="alert"
-            aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body" id="toast-message">
-                    <!-- Mensagem será inserida aqui -->
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Fechar"></button>
-            </div>
-        </div>
-    </div>
-    
     <div id="footer-container"></div>
     <script src="../../../components/header.js" defer></script>
     <script src="../../../components/footer.js" defer></script>
