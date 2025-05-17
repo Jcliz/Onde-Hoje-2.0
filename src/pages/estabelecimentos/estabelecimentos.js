@@ -21,6 +21,33 @@ async function carregarDados() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
+
+    const fotoInput = document.getElementById('foto');
+    const fotoLabel = document.querySelector('label[for="foto"]');
+    // Armazena o HTML original do botão de selecionar a foto
+    const originalLabelHTML = fotoLabel.innerHTML;
+
+    fotoInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+            fotoLabel.innerHTML = `<i class="bi bi-check-circle me-2" style="font-size: 1.5rem; color: green;"></i> Upload realizado!`;
+            fotoInput.disabled = true;
+            fotoLabel.style.pointerEvents = 'none';
+
+            // Cria o elemento que permitirá trocar a foto com o ícone X em vermelho
+            const trocarFotoEl = document.createElement('div');
+            trocarFotoEl.innerHTML = `<span style="cursor: pointer;"><i class="bi bi-x-circle me-2" style="font-size: 1.5rem; color: red;"></i> Trocar de foto</span>`;
+
+            trocarFotoEl.addEventListener("click", () => {
+                // Restaura o input
+                fotoInput.disabled = false;
+                fotoInput.value = "";
+                fotoLabel.innerHTML = originalLabelHTML;
+                fotoLabel.style.pointerEvents = '';
+                trocarFotoEl.remove();
+            });
+            fotoLabel.parentNode.insertBefore(trocarFotoEl, fotoLabel.nextSibling);
+        }
+    });
 });
 
 async function criar() {
