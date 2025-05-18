@@ -14,7 +14,7 @@
 <body class="OH-bg text-white">
     <div id="header-container" class="navbar navbar-expand-lg"></div>
     <main class="container py-5 avaliacao-container">
-        <div class="OH-dark shadow col-md-6 col-12 me-md-2 mb-3" style="border-radius: 15px;">
+        <div class="OH-dark shadow col-md-6 col-12 me-md-2" style="border-radius: 15px;">
 
             <div class="p-3">
                 <h4 class="text-center fw-bold fs-6 mb-0">Avaliados</h4>
@@ -100,6 +100,77 @@
                 </div>
             </div>
     </main>
+
+    <div class="container">
+        <div class="OH-dark shadow w-100 me-2" style="border-radius: 15px;">
+
+            <div class="p-3">
+                <h4 class="text-center fw-bold fs-6 mb-0">Minhas avaliações</h4>
+            </div>
+
+            <!-- Lista de estabelecimentos -->
+            <div id="lista-eventos" class="d-flex p-4 OH-bg flex-column overflow-auto" style="max-height: 450px">
+                <!-- preenchido dinamicamente -->
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4" data-bs-toggle="modal"
+                    data-bs-target="#editarEstabelecimentoModal">
+                    Editar avaliação
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="editarEstabelecimentoModal" tabindex="-1" aria-labelledby="editarEventoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content OH-dark">
+                <div class="modal-header">
+                    <h2 class="modal-title text-white" id="editarEventoModalLabel">Editar avaliação</h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarEvento" onsubmit="event.preventDefault(); editarEvento();">
+                        <div class="mb-3">
+                            <label for="editarNomeEstabelecimento" class="form-label text-white">Nome do
+                                Estabelecimento</label>
+                            <input type="text" class="form-control OH-bg text-white" id="editarNomeEstabelecimento"
+                                name="editarNomeEstabelecimento" required>
+                        </div>
+                        <div class="mb-4 text-center">
+                            <label class="form-label text-white d-block mb-2">Nota</label>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="nota" value="5" required />
+                                <label for="star5" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star4" name="nota" value="4" />
+                                <label for="star4" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star3" name="nota" value="3" />
+                                <label for="star3" title="3 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star2" name="nota" value="2" />
+                                <label for="star2" title="2 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star1" name="nota" value="1" />
+                                <label for="star1" title="1 estrela"><i class="bi bi-star-fill"></i></label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editarDescricao" class="form-label text-white">Descrição</label>
+                            <textarea class="form-control OH-bg text-white" id="editarDescricao" name="editarDescricao"
+                                rows="4" required></textarea>
+                        </div>
+                        <div class="text-center justify-content-between">
+                            <button type="submit" class="btn OH-btt1 text-white fw-bold px-4">Salvar Alterações</button>
+                            <button type="submit" class="btn OH-btt2 text-white fw-bold px-4">Excluir Avaliação</button>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="toast-alert" class="toast align-items-center text-white bg-danger border-0" role="alert"
