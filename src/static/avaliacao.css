@@ -1,5 +1,6 @@
 #lista-estabelecimentos,
-#listas-estabelecimentos {
+#listas-estabelecimentos,
+#lista-ava {
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-width: none;

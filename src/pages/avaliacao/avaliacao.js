@@ -127,6 +127,52 @@ async function carregarAvaliacoes() {
     }
 }
 
+async function carregarAvaliacoesPessoal() {
+    try {
+        const responseAval = await fetch("/api/usuarios/avaliacoesPessoais");
+        const avaliacoes = await responseAval.json();
+
+        const containerAval = document.getElementById('lista-ava');
+        containerAval.innerHTML = '';
+
+        avaliacoes.forEach(item => {
+            let stars = '';
+            const rating = Number(item.avaliacao);
+            for (let i = 0; i < rating; i++) {
+                stars += '<i class="bi bi-star-fill"></i>';
+            }
+            for (let i = rating; i < 5; i++) {
+                stars += '<i class="bi bi-star"></i>';
+            }
+            const avaliacaoContent = `
+                <div class="text-warning ms-2">
+                    <div class="star-rating list-stars" style="direction: ltr; unicode-bidi: embed;">
+                        ${stars}
+                    </div>
+                    <div class="text-white small fst-italic mt-1">
+                        "${item.comentario}"
+                    </div>
+                </div>
+            `;
+
+            const fotoUrl = item.foto
+                ? `/api/estabelecimentos/foto/${item.ID_estabelecimento}?${Date.now()}`
+                : '../../../public/cafe.png';
+
+            const card = document.createElement('div');
+            card.className = "estabelecimento-card shadow OH-dark text-center";
+            card.innerHTML = `
+                <img src="${fotoUrl}" alt="${item.nome}" class="img-fluid rounded mb-1" />
+                <h6 class="mb-0 w-50">${item.nome}</h6>
+                ${avaliacaoContent}
+            `;
+            containerAval.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Erro ao carregar avaliações:", error);
+    }
+}
+
 // Carregar a lista completa de estabelecimentos
 async function carregarEstabelecimentos() {
     try {
@@ -178,6 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
     carregarAvaliacoes();
     carregarEstabelecimentos();
+    carregarAvaliacoesPessoal();
 });
 
 window.avaliar = avaliar;
