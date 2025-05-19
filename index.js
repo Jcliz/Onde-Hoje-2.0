@@ -66,7 +66,7 @@ app.use(express.static(__dirname));
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
+    password: "PUC@1234",
     database: "ondehoje2"
 });
 
@@ -571,12 +571,36 @@ app.post('/api/eventos/criar', upload.single('foto'), (req, res) => {
 });
 
 //endpoint para buscar avaliações do banco
-app.get('/api/usuarios/avaliacoes', (req, res) => {
+app.get('/api/usuarios/avaliacoesPessoais', (req, res) => {
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
     const sql = `
         SELECT e.ID_estabelecimento, e.nome, e.foto, a.avaliacao, a.comentario
         FROM estabelecimento e
         JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento
-        ORDER BY a.ID_rating ASC
+        WHERE a.fk_ID_usuario = ?
+        ORDER BY a.ID_rating
+    `;
+
+    con.query(sql, [idUsuario], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro interno no servidor' });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/usuarios/avaliacoes', (req, res) => {
+    const sql = `
+        SELECT e.ID_estabelecimento, e.nome, e.foto, a.avaliacao, a.comentario 
+        FROM estabelecimento e 
+        JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento
+        ORDER BY a.ID_rating ASC 
     `;
     con.query(sql, (err, results) => {
         if (err) {
