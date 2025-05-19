@@ -428,3 +428,5 @@ document.getElementById('btnLimparPessoais').addEventListener('click', function 
 
   showToast('Dados pessoais limpos', 'success');
 });
+
+window.processarCadastro = processarCadastro;

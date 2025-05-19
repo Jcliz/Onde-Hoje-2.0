@@ -64,14 +64,12 @@
                                 <i class="bi bi-search"></i>
                             </a>
                         </li>
-                        <div id="searchFormContainer" class="container  d-none animate__animated animate__fadeIn">
-                            <form class="d-flex justify-content-center text-white"  action="/components/filtros.html">
-                                <input class="form-control me-2 w-100 OH-dark" type="search" placeholder="Pesquisar"
-                                    aria-label="Buscar">
-                                <button class="btn OH-btt2 text-white" type="submit"> <i
-                                        class="bi bi-search"></i></button>
+                        <div id="searchFormContainer" class="container d-none animate__animated animate__fadeIn">
+                            <form class="d-flex justify-content-center text-white" action="/src/pages/filtros/filtros.html" method="GET">
+                                <input class="form-control me-2 w-100 OH-dark" type="search" name="q" placeholder="Pesquisar" aria-label="Buscar">
+                                <button class="btn OH-btt2 text-white" type="submit"> <i class="bi bi-search"></i></button>
                             </form>
-                        </div>
+                        </div> 
                     </ul>
 
                 </div>
