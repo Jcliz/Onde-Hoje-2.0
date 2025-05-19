@@ -1,6 +1,5 @@
 import { showToast } from "../../../components/toast.js";
 
-let sessionDataGlobal = null;
 let selectedCard = null;
 
 async function avaliar() {
@@ -46,7 +45,6 @@ async function carregarDados() {
     try {
         const response = await fetch("/api/session");
         const sessionData = await response.json();
-        sessionDataGlobal = sessionData;
 
         if (!sessionData.estaAutenticado) {
             document.body.classList.add('unauthenticated');
@@ -64,19 +62,39 @@ async function carregarDados() {
 // Função para atualizar o botão de avaliação
 function updateAvaliarButton() {
     const btn = document.getElementById('btnAvaliar');
+    const btnEdit = document.getElementById('editar');
+
     const estabelecimento = document.getElementById('estabelecimento').value;
+    const avaliacao = document.getElementById('editarAva').value;
+
     if (!estabelecimento) {
         btn.disabled = true;
-        // Define o botão com background transparente e borda visível
+
         btn.style.backgroundColor = "transparent";
         btn.style.border = "1px solid white";
         btn.style.color = "white";
+        
     } else {
         btn.disabled = false;
-        // Remove os estilos customizados para restaurar as cores padrão
+        
         btn.style.backgroundColor = "";
         btn.style.border = "";
         btn.style.color = "";
+    }
+
+    if (!avaliacao) {
+        btnEdit.disabled = true;
+        
+        btnEdit.style.backgroundColor = "transparent";
+        btnEdit.style.border = "1px solid white";
+        btnEdit.style.color = "white";
+
+    } else {
+        btnEdit.disabled = false;
+        
+        btnEdit.style.backgroundColor = "";
+        btnEdit.style.border = "";
+        btnEdit.style.color = "";
     }
 }
 
@@ -127,6 +145,8 @@ async function carregarAvaliacoes() {
     }
 }
 
+let selectedUserCard = null; // Variável para rastrear o card de avaliação selecionado
+
 async function carregarAvaliacoesPessoal() {
     try {
         const responseAval = await fetch("/api/usuarios/avaliacoesPessoais");
@@ -166,6 +186,26 @@ async function carregarAvaliacoesPessoal() {
                 <h6 class="mb-0 w-50">${item.nome}</h6>
                 ${avaliacaoContent}
             `;
+
+            // Adiciona o evento de clique para selecionar o card
+            card.onclick = function () {
+                if (this === selectedUserCard) {
+                    // Desmarcar seleção
+                    this.classList.remove("border", "border-2", "border-white");
+                    selectedUserCard = null;
+                    document.getElementById('editarAva').value = "";
+                } else {
+                    // Remover seleção anterior, se existir
+                    if (selectedUserCard) {
+                        selectedUserCard.classList.remove("border", "border-2", "border-white");
+                    }
+                    selectedUserCard = this;
+                    this.classList.add("border", "border-2", "border-white");
+                    document.getElementById('editarAva').value = item.nome;
+                }
+                updateAvaliarButton();
+            };
+
             containerAval.appendChild(card);
         });
     } catch (error) {

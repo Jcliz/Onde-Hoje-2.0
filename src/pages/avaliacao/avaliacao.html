@@ -114,7 +114,7 @@
             </div>
             
             <div class="text-center">
-                <button type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4" data-bs-toggle="modal"
+                <button id="editar" type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4" data-bs-toggle="modal"
                     data-bs-target="#editarEstabelecimentoModal">
                     Editar avaliação
                 </button>
@@ -133,12 +133,12 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEditarEvento" onsubmit="event.preventDefault(); editarEvento();">
+                    <form id="formEditarEvento" onsubmit="event.preventDefault(); editar();">
                         <div class="mb-3">
-                            <label for="editarNomeEstabelecimento" class="form-label text-white">Nome do
+                            <label for="editarAva" class="form-label text-white">Nome do
                                 Estabelecimento</label>
-                            <input type="text" class="form-control OH-bg text-white" id="editarNomeEstabelecimento"
-                                name="editarNomeEstabelecimento" required>
+                            <input type="text" class="form-control OH-bg text-white" id="editarAva"
+                                name="editarAva" required>
                         </div>
                         <div class="mb-4 text-center">
                             <label class="form-label text-white d-block mb-2">Nota</label>
@@ -162,10 +162,8 @@
                         </div>
                         <div class="text-center justify-content-between">
                             <button type="submit" class="btn OH-btt1 text-white fw-bold px-4">Salvar Alterações</button>
-                            <button type="submit" class="btn OH-btt2 text-white fw-bold px-4">Excluir Avaliação</button>
-
+                            <button type="submit" class="btn OH-btt2 text-white fw-bold px-4" style="margin-left: 1vh;">Excluir Avaliação</button>
                         </div>
-
                     </form>
                 </div>
             </div>
