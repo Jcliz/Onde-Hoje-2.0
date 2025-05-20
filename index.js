@@ -4,6 +4,7 @@ const session = require('express-session');
 var mysql = require('mysql2');
 const nunjucks = require('nunjucks');
 const sessionMaxAge = 10 * 60 * 1000; // Expira após 10 minutos
+// const sessionMaxAge = 5 * 1000; //expira em 5 segundos
 
 
 app.use(session({
