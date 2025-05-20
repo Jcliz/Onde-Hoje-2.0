@@ -112,10 +112,10 @@
             <div id="lista-ava" class="d-flex p-4 OH-bg flex-column overflow-auto" style="max-height: 450px">
                 <!-- preenchido dinamicamente -->
             </div>
-            
+
             <div class="text-center">
-                <button id="editar" type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4" data-bs-toggle="modal"
-                    data-bs-target="#editarEstabelecimentoModal">
+                <button id="editar" type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4"
+                    data-bs-toggle="modal" data-bs-target="#editarEstabelecimentoModal">
                     Editar avaliação
                 </button>
             </div>
@@ -133,36 +133,36 @@
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formEditarEvento" onsubmit="event.preventDefault(); editar();">
+                    <form id="formEditarAva">
                         <div class="mb-3">
-                            <label for="editarAva" class="form-label text-white">Nome do
-                                Estabelecimento</label>
-                            <input type="text" class="form-control OH-bg text-white" id="editarAva"
-                                name="editarAva" required>
+                            <label for="editarAva" class="form-label text-white">Nome do Estabelecimento</label>
+                            <input type="text" class="form-control OH-bg text-white" id="editarAva" name="editarAva"
+                                required>
                         </div>
                         <div class="mb-4 text-center">
                             <label class="form-label text-white d-block mb-2">Nota</label>
                             <div class="star-rating">
-                                <input type="radio" id="star5" name="nota" value="5" required />
-                                <label for="star5" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
-                                <input type="radio" id="star4" name="nota" value="4" />
-                                <label for="star4" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
-                                <input type="radio" id="star3" name="nota" value="3" />
-                                <label for="star3" title="3 estrelas"><i class="bi bi-star-fill"></i></label>
-                                <input type="radio" id="star2" name="nota" value="2" />
-                                <label for="star2" title="2 estrelas"><i class="bi bi-star-fill"></i></label>
-                                <input type="radio" id="star1" name="nota" value="1" />
-                                <label for="star1" title="1 estrela"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star5Edit" name="notaEditModal" value="5" required />
+                                <label for="star5Edit" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star4Edit" name="notaEditModal" value="4" />
+                                <label for="star4Edit" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star3Edit" name="notaEditModal" value="3" />
+                                <label for="star3Edit" title="3 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star2Edit" name="notaEditModal" value="2" />
+                                <label for="star2Edit" title="2 estrelas"><i class="bi bi-star-fill"></i></label>
+                                <input type="radio" id="star1Edit" name="notaEditModal" value="1" />
+                                <label for="star1Edit" title="1 estrela"><i class="bi bi-star-fill"></i></label>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="editarDescricao" class="form-label text-white">Descrição</label>
-                            <textarea class="form-control OH-bg text-white" id="editarDescricao" name="editarDescricao"
-                                rows="4" required></textarea>
+                        <div class="mb-4">
+                            <label for="comentarioEdit" class="form-label text-white">Comentário</label>
+                            <textarea class="form-control OH-bg text-white" id="comentarioEdit" name="comentarioEdit"
+                                rows="4" placeholder="Deixe sua opinião... (opcional)"></textarea>
                         </div>
                         <div class="text-center justify-content-between">
                             <button type="submit" class="btn OH-btt1 text-white fw-bold px-4">Salvar Alterações</button>
-                            <button type="submit" class="btn OH-btt2 text-white fw-bold px-4" style="margin-left: 1vh;">Excluir Avaliação</button>
+                            <button type="submit" class="btn OH-btt2 text-white fw-bold px-4"
+                                style="margin-left: 1vh;">Excluir Avaliação</button>
                         </div>
                     </form>
                 </div>

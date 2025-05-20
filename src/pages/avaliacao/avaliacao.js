@@ -260,6 +260,51 @@ async function carregarEstabelecimentos() {
     }
 }
 
+async function editar() {
+    try {
+        const estabelecimento = document.getElementById('editarAva').value;
+        const notaInput = document.querySelector('input[name="notaEditModal"]:checked'); // Atualizado para "notaEditModal"
+
+        if (!notaInput) {
+            showToast("Por favor, selecione uma nota.", 'warning');
+            return;
+        }
+
+        const nota = notaInput.value;
+        const comentario = document.getElementById('comentarioEdit').value;
+
+        if (!estabelecimento || !nota) {
+            showToast("Atenção: Por favor, preencha todos os campos obrigatórios.", 'error');
+            return;
+        }
+
+        const response = await fetch("/api/usuarios/editarAvaliacao", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nota, comentario, estabelecimento })
+        });
+
+        if (response.ok) {
+            showToast("Avaliação atualizada com sucesso!", 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showToast("Erro ao atualizar a avaliação. Tente novamente mais tarde.", 'error');
+        }
+    } catch (error) {
+        console.error("Erro ao atualizar a avaliação:", error);
+        showToast("Erro ao atualizar a avaliação. Tente novamente mais tarde.", 'error');
+    }
+}
+
+document.getElementById('formEditarAva').addEventListener('submit', (e) => {
+    e.preventDefault();
+    editar();    
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
     carregarAvaliacoes();
@@ -268,3 +313,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 window.avaliar = avaliar;
+window.editar = editar;

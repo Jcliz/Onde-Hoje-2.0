@@ -611,6 +611,42 @@ app.get('/api/usuarios/avaliacoes', (req, res) => {
     });
 });
 
+app.post('/api/usuarios/editarAvaliacao', (req, res) => {
+    const { nota, comentario, estabelecimento } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    // Buscar o ID do estabelecimento a partir do nome
+    const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+    con.query(sqlFind, [estabelecimento], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro no banco de dados ao buscar estabelecimento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado' });
+        }
+
+        const fk_ID_estabelecimento = results[0].ID_estabelecimento;
+
+        // Atualizar a avaliação do usuário
+        const sqlUpdate = `
+            UPDATE avaliacao 
+            SET avaliacao = ?, comentario = ? 
+            WHERE fk_ID_usuario = ? AND fk_ID_estabelecimento = ?
+        `;
+        con.query(sqlUpdate, [nota, comentario, idUsuario, fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao atualizar avaliação' });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ error: 'Avaliação não encontrada para este estabelecimento' });
+            }
+            return res.status(200).json({ message: 'Avaliação atualizada com sucesso' });
+        });
+    });
+});
+
 // Endpoint para buscar a foto de um evento
 app.get('/api/eventos/foto/:id', (req, res) => {
     const { id } = req.params;
