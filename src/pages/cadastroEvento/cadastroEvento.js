@@ -166,6 +166,12 @@ async function criarEvento() {
   }
 
   const localEvento = document.getElementById('localEvento').value;
+
+  if (!localEvento) {
+    showToast("Selecione o tipo de local do evento.", "error");
+    return;
+  }
+
   let fk_ID_estabelecimento = null;
   if (localEvento === 'estabelecimento') {
     const estabSelected = document.querySelector('input[name="estabelecimento"]:checked');
@@ -175,6 +181,17 @@ async function criarEvento() {
     }
     // Envia o nome do estabelecimento para que o backend o busque
     fk_ID_estabelecimento = estabSelected.value;
+  } else if (localEvento === 'residencia') {
+    // Validar campos de endereço
+    const cep = document.getElementById('cep').value;
+    const rua = document.getElementById('rua').value;
+    const bairro = document.getElementById('bairro').value;
+    const numero = document.getElementById('numero').value;
+
+    if (!cep || !rua || !bairro || !numero) {
+      showToast("Preencha todos os campos de endereço.", "error");
+      return;
+    }
   }
 
   const dateInputValue = document.getElementById('data').value;
@@ -199,28 +216,33 @@ async function criarEvento() {
     return;
   }
 
-  // Coleta os demais campos de evento
+  // Coleta os campos do evento
   const nome = document.getElementById('nome').value;
-  const cep = document.getElementById('cep').value;
-  const rua = document.getElementById('rua').value;
-  const bairro = document.getElementById('bairro').value;
-  const numero = document.getElementById('numero').value;
+  const cep = localEvento === 'residencia' ? document.getElementById('cep').value : '';
+  const rua = localEvento === 'residencia' ? document.getElementById('rua').value : '';
+  const bairro = localEvento === 'residencia' ? document.getElementById('bairro').value : '';
+  const numero = localEvento === 'residencia' ? document.getElementById('numero').value : '';
   const fotoInput = document.getElementById('foto');
 
   const formData = new FormData();
   formData.append('nome', nome);
   formData.append('data', dateInputValue);
   formData.append('hora', timeInputValue);
-  formData.append('cep', cep);
-  formData.append('rua', rua);
-  formData.append('bairro', bairro);
-  formData.append('numero', numero);
 
-  //só adiciona fk_ID_estabelecimento se a opção for estabelecimento
+  // Só adiciona campos de endereço se for residência
+  if (localEvento === 'residencia') {
+    formData.append('cep', cep);
+    formData.append('rua', rua);
+    formData.append('bairro', bairro);
+    formData.append('numero', numero);
+  }
+
+  // Só adiciona fk_ID_estabelecimento se a opção for estabelecimento
   if (localEvento === 'estabelecimento') {
     formData.append('fk_ID_estabelecimento', fk_ID_estabelecimento);
   }
 
+  // Verifica se há uma foto e a adiciona ao FormData
   if (fotoInput && fotoInput.files.length > 0) {
     formData.append('foto', fotoInput.files[0]);
   }
@@ -230,18 +252,21 @@ async function criarEvento() {
       method: "POST",
       body: formData
     });
-    const result = await response.json();
-    if (response.ok) {
-      showToast(result.message, "success");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-    } else {
-      showToast(result.message || "Erro ao criar evento.", "error");
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Erro na resposta:", errorText);
+      throw new Error(response.statusText);
     }
+
+    const result = await response.json();
+    showToast(result.message, "success");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   } catch (error) {
     console.error("Erro ao criar evento:", error);
-    showToast("Erro ao criar evento.", "error");
+    showToast("Erro ao criar evento. Verifique o console para mais detalhes.", "error");
   }
 }
 
@@ -274,6 +299,9 @@ async function carregarEventosAtivos() {
           <strong>${evento.nome}</strong>
           <div class="small text-white">${dataFormat} - ${evento.hora}</div>
           <div class="small text-white">${localText}</div>
+          <div class="small text-white-50 mt-1">
+            <i class="bi bi-person-circle me-1"></i>Criado por: ${evento.usuario_nome || 'Usuário desconhecido'}
+          </div>
         </div>
         <i class="bi bi-chevron-right text-secondary"></i>
       `;
@@ -284,6 +312,7 @@ async function carregarEventosAtivos() {
         document.getElementById('eventoData').textContent = dataFormat;
         document.getElementById('eventoHorario').textContent = evento.hora;
         document.getElementById('eventoLocal').textContent = localText;
+        document.getElementById('eventoCriador').textContent = evento.usuario_nome || 'Usuário desconhecido';
         const eventoFotoEl = document.getElementById('eventoFoto');
         eventoFotoEl.src = `/api/eventos/foto/${evento.ID_evento}?${Date.now()}`;
 
@@ -346,6 +375,7 @@ async function carregarMeusEventos() {
       card.dataset.data = evento.data;
       card.dataset.hora = evento.hora;
       card.dataset.local = localText;
+      card.dataset.criador = evento.usuario_nome || 'Você';
 
       card.innerHTML = `
             <div class="row align-items-center">
@@ -360,6 +390,9 @@ async function carregarMeusEventos() {
                     <div class="text-white small">
                         <div>${dataFormat} às ${evento.hora}</div>
                         <div class="small text-truncate">${localText}</div>
+                        <div class="small text-white-50 mt-1">
+                            <i class="bi bi-person-circle me-1"></i>Criado por: ${evento.usuario_nome || 'Você'}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -375,6 +408,7 @@ async function carregarMeusEventos() {
           document.getElementById('editarEventoData').value = "";
           document.getElementById('editarEventoHora').value = "";
           document.getElementById('editarEventoLocal').value = "";
+          document.getElementById('editarEventoCriador').value = "";
         } else {
           // Remover seleção anterior, se existir
           if (selectedEventCard) {
@@ -388,6 +422,9 @@ async function carregarMeusEventos() {
           document.getElementById('editarEventoData').value = evento.data;
           document.getElementById('editarEventoHora').value = evento.hora;
           document.getElementById('editarEventoLocal').value = localText;
+          if (document.getElementById('editarEventoCriador')) {
+            document.getElementById('editarEventoCriador').value = evento.usuario_nome || 'Você';
+          }
         }
         updateEditarButton();
       };
@@ -520,3 +557,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   carregarEventosAtivos();
   carregarMeusEventos(); // Adicione esta linha
 });
+
+window.criarEvento = criarEvento;
