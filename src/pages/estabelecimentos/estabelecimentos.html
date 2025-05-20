@@ -27,77 +27,85 @@
 
   <!-- Conteúdo principal -->
   <main class="container py-5 flex-grow-1" id="crud-estabelecimentos">
-    <div class="mx-auto" style="max-width: 800px;">
-      <h2 class="fw-bold fs-3 mb-4 text-center">Cadastro de Estabelecimento</h2>
+    <div class="row">
+      <div class="col-lg-7 mx-auto mb-4">
+        <h2 class="fw-bold fs-3 mb-4 text-center">Cadastro de Estabelecimento</h2>
 
-      <form class="OH-dark rounded p-3" id="formCadastro" onsubmit="event.preventDefault(); criar();">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="nome" name="nome"
-              required>
-            <div class="invalid-feedback">Nome inválido.</div>
+        <form class="OH-dark rounded p-3" id="formCadastro" onsubmit="event.preventDefault(); criar();">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="nome" name="nome"
+                required>
+              <div class="invalid-feedback">Nome inválido.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="cnpj" class="form-label">CNPJ</label>
+              <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="cnpj" name="cnpj"
+                placeholder="00.000.000/0000-00" maxlength="14" required
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+
+            <div class="col-md-6">
+              <label for="cep" class="form-label">CEP</label>
+
+              <input type="text" class="form-control OH-bg text-light" id="cep" placeholder="_ _ _ _ _ _ _ _"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8" required>
+
+              <div class="invalid-feedback">CEP inválido.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="rua" class="form-label">Rua</label>
+              <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="rua" name="rua"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="bairro" class="form-label">Bairro</label>
+              <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="bairro"
+                name="bairro" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="numero" class="form-label">Número</label>
+              <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="numero"
+                name="numero" maxlength="10" required>
+            </div>
+
+            <div class="col-md-12">
+              <label for="foto" class="form-label">Foto (opcional):</label>
+              <input type="file" id="foto" name="foto" accept="image/*" class="d-none">
+              <label for="foto" class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center"
+                style="height: 60px;">
+                <i class="bi bi-camera me-2" style="font-size: 1.5rem;"></i>
+                Selecione um arquivo
+              </label>
+            </div>
           </div>
 
-          <div class="col-md-6">
-            <label for="cnpj" class="form-label">CNPJ</label>
-            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="cnpj" name="cnpj"
-              placeholder="00.000.000/0000-00" maxlength="14" required
-              oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          <div class="text-center mt-4">
+            <button type="submit" class="btn OH-btt1 text-white fw-bold px-5 py-2 rounded"
+              id="btnCriar">Cadastrar</button>
           </div>
-
-          <div class="col-md-6">
-            <label for="cep" class="form-label">CEP</label>
-
-            <input type="text" class="form-control OH-bg text-light" id="cep" placeholder="_ _ _ _ _ _ _ _"
-              oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8" required>
-
-            <div class="invalid-feedback">CEP inválido.</div>
-          </div>
-
-          <div class="col-md-6">
-            <label for="rua" class="form-label">Rua</label>
-            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="rua" name="rua"
-              oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-          </div>
-
-          <div class="col-md-6">
-            <label for="bairro" class="form-label">Bairro</label>
-            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="bairro" name="bairro"
-              required>
-          </div>
-
-          <div class="col-md-6">
-            <label for="numero" class="form-label">Número</label>
-            <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="numero" name="numero"
-              maxlength="10" required>
-          </div>
-
-          <div class="col-md-12">
-            <label for="foto" class="form-label">Foto (opcional):</label>
-            <input type="file" id="foto" name="foto" accept="image/*" class="d-none">
-            <label for="foto" class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center"
-              style="height: 60px;">
-              <i class="bi bi-camera me-2" style="font-size: 1.5rem;"></i>
-              Selecione um arquivo
-            </label>
-          </div>
-        </div>
-
-        <div class="text-center mt-4">
-          <button type="submit" class="btn OH-btt1 text-white fw-bold px-5 py-2 rounded"
-            id="btnCriar">Cadastrar</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Container dos Estabelecimentos Cadastrados -->
-    <div class="col-md-5 OH-dark shadow mx-md-3" style="border-radius: 15px;">
-      <h3 class="text-center text-white mt-4 mb-3">Registro de Estabelecimentos</h3>
-      <div class="list-group px-2 pb-4" id="estab-container">
-        <!-- Estabelecimentos Cadastrados serão carregados aqui dinamicamente -->
+        </form>
       </div>
-    </div>
+
+      <!-- Container dos Estabelecimentos Cadastrados -->
+      <div class="col-lg-5 mx-auto">
+        <div class="OH-dark shadow p-3" style="border-radius: 15px;">
+          <h3 class="text-center text-white mt-2 mb-3">Registro de Estabelecimentos</h3>
+          <div class="list-group px-2 pb-3" id="estab-container">
+            <!-- Estabelecimentos Cadastrados serão carregados aqui dinamicamente -->
+            <div class="text-center my-3">
+              <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Carregando...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal de Detalhes do Evento -->
@@ -115,7 +123,7 @@
               style="max-height: 150px; object-fit: cover;">
             <p><strong>Nome:</strong> <span id="estabelecimentoNome"></span></p>
             <p><strong>Local:</strong> <span id="estabelecimentoLocal"></span></p>
-            
+
           </div>
           <div class="modal-footer border-0 justify-content-center">
             <button id="btnAtualizar" type="button" class="btn OH-btt1 text-white">Atualizar</button>
@@ -123,6 +131,78 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
           </div>
 
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Edição de Estabelecimento -->
+    <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content OH-dark text-white">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="editarModalLabel">Editar Estabelecimento</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+              aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formEditar">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="editNome" class="form-label">Nome</label>
+                  <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="editNome"
+                    name="editNome" required>
+                  <div class="invalid-feedback">Nome inválido.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="editCnpj" class="form-label">CNPJ</label>
+                  <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="editCnpj"
+                    name="editCnpj" placeholder="00.000.000/0000-00" maxlength="14" required
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="col-md-6">
+                  <label for="editCep" class="form-label">CEP</label>
+                  <input type="text" class="form-control OH-bg text-light" id="editCep" placeholder="_ _ _ _ _ _ _ _"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="8" required>
+                  <div class="invalid-feedback">CEP inválido.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="editRua" class="form-label">Rua</label>
+                  <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="editRua"
+                    name="editRua" required>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="editBairro" class="form-label">Bairro</label>
+                  <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="editBairro"
+                    name="editBairro" required>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="editNumero" class="form-label">Número</label>
+                  <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="editNumero"
+                    name="editNumero" maxlength="10" required>
+                </div>
+
+                <div class="col-md-12">
+                  <label for="editFoto" class="form-label">Alterar Foto (opcional):</label>
+                  <input type="file" id="editFoto" name="editFoto" accept="image/*" class="d-none">
+                  <label for="editFoto"
+                    class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center"
+                    style="height: 60px;">
+                    <i class="bi bi-camera me-2" style="font-size: 1.5rem;"></i>
+                    Selecione um novo arquivo
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn OH-btt1 text-white" id="btnSalvarEdicao">Salvar Alterações</button>
+          </div>
         </div>
       </div>
     </div>
