@@ -300,9 +300,47 @@ async function editar() {
     }
 }
 
+async function excluir() {
+    try {
+        const estabelecimento = document.getElementById('editarAva').value;
+
+        if (!estabelecimento) {
+            showToast("Por favor, selecione um estabelecimento para excluir.", 'warning');
+            return;
+        }
+
+        const response = await fetch("/api/usuarios/excluirAvaliacao", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ estabelecimento })
+        });
+
+        if (response.ok) {
+            showToast("Avaliação excluída com sucesso!", 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || "Erro ao excluir avaliação. Tente novamente mais tarde.", 'error');
+        }
+    } catch (error) {
+        console.error("Erro ao excluir avaliação:", error);
+        showToast("Erro ao excluir avaliação. Tente novamente mais tarde.", 'error');
+    }
+}
+
 document.getElementById('formEditarAva').addEventListener('submit', (e) => {
     e.preventDefault();
-    editar();    
+
+    const submitter = e.submitter; // Identifica qual botão foi clicado
+    if (submitter && submitter.id === 'btnExcluir') {
+        excluir(); // Chama a função excluir
+    } else {
+        editar(); // Chama a função editar
+    }
 });
 
 document.addEventListener("DOMContentLoaded", async () => {

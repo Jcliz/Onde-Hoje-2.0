@@ -647,6 +647,45 @@ app.post('/api/usuarios/editarAvaliacao', (req, res) => {
     });
 });
 
+app.delete('/api/usuarios/excluirAvaliacao', (req, res) => {
+    const { estabelecimento } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
+    // Buscar o ID do estabelecimento a partir do nome
+    const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+    con.query(sqlFind, [estabelecimento], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro no banco de dados ao buscar estabelecimento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado' });
+        }
+
+        const fk_ID_estabelecimento = results[0].ID_estabelecimento;
+
+        // Excluir a avaliação do usuário para o estabelecimento
+        const sqlDelete = `
+            DELETE FROM avaliacao 
+            WHERE fk_ID_usuario = ? AND fk_ID_estabelecimento = ?
+        `;
+        con.query(sqlDelete, [idUsuario, fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao excluir avaliação' });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ error: 'Avaliação não encontrada para este estabelecimento' });
+            }
+            return res.status(200).json({ message: 'Avaliação excluída com sucesso' });
+        });
+    });
+});
+
 // Endpoint para buscar a foto de um evento
 app.get('/api/eventos/foto/:id', (req, res) => {
     const { id } = req.params;

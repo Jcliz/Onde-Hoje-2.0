@@ -142,7 +142,7 @@
                         <div class="mb-4 text-center">
                             <label class="form-label text-white d-block mb-2">Nota</label>
                             <div class="star-rating">
-                                <input type="radio" id="star5Edit" name="notaEditModal" value="5" required />
+                                <input type="radio" id="star5Edit" name="notaEditModal" value="5"/>
                                 <label for="star5Edit" title="5 estrelas"><i class="bi bi-star-fill"></i></label>
                                 <input type="radio" id="star4Edit" name="notaEditModal" value="4" />
                                 <label for="star4Edit" title="4 estrelas"><i class="bi bi-star-fill"></i></label>
@@ -160,9 +160,10 @@
                                 rows="4" placeholder="Deixe sua opinião... (opcional)"></textarea>
                         </div>
                         <div class="text-center justify-content-between">
-                            <button type="submit" class="btn OH-btt1 text-white fw-bold px-4">Salvar Alterações</button>
-                            <button type="submit" class="btn OH-btt2 text-white fw-bold px-4"
-                                style="margin-left: 1vh;">Excluir Avaliação</button>
+                            <div class="text-center justify-content-between">
+                                <button type="submit" id="btnSalvar" class="btn OH-btt1 text-white fw-bold px-4">Salvar Alterações</button>
+                                <button type="submit" id="btnExcluir" class="btn OH-btt2 text-white fw-bold px-4" style="margin-left: 1vh;">Excluir Avaliação</button>
+                            </div>
                         </div>
                     </form>
                 </div>
