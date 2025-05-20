@@ -288,11 +288,12 @@ async function carregarEventosAtivos() {
         eventoFotoEl.src = `/api/eventos/foto/${evento.ID_evento}?${Date.now()}`;
 
         eventoFotoEl.onerror = () => {
-          eventoFotoEl.src = '../../../bar.png';
+          eventoFotoEl.src = '../../../public/bar.png';
         };
 
         // Abre o modal utilizando a API do Bootstrap
-        const modal = new bootstrap.Modal(document.getElementById('modalEvento'));
+        const modalElement = document.getElementById('modalEvento');
+        const modal = new bootstrap.Modal(modalElement);
         modal.show();
       });
 
@@ -303,9 +304,219 @@ async function carregarEventosAtivos() {
   }
 }
 
+async function carregarMeusEventos() {
+  try {
+    const response = await fetch('/api/eventos/meus-eventos');
+    const eventos = await response.json();
+    const container = document.getElementById('lista-meus-eventos');
+
+    // Ajuste para centralizar o conteúdo
+    container.className = "d-flex p-4 OH-bg flex-column overflow-auto align-items-center";
+    container.style.maxHeight = "450px";
+
+    container.innerHTML = '';
+
+    let selectedEventCard = null; // Variável para rastrear o card de evento selecionado
+
+    if (eventos.length === 0) {
+      container.innerHTML = '<div class="text-center py-4 text-white">Você ainda não possui eventos cadastrados.</div>';
+      return;
+    }
+
+    eventos.forEach(evento => {
+      // Formata a data para o padrão pt-BR
+      const dataFormat = new Date(evento.data).toLocaleDateString('pt-BR');
+
+      // Define o local: se houver CEP, monta o endereço; senão, usa o nome do estabelecimento
+      let localText = '';
+      if (evento.cep) {
+        localText = `${evento.rua}, ${evento.bairro}, Nº ${evento.numero}`;
+      } else {
+        localText = evento.estabelecimento_nome || 'Local não definido';
+      }
+
+      const fotoUrl = `/api/eventos/foto/${evento.ID_evento}?${Date.now()}`;
+
+      const card = document.createElement('div');
+      // Ajuste de largura e centralização com mx-auto
+      card.className = "estabelecimento-card shadow OH-dark text-center mb-3 p-2 mx-auto";
+      card.style.width = "85%"; // Define largura do card relativamente ao container
+      card.dataset.id = evento.ID_evento;
+      card.dataset.nome = evento.nome;
+      card.dataset.data = evento.data;
+      card.dataset.hora = evento.hora;
+      card.dataset.local = localText;
+
+      card.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-4">
+                    <img src="${fotoUrl}" alt="${evento.nome}" 
+                         class="img-fluid rounded" 
+                         style="height: 70px; width: 70px; object-fit: cover;" 
+                         onerror="this.src='../../../public/bar.png'" />
+                </div>
+                <div class="col-8 text-start">
+                    <h6 class="mb-1 fs-6 fw-bold">${evento.nome}</h6>
+                    <div class="text-white small">
+                        <div>${dataFormat} às ${evento.hora}</div>
+                        <div class="small text-truncate">${localText}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+      // Adiciona o evento de clique para selecionar o card
+      card.onclick = function () {
+        if (this === selectedEventCard) {
+          // Desmarcar seleção
+          this.classList.remove("border", "border-2", "border-white");
+          selectedEventCard = null;
+          document.getElementById('editarEventoNome').value = "";
+          document.getElementById('editarEventoData').value = "";
+          document.getElementById('editarEventoHora').value = "";
+          document.getElementById('editarEventoLocal').value = "";
+        } else {
+          // Remover seleção anterior, se existir
+          if (selectedEventCard) {
+            selectedEventCard.classList.remove("border", "border-2", "border-white");
+          }
+          selectedEventCard = this;
+          this.classList.add("border", "border-2", "border-white");
+
+          // Preencher o formulário de edição com os dados do evento
+          document.getElementById('editarEventoNome').value = evento.nome;
+          document.getElementById('editarEventoData').value = evento.data;
+          document.getElementById('editarEventoHora').value = evento.hora;
+          document.getElementById('editarEventoLocal').value = localText;
+        }
+        updateEditarButton();
+      };
+
+      container.appendChild(card);
+    });
+
+    // Inicializa o estado do botão
+    updateEditarButton();
+  } catch (error) {
+    console.error("Erro ao carregar meus eventos:", error);
+    document.getElementById('lista-meus-eventos').innerHTML =
+      '<div class="text-center py-4 text-white">Erro ao carregar seus eventos. Tente novamente mais tarde.</div>';
+  }
+}
+
+function updateEditarButton() {
+  const btnEdit = document.getElementById('editarEvento');
+  const eventoNome = document.getElementById('editarEventoNome').value;
+
+  if (!eventoNome) {
+    btnEdit.disabled = true;
+    btnEdit.style.backgroundColor = "transparent";
+    btnEdit.style.border = "1px solid white";
+    btnEdit.style.color = "white";
+  } else {
+    btnEdit.disabled = false;
+    btnEdit.style.backgroundColor = "";
+    btnEdit.style.border = "";
+    btnEdit.style.color = "";
+  }
+}
+
+async function editarEvento() {
+  try {
+    const nome = document.getElementById('editarEventoNome').value;
+    const data = document.getElementById('editarEventoData').value;
+    const hora = document.getElementById('editarEventoHora').value;
+
+    if (!nome || !data || !hora) {
+      showToast("Por favor, preencha todos os campos obrigatórios.", 'warning');
+      return;
+    }
+
+    const selectedCard = document.querySelector('#lista-meus-eventos .estabelecimento-card.border');
+    if (!selectedCard) {
+      showToast("Selecione um evento para editar.", 'warning');
+      return;
+    }
+
+    const eventId = selectedCard.dataset.id;
+
+    const fotoInput = document.getElementById('editarEventoFoto');
+    const formData = new FormData();
+    formData.append('id', eventId);
+    formData.append('nome', nome);
+    formData.append('data', data);
+    formData.append('hora', hora);
+
+    if (fotoInput.files.length > 0) {
+      formData.append('foto', fotoInput.files[0]);
+    }
+
+    const response = await fetch("/api/eventos/editar", {
+      method: "POST",
+      body: formData
+    });
+
+    if (response.ok) {
+      showToast("Evento atualizado com sucesso!", 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      const errorData = await response.json();
+      showToast(errorData.message || "Erro ao atualizar evento.", 'error');
+    }
+  } catch (error) {
+    console.error("Erro ao editar evento:", error);
+    showToast("Erro ao editar evento. Tente novamente mais tarde.", 'error');
+  }
+}
+
+async function excluirEvento() {
+  try {
+    const selectedCard = document.querySelector('#lista-meus-eventos .estabelecimento-card.border');
+    if (!selectedCard) {
+      showToast("Selecione um evento para excluir.", 'warning');
+      return;
+    }
+
+    const eventId = selectedCard.dataset.id;
+
+    const response = await fetch("/api/eventos/excluir", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: eventId })
+    });
+
+    if (response.ok) {
+      showToast("Evento excluído com sucesso!", 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      const errorData = await response.json();
+      showToast(errorData.message || "Erro ao excluir evento.", 'error');
+    }
+  } catch (error) {
+    console.error("Erro ao excluir evento:", error);
+    showToast("Erro ao excluir evento. Tente novamente mais tarde.", 'error');
+  }
+}
+
+document.getElementById('formEditarEvento').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const submitter = e.submitter; // Identifica qual botão foi clicado
+  if (submitter && submitter.id === 'btnExcluirEvento') {
+    excluirEvento(); // Chama a função excluir
+  } else {
+    editarEvento(); // Chama a função editar
+  }
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarDados();
   carregarEventosAtivos();
+  carregarMeusEventos(); // Adicione esta linha
 });
-
-window.criarEvento = criarEvento;

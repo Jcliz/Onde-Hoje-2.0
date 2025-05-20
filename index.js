@@ -66,7 +66,7 @@ app.use(express.static(__dirname));
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "PUC@1234",
+    password: "123456",
     database: "ondehoje2"
 });
 
@@ -722,6 +722,118 @@ app.get('/api/eventos/ativos', (req, res) => {
             return res.status(500).json({ message: 'Erro ao buscar eventos ativos.' });
         }
         res.json(results);
+    });
+});
+
+// Endpoint para buscar os eventos criados pelo usuário atual
+app.get('/api/eventos/meus-eventos', (req, res) => {
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    const sql = `
+        SELECT e.*, est.nome AS estabelecimento_nome 
+        FROM evento e
+        LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+        WHERE e.fk_ID_usuario = ?
+        ORDER BY e.data DESC, e.hora DESC
+    `;
+
+    con.query(sql, [idUsuario], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar meus eventos:", err);
+            return res.status(500).json({ message: 'Erro ao buscar seus eventos.' });
+        }
+        res.json(results);
+    });
+});
+
+// Endpoint para editar um evento
+app.post('/api/eventos/editar', upload.single('foto'), (req, res) => {
+    const { id, nome, data, hora } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    // Primeiro, verificar se o evento pertence ao usuário
+    const sqlCheck = "SELECT * FROM evento WHERE ID_evento = ? AND fk_ID_usuario = ?";
+    con.query(sqlCheck, [id, idUsuario], (err, results) => {
+        if (err) {
+            console.error("Erro ao verificar propriedade do evento:", err);
+            return res.status(500).json({ message: 'Erro ao verificar o evento.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(403).json({ message: 'Você não tem permissão para editar este evento.' });
+        }
+
+        // Preparar campos para atualização
+        let sql = 'UPDATE evento SET nome = ?, data = ?, hora = ?';
+        let params = [nome, data, hora];
+
+        // Se houver uma nova foto, incluí-la na atualização
+        if (req.file) {
+            try {
+                const fotoHex = req.file.buffer.toString('hex');
+                sql += ', foto = UNHEX(?)';
+                params.push(fotoHex);
+            } catch (error) {
+                console.error("Erro ao converter a foto:", error);
+                return res.status(400).json({ message: 'Foto inválida.' });
+            }
+        }
+
+        // Finalizar a query SQL
+        sql += ' WHERE ID_evento = ?';
+        params.push(id);
+
+        // Executar a atualização
+        con.query(sql, params, (err, updateResult) => {
+            if (err) {
+                console.error("Erro ao atualizar evento:", err);
+                return res.status(500).json({ message: 'Erro ao atualizar o evento.' });
+            }
+
+            res.status(200).json({ message: 'Evento atualizado com sucesso!' });
+        });
+    });
+});
+
+// Endpoint para excluir um evento
+app.delete('/api/eventos/excluir', (req, res) => {
+    const { id } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    // Primeiro, verificar se o evento pertence ao usuário
+    const sqlCheck = "SELECT * FROM evento WHERE ID_evento = ? AND fk_ID_usuario = ?";
+    con.query(sqlCheck, [id, idUsuario], (err, results) => {
+        if (err) {
+            console.error("Erro ao verificar propriedade do evento:", err);
+            return res.status(500).json({ message: 'Erro ao verificar o evento.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(403).json({ message: 'Você não tem permissão para excluir este evento.' });
+        }
+
+        // Executar a exclusão
+        const sqlDelete = "DELETE FROM evento WHERE ID_evento = ?";
+        con.query(sqlDelete, [id], (err, deleteResult) => {
+            if (err) {
+                console.error("Erro ao excluir evento:", err);
+                return res.status(500).json({ message: 'Erro ao excluir o evento.' });
+            }
+
+            res.status(200).json({ message: 'Evento excluído com sucesso!' });
+        });
     });
 });
 

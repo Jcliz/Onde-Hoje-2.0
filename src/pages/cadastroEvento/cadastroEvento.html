@@ -109,26 +109,101 @@
         </div>
     </div>
 
+    <div class="container mt-5">
+        <div class="OH-dark shadow w-100 me-2" style="border-radius: 15px;">
+
+            <div class="p-3">
+                <h4 class="text-center fw-bold fs-6 mb-0">Meus eventos</h4>
+            </div>
+
+            <!-- Lista de eventos -->
+            <div id="lista-meus-eventos" class="d-flex p-4 OH-bg flex-column overflow-auto" style="max-height: 450px">
+                <!-- preenchido dinamicamente -->
+            </div>
+
+            <div class="text-center">
+                <button id="editarEvento" type="button" class="btn OH-btt2 mb-3 mt-3 text-white fw-bold px-4"
+                    data-bs-toggle="modal" data-bs-target="#editarEventoModal">
+                    Editar evento
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Detalhes do Evento -->
     <div class="modal fade" id="modalEvento" tabindex="-1" aria-labelledby="modalEventoLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content OH-dark text-white">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="modalEventoLabel">Detalhes do Evento</h5>
+            <div class="modal-content OH-dark">
+                <div class="modal-header">
+                    <h2 class="modal-title text-white fs-5" id="eventoNome">Nome do Evento</h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="eventoFoto" class="img-fluid rounded mb-3" style="max-height: 200px" alt="Foto do evento">
+                    <div class="text-white">
+                        <p><i class="bi bi-calendar-event me-2"></i><span id="eventoData"></span> às <span
+                                id="eventoHorario"></span>
+                        </p>
+                        <p><i class="bi bi-geo-alt me-2"></i><span id="eventoLocal"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Evento -->
+    <div class="modal fade" id="editarEventoModal" tabindex="-1" aria-labelledby="editarEventoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content OH-dark">
+                <div class="modal-header">
+                    <h2 class="modal-title text-white" id="editarEventoModalLabel">Editar evento</h2>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Foto do Evento com tamanho reduzido -->
-                    <img id="eventoFoto" src="" alt="Foto do Evento" class="img-fluid rounded mb-3"
-                        style="max-height: 150px; object-fit: cover;">
-                    <p><strong>Nome:</strong> <span id="eventoNome"></span></p>
-                    <p><strong>Data:</strong> <span id="eventoData"></span></p>
-                    <p><strong>Horário:</strong> <span id="eventoHorario"></span></p>
-                    <p><strong>Local:</strong> <span id="eventoLocal"></span></p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <form id="formEditarEvento">
+                        <div class="mb-3">
+                            <label for="editarEventoNome" class="form-label text-white">Nome do Evento</label>
+                            <input type="text" class="form-control OH-bg text-white" id="editarEventoNome"
+                                name="editarEventoNome" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editarEventoData" class="form-label text-white">Data</label>
+                                <input type="date" class="form-control OH-bg text-white" id="editarEventoData"
+                                    name="editarEventoData">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editarEventoHora" class="form-label text-white">Horário</label>
+                                <input type="time" class="form-control OH-bg text-white" id="editarEventoHora"
+                                    name="editarEventoHora" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editarEventoLocal" class="form-label text-white">Local</label>
+                            <input type="text" class="form-control OH-bg text-white" id="editarEventoLocal"
+                                name="editarEventoLocal" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editarEventoFoto" class="form-label text-white">Alterar Foto (opcional)</label>
+                            <input type="file" id="editarEventoFoto" name="editarEventoFoto" accept="image/*"
+                                class="d-none">
+                            <label for="editarEventoFoto"
+                                class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center"
+                                style="height: 60px;">
+                                <i class="bi bi-camera me-2" style="font-size: 1.5rem;"></i>
+                                Selecione um arquivo
+                            </label>
+                        </div>
+                        <div class="text-center justify-content-between">
+                            <button type="submit" id="btnSalvarEvento"
+                                class="btn OH-btt1 text-white fw-bold px-4">Salvar Alterações</button>
+                            <button type="submit" id="btnExcluirEvento" class="btn OH-btt2 text-white fw-bold px-4"
+                                style="margin-left: 1vh;">Excluir Evento</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
