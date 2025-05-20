@@ -38,6 +38,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             trocarFotoEl.innerHTML = `<span style="cursor: pointer;"><i class="bi bi-x-circle me-2" style="font-size: 1.5rem; color: red;"></i> Trocar de foto</span>`;
 
             trocarFotoEl.addEventListener("click", () => {
+                document.getElementById('modalEstab').setAttribute('data-id', estabelecimento.ID_estabelecimento);
+
                 // Restaura o input
                 fotoInput.disabled = false;
                 fotoInput.value = "";
@@ -49,6 +51,62 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 });
+
+async function excluirEstabelecimento() {
+    const id = document.getElementById('modalEstab').getAttribute('data-id');
+
+    if (!id) return;
+
+    if (confirm("Tem certeza que deseja excluir este estabelecimento?")) {
+        try {
+            const response = await fetch(`/api/estabelecimentos/${id}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                showToast("Estabelecimento excluído com sucesso!", 'success');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEstab'));
+                modal.hide();
+                carregarEstabAtivos();
+            } else {
+                showToast("Erro ao excluir o estabelecimento.", 'error');
+            }
+        } catch (error) {
+            console.error("Erro ao excluir:", error);
+            showToast("Erro ao excluir. Tente novamente mais tarde.", 'error');
+        }
+    }
+}
+
+async function atualizarEstabelecimento() {
+    const id = document.getElementById('modalEstab').getAttribute('data-id');
+    const novoNome = prompt("Digite o novo nome do estabelecimento:");
+
+    if (!novoNome || !id) return;
+
+    try {
+        const response = await fetch(`/api/estabelecimentos/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nome: novoNome }),
+        });
+
+        if (response.ok) {
+            showToast("Estabelecimento atualizado com sucesso!", 'success');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEstab'));
+            modal.hide();
+            carregarEstabAtivos();
+        } else {
+            showToast("Erro ao atualizar estabelecimento.", 'error');
+        }
+    } catch (error) {
+        console.error("Erro ao atualizar:", error);
+        showToast("Erro ao atualizar. Tente novamente mais tarde.", 'error');
+    }
+}
+
 
 async function criar() {
     const nome = document.getElementById('nome').value;
@@ -90,6 +148,9 @@ async function criar() {
 
         if (response.ok) {
             showToast("Estabelecimento cadastrado com sucesso!", 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
         } else if (response.status === 400) {
             const data = await response.json();
             showToast("Foto inválida.", 'error');
@@ -192,6 +253,67 @@ document.getElementById('cnpj').addEventListener('focusout', function () {
         if (g5) formatted += '-' + g5;
         return formatted;
     });
+});
+
+async function carregarEstabAtivos() {
+    try {
+        const response = await fetch('/api/estabelecimentos/ativos');
+        const estab = await response.json();
+        const container = document.getElementById('estab-container');
+        container.innerHTML = '';
+
+        estab.forEach(estabelecimento => {
+            // Define o local: se houver CEP, monta o endereço; senão, usa o nome do estabelecimento
+            let localText = '';
+            if (estabelecimento.cep) {
+                localText = `${estabelecimento.cep} - ${estabelecimento.rua}, ${estabelecimento.bairro}, Nº ${estabelecimento.numero}`;
+            } else {
+                localText = estabelecimento.nome || 'Local não definido';
+            }
+
+            // Cria o card do evento
+            const card = document.createElement('div');
+            card.className = "list-group-item OH-dark text-white d-flex justify-content-between align-items-center rounded mb-2 shadow-sm";
+            card.style.cursor = "pointer";
+            card.innerHTML = `
+        <div>
+          <i class="bi bi-calendar-event me-2 text-white"></i>
+          <strong>${estabelecimento.nome}</strong>
+          <div class="small text-white">${localText}</div>
+        </div>
+        <i class="bi bi-chevron-right text-secondary"></i>
+      `;
+
+            // Ao clicar, preenche o modal com os detalhes do evento e exibe a foto
+            card.addEventListener('click', () => {
+                document.getElementById('estabelecimentoNome').textContent = estabelecimento.nome;
+                document.getElementById('estabelecimentoLocal').textContent = localText;
+                const estabelecimentoFotoEl = document.getElementById('estabelecimentoFoto');
+                estabelecimentoFotoEl.src = `/api/estabelecimento/foto/${estabelecimento.ID_estabelecimento}?${Date.now()}`;
+
+                estabelecimentoFotoEl.onerror = () => {
+                    estabelecimentoFotoEl.src = '../../../bar.png';
+                };
+
+                // Abre o modal utilizando a API do Bootstrap
+                const modal = new bootstrap.Modal(document.getElementById('modalEstab'));
+                document.getElementById('modalEstab').setAttribute('data-id', estabelecimento.ID_estabelecimento);
+
+                modal.show();
+            });
+
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Erro ao carregar eventos ativos:", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    document.getElementById('btnExcluir').addEventListener('click', excluirEstabelecimento);
+    document.getElementById('btnAtualizar').addEventListener('click', atualizarEstabelecimento);
+    await carregarDados();
+    carregarEstabAtivos();
 });
 
 window.criar = criar;

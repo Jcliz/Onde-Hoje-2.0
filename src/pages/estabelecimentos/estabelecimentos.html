@@ -35,7 +35,7 @@
           <div class="col-md-6">
             <label for="nome" class="form-label">Nome</label>
             <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="nome" name="nome"
-            oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+              required>
             <div class="invalid-feedback">Nome inválido.</div>
           </div>
 
@@ -58,7 +58,7 @@
           <div class="col-md-6">
             <label for="rua" class="form-label">Rua</label>
             <input type="text" class="form-control OH-bg text-white border-secondary rounded" id="rua" name="rua"
-             oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+              oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
           </div>
 
           <div class="col-md-6">
@@ -90,7 +90,45 @@
         </div>
       </form>
     </div>
+
+    <!-- Container dos Estabelecimentos Cadastrados -->
+    <div class="col-md-5 OH-dark shadow mx-md-3" style="border-radius: 15px;">
+      <h3 class="text-center text-white mt-4 mb-3">Registro de Estabelecimentos</h3>
+      <div class="list-group px-2 pb-4" id="estab-container">
+        <!-- Estabelecimentos Cadastrados serão carregados aqui dinamicamente -->
+      </div>
+    </div>
+    </div>
+
+    <!-- Modal de Detalhes do Evento -->
+    <div class="modal fade" id="modalEstab" tabindex="-1" aria-labelledby="modalEstabLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content OH-dark text-white">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="modalEstabLabel">Detalhes do Evento</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+              aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Foto do Evento com tamanho reduzido -->
+            <img id="estabelecimentoFoto" src="" alt="Foto do Evento" class="img-fluid rounded mb-3"
+              style="max-height: 150px; object-fit: cover;">
+            <p><strong>Nome:</strong> <span id="estabelecimentoNome"></span></p>
+            <p><strong>Local:</strong> <span id="estabelecimentoLocal"></span></p>
+            
+          </div>
+          <div class="modal-footer border-0 justify-content-center">
+            <button id="btnAtualizar" type="button" class="btn OH-btt1 text-white">Atualizar</button>
+            <button id="btnExcluir" type="button" class="btn OH-btt2 text-white">Excluir</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
   </main>
+
+
 
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="toast-alert" class="toast align-items-center text-white bg-danger border-0" role="alert"
