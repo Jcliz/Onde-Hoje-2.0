@@ -1,156 +1,197 @@
-const modal = document.getElementById('modal');
-const form = document.getElementById('addProductForm');
-const productTableBody = document.getElementById('productTableBody');
-let currentEditingRow = null;
+import { showToast } from "../../../components/toast.js";
 
-// Função para abrir o modal
-function openModal() {
-    modal.showModal(); // Exibe o modal
-}
+async function carregarDados() {
+    try {
+        const response = await fetch("/api/session");
+        const sessionData = await response.json();
 
-// Função para fechar o modal
-function closeModal() {
-    modal.close(); // Fecha o modal
-    form.reset(); // Reseta o formulário
-    currentEditingRow = null; // Reseta a linha de edição
-}
-
-// Função para salvar ou atualizar os dados do formulário
-async function salvar(event) {
-    event.preventDefault();
-
-    const productName = document.getElementById('productName').value;
-    const productCode = document.getElementById('productCode').value;
-    const productPrice = document.getElementById('productPrice').value;
-
-    const data = {
-        nome: productName,
-        endereco: productCode,
-        avaliacao: parseFloat(productPrice)
-    };
-
-    let url = 'http://localhost:3000/api/estabelecimentos';
-    let method = 'POST';
-
-    // Se estiver editando, envie uma requisição PUT para atualizar o item
-    if (currentEditingRow) {
-        const id = currentEditingRow.dataset.id;
-        url = `${url}/${id}`;
-        method = 'PUT';
-    }
-
-    // Enviar os dados para o servidor
-    const response = await fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-        // Atualizar a tabela com os dados atualizados
-        listar();
-        closeModal(); // Fecha o modal após salvar
-    } else {
-        console.error('Erro ao salvar:', result);
+        if (!sessionData.estaAutenticado || !sessionData.isAdm) {
+            if (!sessionData.estaAutenticado) {
+                window.location.href = "/src/pages/login/login.html";
+                return;
+            } else {
+                window.location.href = "/src/pages/telaEntrada/telaentrada.html";
+                return;
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao verificar sessão:", error);
     }
 }
 
-// Função para listar os estabelecimentos e atualizar a tabela
-async function listar() {
-    const response = await fetch('http://localhost:3000/api/estabelecimentos', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
+document.addEventListener("DOMContentLoaded", async () => {
+    await carregarDados();
+
+    const fotoInput = document.getElementById('foto');
+    const fotoLabel = document.querySelector('label[for="foto"]');
+    // Armazena o HTML original do botão de selecionar a foto
+    const originalLabelHTML = fotoLabel.innerHTML;
+
+    fotoInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+            fotoLabel.innerHTML = `<i class="bi bi-check-circle me-2" style="font-size: 1.5rem; color: green;"></i> Upload realizado!`;
+            fotoInput.disabled = true;
+            fotoLabel.style.pointerEvents = 'none';
+
+            // Cria o elemento que permitirá trocar a foto com o ícone X em vermelho
+            const trocarFotoEl = document.createElement('div');
+            trocarFotoEl.innerHTML = `<span style="cursor: pointer;"><i class="bi bi-x-circle me-2" style="font-size: 1.5rem; color: red;"></i> Trocar de foto</span>`;
+
+            trocarFotoEl.addEventListener("click", () => {
+                // Restaura o input
+                fotoInput.disabled = false;
+                fotoInput.value = "";
+                fotoLabel.innerHTML = originalLabelHTML;
+                fotoLabel.style.pointerEvents = '';
+                trocarFotoEl.remove();
+            });
+            fotoLabel.parentNode.insertBefore(trocarFotoEl, fotoLabel.nextSibling);
         }
     });
+});
 
-    const result = await response.json();
+async function criar() {
+    const nome = document.getElementById('nome').value;
+    const cnpj = document.getElementById('cnpj').value;
+    const cep = document.getElementById('cep').value;
+    const rua = document.getElementById('rua').value;
+    const bairro = document.getElementById('bairro').value;
+    const numero = document.getElementById('numero').value;
+    const fotoInput = document.getElementById('foto');
 
-    // Limpar a tabela antes de preencher novamente
-    productTableBody.innerHTML = '';
+    const invalidFields = document.querySelectorAll('.is-invalid');
+    if (invalidFields.length > 0) {
+        showToast("Atenção: Corrija os erros no formulário.", 'error');
+        return;
+    }
 
-    // Preencher a tabela com os dados obtidos
-    result.forEach(estabelecimento => {
-        const newRow = document.createElement('tr');
-        newRow.dataset.id = estabelecimento.id;
-        newRow.innerHTML = `
-            <td style="width: 140px;">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" onchange="statusProduct(this)">
-                    <label class="form-check-label" style="margin-left: 15%; color: white !important;">Inativo</label>
-                </div>
-            </td>
-            <td style="text-align: center !important; color: white !important;">${estabelecimento.nome}</td>
-            <td style="text-align: center !important; color: white !important;">${estabelecimento.endereco}</td>
-            <td style="text-align: center !important; color: white !important;">${estabelecimento.avaliacao.toFixed(2)}</td>
-            <td style="text-align: center !important">
-                <div class="btn-group">
-                    <button class="btn btn-warning btn-sm" onclick="editProduct(this)">Editar</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(this)">Excluir</button>
-                </div>
-            </td>
-        `;
-        productTableBody.appendChild(newRow);
-    });
-}
+    if (!nome || !cnpj || !cep || !rua || !numero || !bairro) {
+        showToast("Atenção: Por favor, preencha todos os campos obrigatórios.", 'error');
+        return;
+    }
 
-// Função para editar um estabelecimento
-function editProduct(button) {
-    const row = button.closest('tr');
-    document.getElementById('productName').value = row.cells[1].textContent;
-    document.getElementById('productCode').value = row.cells[2].textContent;
-    document.getElementById('productPrice').value = row.cells[3].textContent;
-    currentEditingRow = row;
-    openModal(); // Abre o modal para editar
-}
+    // Cria um FormData para enviar os dados, semelhante à função uploadFoto
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("cnpj", cnpj);
+    formData.append("cep", cep);
+    formData.append("rua", rua);
+    formData.append("bairro", bairro);
+    formData.append("numero", numero);
+    if (fotoInput.files.length > 0) {
+        formData.append("foto", fotoInput.files[0]);
+    }
 
-// Função para excluir um estabelecimento
-async function deleteProduct(button) {
-    if (confirm('Tem certeza de que deseja excluir este produto?')) {
-        const row = button.closest('tr');
-        const id = row.dataset.id;
-
-        const response = await fetch(`http://localhost:3000/api/estabelecimentos/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+    try {
+        const response = await fetch("/api/estabelecimentos/criar", {
+            method: "POST",
+            body: formData
         });
 
         if (response.ok) {
-            row.remove();
+            showToast("Estabelecimento cadastrado com sucesso!", 'success');
+        } else if (response.status === 400) {
+            const data = await response.json();
+            showToast("Foto inválida.", 'error');
+            return;
         } else {
-            console.error('Erro ao excluir');
+            showToast("Erro ao cadastrar estabelecimento", 'error');
+        }
+    } catch (error) {
+        console.error("Erro ao enviar o cadastro:", error);
+        showToast("Erro ao cadastrar. Tente novamente mais tarde.", 'error');
+    }
+}
+
+//verificação de CEP e auto completamento
+async function validarCEP(input) {
+    const rua = document.querySelector('#rua');
+    const bairro = document.querySelector('#bairro');
+
+    const onlyNumbers = /^[0-9]+$/;
+
+    try {
+        if (!onlyNumbers.test(input.value)) {
+            throw { cep_error: 'CEP inválido.' };
+        }
+
+        const response = await fetch(`https://viacep.com.br/ws/${input.value}/json/`);
+
+        if (!response.ok) {
+            throw await response.json();
+        }
+
+        const responseCep = await response.json();
+
+        if (responseCep.erro) {
+            throw { cep_error: 'CEP não encontrado.' };
+        }
+
+        rua.value = responseCep.logradouro;
+        bairro.value = `${responseCep.bairro} | ${responseCep.localidade} - ${responseCep.uf}`;
+
+        input.classList.remove('is-invalid');
+        input.value = input.value.replace(/(\d{5})(\d{3})/, '$1-$2');
+
+    } catch (error) {
+        if (error?.cep_error) {
+            input.classList.add('is-invalid');
         }
     }
 }
 
-// Função para atualizar o status do produto
-function statusProduct(input) {
-    const label = input.nextElementSibling;
-    label.textContent = input.checked ? "Ativo" : "Inativo";
+//apenas números no campo de CEP
+document.querySelectorAll('#cep').forEach(cepInput => {
+    cepInput.addEventListener('input', () => {
+        cepInput.value = cepInput.value.replace(/\D/g, '');
+    });
+
+    cepInput.addEventListener('focusout', () => {
+        validarCEP(cepInput);
+    });
+});
+
+function validarNome(input) {
+    const nomeValid = /^[a-zA-ZÀ-ú]+\s[a-zA-ZÀ-ú\s]+$/;
+
+    if (input.value.length < 3 || input.value.length > 50) {
+        input.classList.add('is-invalid');
+        return false;
+
+    } else if (nomeValid.test(input.value)) {
+        input.classList.remove('is-invalid');
+        return true;
+
+    } else {
+        input.classList.add('is-invalid');
+        return false;
+
+    }
 }
 
-// Eventos de inicialização
-form.addEventListener('submit', salvar);
-document.addEventListener('DOMContentLoaded', listar);
-
-var menuButton = document.getElementById("menu-button");
-var menu = document.getElementById("menu");
-var content = document.getElementById("content");
-
-menuButton.addEventListener("click", function() {
-    if (menu.classList.contains("menu-show")) {
-        menu.classList.remove("menu-show");
-        menu.classList.add("menu-hide");
-        content.classList.add("content-expanded");
-    } else {
-        menu.classList.remove("menu-hide");
-        menu.classList.add("menu-show");
-        content.classList.remove("content-expanded");
-    }
+document.querySelectorAll('#nome').forEach(nameInput => {
+    nameInput.addEventListener('input', () => {
+        nameInput.value = nameInput.value.replace(/[^a-zA-ZÀ-ú\s]/g, '');
+    });
 });
+
+document.getElementById('nome').addEventListener('focusout', function () {
+    validarNome(this);
+});
+
+document.getElementById('cnpj').addEventListener('focusout', function () {
+    let value = this.value.replace(/\D/g, '');
+    if (value.length > 14) {
+        value = value.slice(0, 14);
+    }
+    this.value = value.replace(/^(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})$/, (match, g1, g2, g3, g4, g5) => {
+        let formatted = g1;
+        if (g2) formatted += '.' + g2;
+        if (g3) formatted += '.' + g3;
+        if (g4) formatted += '/' + g4;
+        if (g5) formatted += '-' + g5;
+        return formatted;
+    });
+});
+
+window.criar = criar;

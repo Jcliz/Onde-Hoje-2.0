@@ -43,10 +43,23 @@
     </section>
   </main>
   <div id="footer-container"></div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast-alert" class="toast align-items-center text-white bg-danger border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">
+                    <!-- Mensagem será inserida aqui -->
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
   
   <script src="../../../components/header.js" defer></script>
   <script src="../../../components/footer.js" defer></script>
-  <script src="esqueceuSenha.js"></script>
+  <script type="module" src="esqueceuSenha.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YQJ5WWv1pBSeUdsE21xrP+JjT56fuY9A4yJXUpyoylA6E/z7hQr0cvzW4T44yD4P" crossorigin="anonymous"></script>
 
 </html>

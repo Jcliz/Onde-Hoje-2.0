@@ -1,3 +1,17 @@
+#lista-estabelecimentos,
+#listas-estabelecimentos,
+#lista-ava {
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* esconde a scrollbar em WebKit (Chrome, Safari) */
+#lista-estabelecimentos::-webkit-scrollbar {
+    display: none;
+}
+
 .estabelecimentos {
     width: 30%;
     max-height: 70vh;
@@ -31,10 +45,12 @@
 }
 
 #comentario::placeholder {
-    color: #ffffff; /* Altere para a cor desejada */
+    color: #ffffff;
+    /* Altere para a cor desejada */
     opacity: 0.5;
-    background-color: #191922 ; /* Altere para a opacidade desejada */
-  }
+    background-color: #191922;
+    /* Altere para a opacidade desejada */
+}
 
 .estabelecimento-card h5 {
     margin: 0;
@@ -58,8 +74,20 @@
     transition: color 0.2s;
 }
 
-.star-rating input[type="radio"]:checked ~ label,
+.star-rating input[type="radio"]:checked~label,
 .star-rating label:hover,
-.star-rating label:hover ~ label {
+.star-rating label:hover~label {
     color: gold;
+}
+
+.star-rating.list-stars i {
+    font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    main.container {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+    }
 }

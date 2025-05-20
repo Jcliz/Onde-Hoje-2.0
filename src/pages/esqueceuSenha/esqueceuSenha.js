@@ -1,3 +1,5 @@
+import { showToast } from "../../../components/toast.js";
+
 function validarEmail(input) {
   const emailError = input.nextElementSibling;
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,16 +36,16 @@ async function verificarEmail() {
 
     if (response.ok) {
       const data = await response.json();
-      alert('E-mail enviado!');
+      showToast('E-mail enviado!', 'success');
       window.location.href = '../retorno/retornoHome.html';
     } else {
       const errorData = await response.json();
-      alert(errorData.message || 'E-mail não encontrado.');
+      showToast('E-mail não encontrado.', 'error');
     }
   
   } catch (error) {
     console.error('Erro:', error);
-    alert('Erro ao tentar recuperar a senha. Tente novamente.');
+    showToast('Erro ao tentar recuperar a senha. Tente novamente.', 'error');
   }
 }
 

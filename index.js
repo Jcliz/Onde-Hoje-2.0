@@ -6,8 +6,6 @@ var app = express();
 const session = require('express-session');
 var mysql = require('mysql2');
 const nunjucks = require('nunjucks');
-const fs = require('fs');
-const path = require('path');
 const sessionMaxAge = 10 * 60 * 1000; // Expira após 10 minutos
 
 
@@ -68,7 +66,7 @@ app.use(express.static(__dirname));
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "1234",
+    password: "123456",
     database: "ondehoje2"
 });
 
@@ -94,7 +92,7 @@ const upload = multer({
 //rota principal
 app.get('/', (req, res) => {
     if (req.session.user_logged_in) {
-        return res.redirect(303, '/src/pages/topRoles/topRoles.html');
+        return res.redirect(303, '/src/pages/perfil/perfil.html');
     }
     res.redirect('/src/pages/telaEntrada/telaentrada.html');
 });
@@ -133,7 +131,7 @@ app.post('/api/usuarios/uploadFoto', upload.single('foto'), async (req, res) => 
 
         const idUsuario = req.session.ID_usuario;
         const sql = 'UPDATE usuario SET foto = UNHEX(?) WHERE ID_usuario = ?';
-        con.query(sql, [fotoHex, idUsuario]); 
+        con.query(sql, [fotoHex, idUsuario]);
 
         res.status(200).json({ mensagem: 'Upload realizado com sucesso!' });
 
@@ -156,7 +154,8 @@ app.get('/api/session', (req, res) => {
             cep: req.session.cep,
             numero: req.session.numero,
             complemento: req.session.complemento,
-            nick: req.session.nick
+            nick: req.session.nick,
+            isAdm: req.session.isAdm
         });
     } else {
         res.json({ estaAutenticado: false });
@@ -224,153 +223,83 @@ app.delete('/api/usuarios/excluir', (req, res) => {
     });
 });
 
-//update de usuário
+//função para verficação de campos
+function verficarCampos(user, body, novaFoto) {
+    const campos = [];
+    const valores = [];
+    if (body.nick && body.nick !== user.nick) {
+        campos.push("nick = ?");
+        valores.push(body.nick);
+    }
+    if (body.email && body.email !== user.email) {
+        campos.push("email = ?");
+        valores.push(body.email);
+    }
+    if (body.senha && body.senha !== user.senha) {
+        campos.push("senha = MD5(?)");
+        valores.push(body.senha);
+    }
+    if (body.cep && body.cep !== user.cep) {
+        campos.push("cep = ?");
+        valores.push(body.cep);
+    }
+    if (body.complemento && body.complemento !== user.complemento) {
+        campos.push("complemento = ?");
+        valores.push(body.complemento);
+    }
+    if (body.numero && body.numero !== user.numero) {
+        campos.push("numero = ?");
+        valores.push(body.numero);
+    }
+    if (body.telefone && body.telefone !== user.telefone) {
+        campos.push("telefone = ?");
+        valores.push(body.telefone);
+    }
+    if (novaFoto) {
+        campos.push("foto = UNHEX(?)");
+        valores.push(novaFoto);
+    }
+    return { campos, valores };
+}
+
 app.put('/api/usuarios/update', (req, res) => {
     const { nick, email, senha, cep, complemento, numero, telefone } = req.body;
     const idUsuario = req.session.ID_usuario;
     const novaFoto = req.file ? req.file.buffer.toString('hex') : null;
 
-    const getUserSql = 'SELECT * FROM usuario WHERE ID_usuario = ?';
-    con.query(getUserSql, [idUsuario], (err, results) => {
+    con.query('SELECT * FROM usuario WHERE ID_usuario = ?', [idUsuario], (err, results) => {
         if (err || results.length === 0) {
             console.error('Erro ao buscar dados atuais do usuário:', err);
             return res.status(500).json({ message: 'Erro no servidor' });
         }
 
-        const user = results[0]
+        const user = results[0];
 
-        //lista de promessas para verificar apenas o que mudou e dados cadastrados
-        const verificacoes = [];
-
-        if (telefone && telefone !== user.telefone) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT * FROM usuario WHERE telefone = ? AND ID_usuario != ?', [telefone, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar telefone');
-                    else if (result.length > 0) reject('Telefone já cadastrado');
-                    else resolve();
-                });
-            }));
+        const { campos, valores } = verficarCampos(user, req.body, novaFoto);
+        if (campos.length === 0) {
+            return res.status(200).json({ message: 'Nenhum dado alterado.' });
         }
 
-        if (email && email !== user.email) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT * FROM usuario WHERE email = ? AND ID_usuario != ?', [email, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar email');
-                    else if (result.length > 0) reject('Email já cadastrado.');
-                    else resolve();
-                });
-            }));
-        }
+        const sql = `UPDATE usuario SET ${campos.join(', ')} WHERE ID_usuario = ?`;
+        valores.push(idUsuario);
 
-        if (nick && nick !== user.nick) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT * FROM usuario WHERE nick = ? AND ID_usuario != ?', [nick, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar nick');
-                    else if (result.length > 0) reject('Nick já cadastrado');
-                    else resolve();
-                });
-            }));
-        }
+        con.query(sql, valores, (err) => {
+            if (err) {
+                console.error('Erro ao atualizar usuário:', err);
+                return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+            }
 
-        if (nick && nick === user.nick) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse nick.'));
-        }
+            // Atualiza a sessão com os novos dados
+            if (nick) req.session.nick = nick;
+            if (email) req.session.email = email;
+            if (senha) req.session.senha = senha;
+            if (cep) req.session.cep = cep;
+            if (complemento) req.session.complemento = complemento;
+            if (numero) req.session.numero = numero;
+            if (telefone) req.session.telefone = telefone;
 
-        if (email && email === user.email) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse e-mail.'));
-        }
-
-        if (numero && numero === user.numero) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse número.'));
-        }
-
-        if (complemento && complemento === user.complemento) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse complemento.'));
-        }
-
-        if (telefone && telefone === user.telefone) {
-            verificacoes.push(Promise.reject('Você já está utilizando esse telefone.'));
-        }
-
-        if (senha) {
-            verificacoes.push(new Promise((resolve, reject) => {
-                con.query('SELECT senha FROM usuario WHERE senha = MD5(?) AND ID_usuario = ?', [senha, idUsuario], (err, result) => {
-                    if (err) reject('Erro ao verificar a nova senha');
-                    else if (result.length > 0) reject('Senha já cadastrada anteriormente');
-                    else resolve();
-                });
-            }));
-        }
-
-        //executa todas as verificações
-        Promise.all(verificacoes)
-            .then(() => {
-                //monta dinamicamente os campos que devem ser atualizados
-                const campos = [];
-                const valores = [];
-
-                if (nick && nick !== user.nick) {
-                    campos.push("nick = ?");
-                    valores.push(nick);
-                }
-                if (email && email !== user.email) {
-                    campos.push("email = ?");
-                    valores.push(email);
-                }
-                if (senha && senha !== user.senha) {
-                    campos.push("senha = MD5(?)")
-                    valores.push(senha)
-                }
-                if (cep && cep !== user.cep) {
-                    campos.push("cep = ?");
-                    valores.push(cep);
-                }
-                if (complemento && complemento !== user.complemento) {
-                    campos.push("complemento = ?");
-                    valores.push(complemento);
-                }
-                if (numero && numero !== user.numero) {
-                    campos.push("numero = ?");
-                    valores.push(numero);
-                }
-                if (telefone && telefone !== user.telefone) {
-                    campos.push("telefone = ?");
-                    valores.push(telefone);
-                }
-
-                if (novaFoto) {
-                    campos.push("foto = UNHEX(?)");
-                    valores.push(novaFoto);
-                }
-
-                if (campos.length === 0) {
-                    return res.status(200).json({ message: 'Nenhum dado alterado.' });
-                }
-
-                const sql = `UPDATE usuario SET ${campos.join(', ')} WHERE ID_usuario = ?`;
-                valores.push(idUsuario);
-
-                con.query(sql, valores, (err) => {
-                    if (err) {
-                        console.error('Erro ao atualizar usuário:', err);
-                        return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
-                    }
-
-                    //atualiza a sessão com os novos dados
-                    if (nick) req.session.nick = nick;
-                    if (email) req.session.email = email;
-                    if (senha) req.session.senha = senha;
-                    if (cep) req.session.cep = cep;
-                    if (complemento) req.session.complemento = complemento;
-                    if (numero) req.session.numero = numero;
-                    if (telefone) req.session.telefone = telefone;
-
-                    return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
-                });
-            })
-            .catch((msg) => {
-                return res.status(400).json({ message: msg });
-            });
+            return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
+        });
     });
 });
 
@@ -398,6 +327,12 @@ app.post('/api/login', (req, res) => {
             req.session.nick = result[0].nick;
             req.session.senha = result[0].senha;
 
+            if (result[0].role && result[0].role.toLowerCase() === 'adm') {
+                req.session.isAdm = true;
+            } else {
+                req.session.isAdm = false;
+            }
+
             res.status(200).json({ message: 'Login bem-sucedido', usuario: result[0] });
         } else {
             res.status(401).json({ message: 'Senha ou e-mail inválido.' });
@@ -405,6 +340,32 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+app.post('/api/usuarios/avaliar', (req, res) => {
+    const { nota, comentario, estabelecimento } = req.body;
+
+    // Buscar o ID do estabelecimento a partir do nome
+    const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+    con.query(sqlFind, [estabelecimento], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro no banco de dados ao buscar estabelecimento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado' });
+        }
+        const fk_ID_estabelecimento = results[0].ID_estabelecimento;
+
+        // Inserir nova avaliação com nota, comentário e FK do estabelecimento
+        const sqlInsert = "INSERT INTO avaliacao (avaliacao, comentario, fk_ID_usuario, fk_ID_estabelecimento) VALUES (?, ?, ?, ?)";
+        con.query(sqlInsert, [nota, comentario, req.session.ID_usuario, fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao inserir avaliação' });
+            }
+            return res.status(200).json({ message: 'Avaliação adicionada com sucesso' });
+        });
+    });
+});
 // Endpoint para salvar um usuário (criar)
 app.post('/api/usuarios/criar', (req, res) => {
     const { nome, nick, dataNascimento, email, senha, cpf, cep, numero, complemento, genero, telefone } = req.body;
@@ -497,6 +458,556 @@ app.post('/api/esqueceuSenha', (req, res) => {
             res.status(401).json({ message: 'E-mail não encontrado.' });
         }
     });
+});
+
+//endpoint para buscar estabelecimentos do banco
+app.get('/api/estabelecimentos', (req, res) => {
+    const sql = 'SELECT * FROM estabelecimento';
+    con.query(sql, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Erro ao buscar estabelecimentos.' });
+        }
+        res.json(results);
+    });
+});
+
+app.post('/api/estabelecimentos/criar', upload.single('foto'), (req, res) => {
+    const { nome, cnpj, cep, rua, bairro, numero, foto } = req.body;
+    let fotoHex = null;
+
+    if (req.file) {
+        try {
+            fotoHex = req.file.buffer.toString('hex');
+        } catch (error) {
+            console.error("Erro ao converter a foto:", error);
+            return res.status(400).json({ message: 'Foto inválida.' });
+        }
+    } else if (foto) {
+        try {
+            const buffer = Buffer.from(foto, 'base64');
+            fotoHex = buffer.toString('hex');
+        } catch (error) {
+            console.error("Erro ao converter foto base64:", error);
+            return res.status(400).json({ message: 'Foto inválida.' });
+        }
+    }
+
+    const sql = 'INSERT INTO estabelecimento (nome, cnpj, cep, rua, bairro, numero, foto) VALUES (?, ?, ?, ?, ?, ?, UNHEX(?))';
+    con.query(sql, [nome, cnpj, cep, rua, bairro, numero, fotoHex], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Erro ao criar estabelecimento.' });
+        }
+        res.status(200).json({ message: 'Estabelecimento criado com sucesso!' });
+    });
+});
+
+app.get("/api/estabelecimentos/foto/:id", (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT foto FROM estabelecimento WHERE ID_estabelecimento = ?";
+    con.query(sql, [id], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar foto do estabelecimento:", err);
+            return res.status(500).send("Erro ao buscar a foto");
+        }
+        if (results.length === 0 || !results[0].foto) {
+            return res.status(404).send("Foto não encontrada");
+        }
+        const fotoBlob = results[0].foto;
+        res.writeHead(200, {
+            "Content-Type": "image/jpeg",
+            "Content-Length": fotoBlob.length,
+        });
+        res.end(fotoBlob);
+    });
+});
+
+app.post('/api/eventos/criar', upload.single('foto'), (req, res) => {
+    const { nome, data, hora, cep, rua, bairro, numero, fk_ID_estabelecimento } = req.body;
+    let fotoHex = null;
+
+    if (req.file) {
+        try {
+            fotoHex = req.file.buffer.toString('hex');
+        } catch (error) {
+            console.error("Erro ao converter a foto:", error);
+            return res.status(400).json({ message: 'Foto inválida.' });
+        }
+    }
+
+    if (fk_ID_estabelecimento) {
+        const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+        con.query(sqlFind, [fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Erro no banco de dados ao buscar estabelecimento.' });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Estabelecimento não encontrado.' });
+            }
+            const estabelecimentoId = results[0].ID_estabelecimento;
+            // Use UNHEX(?) para converter o valor hexadecimal para o formato binário
+            const sql = 'INSERT INTO evento (nome, data, hora, cep, rua, bairro, numero, foto, fk_ID_estabelecimento) VALUES (?, ?, ?, ?, ?, ?, ?, UNHEX(?), ?)';
+            con.query(sql, [nome, data, hora, cep, rua, bairro, numero, fotoHex, estabelecimentoId], (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ message: 'Erro ao criar evento.' });
+                }
+                return res.status(200).json({ message: 'Evento criado com sucesso!' });
+            });
+        });
+    } else {
+        // Caso não haja estabelecimento, insere nulo para fk_ID_estabelecimento
+        const sql = 'INSERT INTO evento (nome, data, hora, cep, rua, bairro, numero, foto, fk_ID_estabelecimento) VALUES (?, ?, ?, ?, ?, ?, ?, UNHEX(?), ?)';
+        con.query(sql, [nome, data, hora, cep, rua, bairro, numero, fotoHex, null], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Erro ao criar evento.' });
+            }
+            return res.status(200).json({ message: 'Evento criado com sucesso!' });
+        });
+    }
+});
+
+//endpoint para buscar avaliações do banco
+app.get('/api/usuarios/avaliacoesPessoais', (req, res) => {
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
+    const sql = `
+        SELECT e.ID_estabelecimento, e.nome, e.foto, a.avaliacao, a.comentario
+        FROM estabelecimento e
+        JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento
+        WHERE a.fk_ID_usuario = ?
+        ORDER BY a.ID_rating
+    `;
+
+    con.query(sql, [idUsuario], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro interno no servidor' });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/usuarios/avaliacoes', (req, res) => {
+    const sql = `
+        SELECT e.ID_estabelecimento, e.nome, e.foto, a.avaliacao, a.comentario 
+        FROM estabelecimento e 
+        JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento
+        ORDER BY a.ID_rating ASC 
+    `;
+    con.query(sql, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro interno no servidor' });
+        }
+        res.json(results);
+    });
+});
+
+app.post('/api/usuarios/editarAvaliacao', (req, res) => {
+    const { nota, comentario, estabelecimento } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    // Buscar o ID do estabelecimento a partir do nome
+    const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+    con.query(sqlFind, [estabelecimento], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro no banco de dados ao buscar estabelecimento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado' });
+        }
+
+        const fk_ID_estabelecimento = results[0].ID_estabelecimento;
+
+        // Atualizar a avaliação do usuário
+        const sqlUpdate = `
+            UPDATE avaliacao 
+            SET avaliacao = ?, comentario = ? 
+            WHERE fk_ID_usuario = ? AND fk_ID_estabelecimento = ?
+        `;
+        con.query(sqlUpdate, [nota, comentario, idUsuario, fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao atualizar avaliação' });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ error: 'Avaliação não encontrada para este estabelecimento' });
+            }
+            return res.status(200).json({ message: 'Avaliação atualizada com sucesso' });
+        });
+    });
+});
+
+app.delete('/api/usuarios/excluirAvaliacao', (req, res) => {
+    const { estabelecimento } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
+    // Buscar o ID do estabelecimento a partir do nome
+    const sqlFind = "SELECT ID_estabelecimento FROM estabelecimento WHERE nome = ?";
+    con.query(sqlFind, [estabelecimento], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Erro no banco de dados ao buscar estabelecimento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado' });
+        }
+
+        const fk_ID_estabelecimento = results[0].ID_estabelecimento;
+
+        // Excluir a avaliação do usuário para o estabelecimento
+        const sqlDelete = `
+            DELETE FROM avaliacao 
+            WHERE fk_ID_usuario = ? AND fk_ID_estabelecimento = ?
+        `;
+        con.query(sqlDelete, [idUsuario, fk_ID_estabelecimento], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao excluir avaliação' });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ error: 'Avaliação não encontrada para este estabelecimento' });
+            }
+            return res.status(200).json({ message: 'Avaliação excluída com sucesso' });
+        });
+    });
+});
+
+// Endpoint para buscar a foto de um evento
+app.get('/api/eventos/foto/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT foto FROM evento WHERE ID_evento = ?";
+    con.query(sql, [id], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar foto do evento:", err);
+            return res.status(500).send("Erro ao buscar a foto");
+        }
+        if (results.length === 0 || !results[0].foto) {
+            return res.status(404).send("Foto não encontrada");
+        }
+        const fotoBlob = results[0].foto;
+        res.writeHead(200, {
+            "Content-Type": "image/jpeg",
+            "Content-Length": fotoBlob.length,
+        });
+        res.end(fotoBlob);
+    });
+});
+
+// Endpoint para buscar os eventos ativos (a partir de hoje)
+app.get('/api/eventos/ativos', (req, res) => {
+    const sql = `
+      SELECT e.*, est.nome AS estabelecimento_nome
+      FROM evento e
+      LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+      WHERE DATE(e.data) >= CURDATE()
+      ORDER BY e.data, e.hora ASC
+    `;
+    con.query(sql, (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar eventos ativos:", err);
+            return res.status(500).json({ message: 'Erro ao buscar eventos ativos.' });
+        }
+        res.json(results);
+    });
+});
+
+// Endpoint para buscar os eventos criados pelo usuário atual
+app.get('/api/eventos/meus-eventos', (req, res) => {
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    const sql = `
+        SELECT e.*, est.nome AS estabelecimento_nome 
+        FROM evento e
+        LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+        WHERE e.fk_ID_usuario = ?
+        ORDER BY e.data DESC, e.hora DESC
+    `;
+
+    con.query(sql, [idUsuario], (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar meus eventos:", err);
+            return res.status(500).json({ message: 'Erro ao buscar seus eventos.' });
+        }
+        res.json(results);
+    });
+});
+
+// Endpoint para editar um evento
+app.post('/api/eventos/editar', upload.single('foto'), (req, res) => {
+    const { id, nome, data, hora } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    // Primeiro, verificar se o evento pertence ao usuário
+    const sqlCheck = "SELECT * FROM evento WHERE ID_evento = ? AND fk_ID_usuario = ?";
+    con.query(sqlCheck, [id, idUsuario], (err, results) => {
+        if (err) {
+            console.error("Erro ao verificar propriedade do evento:", err);
+            return res.status(500).json({ message: 'Erro ao verificar o evento.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(403).json({ message: 'Você não tem permissão para editar este evento.' });
+        }
+
+        // Preparar campos para atualização
+        let sql = 'UPDATE evento SET nome = ?, data = ?, hora = ?';
+        let params = [nome, data, hora];
+
+        // Se houver uma nova foto, incluí-la na atualização
+        if (req.file) {
+            try {
+                const fotoHex = req.file.buffer.toString('hex');
+                sql += ', foto = UNHEX(?)';
+                params.push(fotoHex);
+            } catch (error) {
+                console.error("Erro ao converter a foto:", error);
+                return res.status(400).json({ message: 'Foto inválida.' });
+            }
+        }
+
+        // Finalizar a query SQL
+        sql += ' WHERE ID_evento = ?';
+        params.push(id);
+
+        // Executar a atualização
+        con.query(sql, params, (err, updateResult) => {
+            if (err) {
+                console.error("Erro ao atualizar evento:", err);
+                return res.status(500).json({ message: 'Erro ao atualizar o evento.' });
+            }
+
+            res.status(200).json({ message: 'Evento atualizado com sucesso!' });
+        });
+    });
+});
+
+// Endpoint para excluir um evento
+app.delete('/api/eventos/excluir', (req, res) => {
+    const { id } = req.body;
+    const idUsuario = req.session.ID_usuario;
+
+    if (!idUsuario) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    // Primeiro, verificar se o evento pertence ao usuário
+    const sqlCheck = "SELECT * FROM evento WHERE ID_evento = ? AND fk_ID_usuario = ?";
+    con.query(sqlCheck, [id, idUsuario], (err, results) => {
+        if (err) {
+            console.error("Erro ao verificar propriedade do evento:", err);
+            return res.status(500).json({ message: 'Erro ao verificar o evento.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(403).json({ message: 'Você não tem permissão para excluir este evento.' });
+        }
+
+        // Executar a exclusão
+        const sqlDelete = "DELETE FROM evento WHERE ID_evento = ?";
+        con.query(sqlDelete, [id], (err, deleteResult) => {
+            if (err) {
+                console.error("Erro ao excluir evento:", err);
+                return res.status(500).json({ message: 'Erro ao excluir o evento.' });
+            }
+
+            res.status(200).json({ message: 'Evento excluído com sucesso!' });
+        });
+    });
+});
+
+// Novo endpoint para retornar os resultados dos filtros com data formatada
+app.get('/api/filtros', (req, res) => {
+    const searchTerm = req.query.q || '';
+    const likeTerm = `%${searchTerm}%`;
+
+    // Consulta para o primeiro evento: se CEP estiver nulo ou vazio, retorna o nome do estabelecimento; formata a data
+    const eventQuery1 = `
+        SELECT e.ID_evento, e.nome, DATE_FORMAT(e.data, '%d/%m/%Y') as data, e.hora,
+          IF(e.cep IS NULL OR e.cep = '', est.nome, CONCAT(e.rua, ', ', e.bairro, ', ', e.numero, ', CEP: ', e.cep)) AS endereco
+        FROM evento e
+        LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+        WHERE e.nome LIKE ?
+        LIMIT 1 OFFSET 0
+    `;
+
+    // Consulta para uma avaliação de estabelecimento (sem foto)
+    const avaliacaoQuery = `
+        SELECT e.ID_estabelecimento, e.nome AS estabelecimento_nome, a.avaliacao, a.comentario 
+        FROM estabelecimento e 
+        JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento 
+        WHERE e.nome LIKE ? 
+        LIMIT 1
+    `;
+
+    // Consulta para o segundo evento: mesma lógica de data e endereço
+    const eventQuery2 = `
+        SELECT e.ID_evento, e.nome, DATE_FORMAT(e.data, '%d/%m/%Y') as data, e.hora,
+          IF(e.cep IS NULL OR e.cep = '', est.nome, CONCAT(e.rua, ', ', e.bairro, ', ', e.numero, ', CEP: ', e.cep)) AS endereco
+        FROM evento e
+        LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+        WHERE e.nome LIKE ?
+        LIMIT 1 OFFSET 1
+    `;
+
+    con.query(eventQuery1, [likeTerm], (err, eventResult1) => {
+        if (err) {
+            console.error("Erro ao buscar o primeiro evento:", err);
+            return res.status(500).json({ error: 'Erro ao buscar eventos' });
+        }
+        con.query(avaliacaoQuery, [likeTerm], (err, avaliacaoResult) => {
+            if (err) {
+                console.error("Erro ao buscar a avaliação:", err);
+                return res.status(500).json({ error: 'Erro ao buscar avaliação' });
+            }
+            con.query(eventQuery2, [likeTerm], (err, eventResult2) => {
+                if (err) {
+                    console.error("Erro ao buscar o segundo evento:", err);
+                    return res.status(500).json({ error: 'Erro ao buscar eventos' });
+                }
+                return res.status(200).json({
+                    evento1: eventResult1[0] || null,
+                    avaliacao: avaliacaoResult[0] || null,
+                    evento2: eventResult2[0] || null
+                });
+            });
+        });
+    });
+});
+
+
+// Endpoint para filtros avançados que mostra eventos e estabelecimentos quando "Todos" é selecionado
+app.get('/api/filtros/avancado', (req, res) => {
+    const searchTerm = req.query.q || '';
+    const categoria = req.query.categoria || 'Todos';
+    const avaliacao = req.query.avaliacao || 'Qualquer';
+    const ordenacao = req.query.ordenacao || 'Relevância';
+
+    const likeTerm = searchTerm ? `%${searchTerm}%` : '%'; // Se vazio, busca tudo
+
+    // Extrair valor numérico da avaliação
+    let avaliacaoMinima = 0;
+    if (avaliacao.includes('1+')) avaliacaoMinima = 1;
+    if (avaliacao.includes('2+')) avaliacaoMinima = 2;
+    if (avaliacao.includes('3+')) avaliacaoMinima = 3;
+    if (avaliacao.includes('4+')) avaliacaoMinima = 4;
+
+    let queries = [];
+    let results = { eventos: [], avaliacoes: [] };
+
+    // Agora, eventos aparecem tanto em "Evento" quanto em "Todos"
+    if (categoria === 'Todos' || categoria === 'Evento') {
+        // Consulta de eventos
+        let eventosQuery = `
+            SELECT e.ID_evento, e.nome, DATE_FORMAT(e.data, '%d/%m/%Y') as data, e.hora,
+                IF(e.cep IS NULL OR e.cep = '', est.nome, 
+                    CONCAT(e.rua, ', ', e.bairro, ', ', e.numero, IF(e.cep IS NULL OR e.cep = '', '', CONCAT(', CEP: ', e.cep)))) AS endereco,
+                'evento' AS tipo
+            FROM evento e
+            LEFT JOIN estabelecimento est ON e.fk_ID_estabelecimento = est.ID_estabelecimento
+            WHERE e.nome LIKE ? 
+               OR e.data LIKE ?
+               OR e.hora LIKE ?
+               OR e.cep LIKE ?
+               OR e.rua LIKE ?
+               OR e.bairro LIKE ?
+               OR est.nome LIKE ?
+        `;
+
+        // Ordenação de eventos
+        if (ordenacao === 'Mais recentes') {
+            eventosQuery += ' ORDER BY e.data DESC, e.hora DESC';
+        } else { // Relevância ou outra opção
+            eventosQuery += ' ORDER BY e.data ASC, e.hora ASC';
+        }
+
+        queries.push(new Promise((resolve, reject) => {
+            // Repete o mesmo parâmetro para cada condição OR
+            con.query(eventosQuery, [likeTerm, likeTerm, likeTerm, likeTerm, likeTerm, likeTerm, likeTerm], (err, eventResult) => {
+                if (err) {
+                    console.error("Erro ao buscar eventos:", err);
+                    reject(err);
+                } else {
+                    results.eventos = eventResult || [];
+                    resolve();
+                }
+            });
+        }));
+    }
+
+    // Estabelecimentos aparecem na categoria 'Todos' ou 'Estabelecimento'
+    if (categoria === 'Todos' || categoria === 'Estabelecimento') {
+        // Consulta de avaliações
+        let avaliacoesQuery = `
+            SELECT 
+                e.ID_estabelecimento, 
+                e.nome AS estabelecimento_nome, 
+                a.ID_rating,
+                a.avaliacao, 
+                a.comentario, 
+                'avaliacao' AS tipo
+            FROM estabelecimento e 
+            JOIN avaliacao a ON e.ID_estabelecimento = a.fk_ID_estabelecimento 
+            WHERE e.nome LIKE ?
+               OR a.comentario LIKE ?
+        `;
+
+        // Filtro de avaliação mínima
+        if (avaliacaoMinima > 0) {
+            avaliacoesQuery += ` AND a.avaliacao >= ${avaliacaoMinima}`;
+        }
+
+        // Ordenação de estabelecimentos
+        if (ordenacao === 'Melhor avaliados') {
+            avaliacoesQuery += ' ORDER BY a.avaliacao DESC';
+        } else if (ordenacao === 'Mais recentes') {
+            avaliacoesQuery += ' ORDER BY a.ID_rating DESC';
+        } else { // Relevância ou outra opção
+            avaliacoesQuery += ' ORDER BY e.nome ASC';
+        }
+
+        queries.push(new Promise((resolve, reject) => {
+            con.query(avaliacoesQuery, [likeTerm, likeTerm], (err, avaliacaoResult) => {
+                if (err) {
+                    console.error("Erro ao buscar avaliações:", err);
+                    reject(err);
+                } else {
+                    results.avaliacoes = avaliacaoResult || [];
+                    resolve();
+                }
+            });
+        }));
+    }
+
+    // Executar todas as consultas e retornar os resultados
+    Promise.all(queries)
+        .then(() => {
+            return res.status(200).json(results);
+        })
+        .catch(err => {
+            return res.status(500).json({ error: 'Erro ao buscar resultados', details: err.message });
+        });
 });
 
 //iniciando o servidor

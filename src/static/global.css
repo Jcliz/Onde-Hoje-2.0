@@ -22,3 +22,60 @@
     background-color: #70452F;
 }
 
+.form-label input::placeholder, #crud-estabelecimentos input::placeholder, #searchFormContainer input::placeholder {
+    color: rgb(255, 255, 255, 0.7) !important;
+}
+
+#searchFormContainer input {
+  color: #f0f0f0;
+}
+
+#searchFormContainer input:focus {
+    border-color: #000000; 
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Hover no dropdown */
+.dropdown-menu .dropdown-item:hover {
+    background-color: #191922; 
+    color: #ffffff !important;
+}
+
+.list-group-item.OH-dark {
+    border: none !important;
+    background-color: #191922 !important;
+}
+
+.list-group-item.OH-dark:not(:last-child) {
+    border-bottom: 1px solid #333;
+}
+
+#sugestoes {
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1055;
+}
+.hover-bg:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.unauthenticated::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    /* Pode ajustar a opacidade se preferir */
+    z-index: 1;
+}
+
+.toast-container,
+.toast {
+    z-index: 2 !important;
+}
